@@ -1,4 +1,3 @@
 
-export * from './account';
-export * from './performance';
-export * from './rh';
+export * from './auth';
+export * from './produit';

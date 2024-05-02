@@ -5,10 +5,17 @@ import DefaultLayout from '@/layouts/DefaultLayout'
 import ProfilePage from '@/views/dashboard/pages/Profile.vue'
 import LoginAdmin from '@/views/dashboard/pages/Login.vue'
 import CreateProduit from '@/views/dashboard/pages/CreateProduit.vue'
+import ListProduit from '@/views/dashboard/pages/ListProduit.vue'
+import ListeCommande from '@/views/dashboard/pages/ListeCommande.vue'
+import Categorie from '@/views/dashboard/pages/Categorie.vue'
+import Marque from '@/views/dashboard/pages/Marque.vue'
+import MaBoutique from '@/views/dashboard/pages/MaBoutique.vue'
+import CreateArticle from '@/views/dashboard/pages/CreateArticle.vue'
+import ListeArticle from '@/views/dashboard/pages/ListeArticle.vue'
 
 const routes = [
   {
-    path: '/admin',
+    path: '/admin/dashboard',
     name: 'Home',
     component: DefaultLayout,
     redirect: '/admin/dashboard',
@@ -19,14 +26,49 @@ const routes = [
         component: () => import('@/views/dashboard/Dashboard.vue'),
       },
       {
-        path: '/admin-profile',
+        path: '/admin/profile',
         name: 'Profile',
         component: ProfilePage ,
       },
       {
-        path: "/produit-create",
+        path: "/admin/produit-create",
         name: 'CreateProduit',
         component: CreateProduit
+      },
+      {
+        path: "/admin/produits-list",
+        name: "Liste des Produits",
+        component: ListProduit
+      },
+      {
+        path: "/admin/commandes", 
+        name: "Commandes",
+        component: ListeCommande
+      },
+      {
+        path: "/admin/liste-categorie",
+        name: "Categorie",
+        component: Categorie
+      },
+      {
+        path: "/admin/liste-marque",
+        name: "Marque",
+        component: Marque
+      },
+      {
+        path: "/admin/boutique",
+        name: "Ma Boutique",
+        component: MaBoutique
+      },
+      {
+        path: "/admin/article-create", // /admin/liste/categorie-article
+        name: "Publier un article ",
+        component: CreateArticle
+      },
+      {
+        path: "/admin/liste/liste-article",
+        name: "Liste des articles",
+        component: ListeArticle
       },
     ]
   },

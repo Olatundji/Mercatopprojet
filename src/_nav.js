@@ -13,61 +13,61 @@ export default [
       {
         component: 'CNavItem',
         name: 'Publier',
-        to: '/article-create',
+        to: '/admin/article-create',
       },
       {
         component: 'CNavItem',
         name: 'Liste des articles',
-        to: '/article',
+        to: '/admin/liste/liste-article',
       },
       {
         component: 'CNavItem',
         name: 'Ma boutique',
-        to: '/boutique',
+        to: '/admin/boutique',
       },
       {
         component: 'CNavItem',
         name: "Catégorie d'article",
-        to: '/liste-article',
+        to: '/admin/liste/categorie-article',
       },
     ],
   },
-  {
+  { 
     component: 'CNavGroup',
     name: 'Produits',
-    icon: 'cil-cursor',
+    icon: 'cil-list',
     items: [
       {
         component: 'CNavItem',
         name: 'Ajouter un produit',
-        to: '/produit-create',
+        to: '/admin/produit-create',
       },
       {
         component: 'CNavItem',
         name: 'Liste des produits',
-        to: '/produits ',
+        to: '/admin/produits-list',
       },
       {
         component: 'CNavItem',
         name: 'Commandes',
-        to: '/commandes',
+        to: '/admin/commandes',
       },
       {
         component: 'CNavItem',
         name: "Catégorie",
-        to: '/liste-article',
+        to: '/admin/liste-categorie',
       },
       {
         component: 'CNavItem',
         name: "Marque",
-        to: '/liste-article',
+        to: '/admin/liste-marque',
       },
     ],
   },
   {
     component: 'CNavItem',
     name: 'Profile',
-    to: '/admin-profile',
+    to: '/admin/profile',
     icon: 'cil-user',
   },
 ]
