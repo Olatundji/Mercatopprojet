@@ -12,6 +12,7 @@ import Marque from '@/views/dashboard/pages/Marque.vue'
 import MaBoutique from '@/views/dashboard/pages/MaBoutique.vue'
 import CreateArticle from '@/views/dashboard/pages/CreateArticle.vue'
 import ListeArticle from '@/views/dashboard/pages/ListeArticle.vue'
+import Welcome from '@/views/client/Welcome.vue'
 
 const routes = [
   {
@@ -76,6 +77,11 @@ const routes = [
     path: '/admin/login',
     name: 'LoginAdmin',
     component: LoginAdmin,
+  },
+  {
+    path: '/',
+    name: 'Accueil',
+    component: Welcome,
   },
 ]
 
