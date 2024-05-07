@@ -15,6 +15,7 @@ $routes->post('product/create', 'ProductController::create');
 $routes->put('product/update/(:num)', 'ProductController::update/$1');
 $routes->delete('product/delete/(:num)', 'ProductController::delete/$1');
 $routes->get('products', 'ProductController::index');
+$routes->get('search', 'ProductController::search');
 //Marque
 $routes->get('marques/index', 'MarqueController::index');
 $routes->post('marques/create', 'MarqueController::create');
@@ -48,5 +49,25 @@ $routes->post('categories/create', 'CategorieController::create');
 $routes->get('categories/show/(:num)', 'CategorieController::show/$1');
 $routes->put('categories/update/(:num)', 'CategorieController::update/$1');
 $routes->delete('categories/delete/(:num)', 'CategorieController::delete/$1');
+//recherche par categorie de produit
+$routes->get('produits/categorie/(:num)', 'ControllerProduit::rechercheParCategorie/$1');
+//panier
+    $routes->post('panier/ajouter', 'PanierController::ajouterProduit');
+    $routes->get('panier/consulter', 'PanierController::consulterPanier');
+    $routes->put('panier/modifier/(:num)', 'PanierController::modifierProduit/$1');
+    $routes->delete('panier/supprimer/(:num)', 'PanierController::supprimerProduit/$1');
+    $routes->delete('panier/vider', 'PanierController::viderPanier');
+//commande
+    $routes->post('commande/nouvelle', 'CommandeController::nouvelleCommande');
+    $routes->get('commande/details/(:num)', 'CommandeController::detailsCommande/$1');
+    $routes->get('commande/historique', 'CommandeController::historiqueCommandes');
+    $routes->get('commande/methodes-paiement', 'CommandeController::listerMethodesPaiement');
+    $routes->post('commande/:numCommande/methode-paiement/:numMethode', 'CommandeController::choisirMethodePaiement/$1/$2');
+//reduction
+    $routes->get('reductions', 'ReductionController::listerReductions');
+    $routes->post('reductions/utiliser', 'ReductionController::utiliserReduction');
+
+    // $routes->get('paiement/methodes', 'PaiementController::listerMethodesPaiement');
+    // $routes->post('paiement/commande/:num' , '');
 
 service('auth')->routes($routes);

@@ -46,6 +46,6 @@ class UserModel extends Model
     }
     public function commande()
     {
-        return $this->hasMany(CommandeModel::class, 'idCommande');
+        return $this->belongsTo(CommandeModel::class);
     }
 }

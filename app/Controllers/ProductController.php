@@ -77,4 +77,17 @@ class ProductController extends BaseController
 
         return $this->respondDeleted(['message' => 'Product deleted successfully']);
     }
+    public function rechercheParCategorie($idCategorie) {
+        // Récupérer les produits de la catégorie spécifiée depuis la base de données
+        $products = $this->productModel->where('idCategorie', $idCategorie)->findAll();
+    
+        // Vérifier s'il y a des produits dans la catégorie spécifiée
+        if (empty($products)) {
+            // Aucun produit trouvé dans la catégorie spécifiée
+            return $this->failNotFound('No products found in this category');
+        }
+    
+        // Retourner la liste des produits de la catégorie spécifiée
+        return $this->respond($products);
+    }
 }

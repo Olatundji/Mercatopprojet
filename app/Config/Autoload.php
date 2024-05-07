@@ -92,3 +92,5 @@ class Autoload extends AutoloadConfig
      */
     public $helpers = ['auth', 'setting'];
 }
+
+$autoload['libraries'] = array('session');
