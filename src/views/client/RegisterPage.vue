@@ -1,0 +1,79 @@
+<template>
+    <section class="signin-page account">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3">
+                    <div class="block text-center">
+                        <a class="logo" href="index.html">
+                            <img src="@/assets/images/logo.png" alt="">
+                        </a>
+                        <h2 class="text-center">Créer un compte</h2>
+                        <div class="error">
+                            <p>Il y a des errors dans le formulaire</p>
+                        </div>
+                        <form @submit.prevent="register" class="text-left clearfix" >
+                            <div class="form-group">
+                                <input v-model="user.nom" type="text" class="form-control" placeholder="Nom">
+                            </div>
+                            <div class="form-group">
+                                <input v-model="user.email" type="email" class="form-control" placeholder="Email">
+                            </div>
+                            <div class="form-group">
+                                <input v-model="user.numero" type="text" class="form-control" placeholder="Numéro">
+                            </div>
+                            <div class="form-group">
+                                <input v-model="user.password" type="password" class="form-control" placeholder="Password">
+                            </div>
+                            <div class="form-group">
+                                <input v-model="passwordConfirm" type="password" class="form-control" placeholder="Password Confirm">
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-main text-center">S'inscrire</button>
+                            </div>
+                        </form>
+                        <p class="mt-20">Already hava an account ?<a href="login.html"> Login</a></p>
+                        <p><a href="forget-password.html"> Forgot your password?</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</template>
+
+<script>
+export default {
+    name: 'RegisterPage',
+    data() {
+        return {
+            user: {
+                nom: '',
+                email: '',
+                numero: '',
+                password: ''
+            },
+            passwordConfirm: '',
+            errors: [],
+            haveError: true
+        }
+    },
+
+    methods: {
+        register(){
+            if(this.user.password == this.passwordConfirm){
+                console.log(this.user);
+            }else {
+                const error = {message: "Les mots de passe ne sont pas identique"}
+                this.errors.push(error)
+                console.log(this.errors.length);
+            }
+            
+        }
+    },
+}
+</script>
+
+<style scoped>
+    .error{
+        background-color: red;
+    }
+</style>

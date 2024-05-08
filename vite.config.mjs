@@ -2,7 +2,6 @@ import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import path from 'node:path'
 import autoprefixer from 'autoprefixer'
-import discardComments from 'postcss-discard-comments';
 
 export default defineConfig(({ mode }) => {
   // Load .env
@@ -18,7 +17,6 @@ export default defineConfig(({ mode }) => {
           autoprefixer({
             remove: true
           }), // add options if needed
-          discardComments({ removeAll: true })
         ],
       },
       exclude: ["**/*.min.css", "**/*.js"]

@@ -1,3 +1,11 @@
+
+import "./assets/plugins/themefisher-font/style.css"
+import "./assets/plugins/bootstrap/css/bootstrap.min.css"
+import "./assets/plugins/animate/animate.css"
+import "./assets/plugins/slick/slick.css"
+import "./assets/plugins/slick/slick-theme.css"
+import "./assets/css/style.css"
+
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'

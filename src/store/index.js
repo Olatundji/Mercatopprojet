@@ -20,7 +20,8 @@ export default createStore({
       theme: 'light',
       token: null,
       type: null,
-      user: null
+      user: null,
+      cartBadge: 0,
     }
   },
   mutations: {

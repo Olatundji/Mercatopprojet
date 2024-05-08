@@ -13,6 +13,9 @@ import MaBoutique from '@/views/dashboard/pages/MaBoutique.vue'
 import CreateArticle from '@/views/dashboard/pages/CreateArticle.vue'
 import ListeArticle from '@/views/dashboard/pages/ListeArticle.vue'
 import Welcome from '@/views/client/Welcome.vue'
+import RegisterPage from '@/views/client/RegisterPage.vue'
+import LoginPage from '@/views/client/LoginPage.vue'
+import UserProfile from '@/views/client/UserProfile.vue'
 
 const routes = [
   {
@@ -82,6 +85,21 @@ const routes = [
     path: '/',
     name: 'Accueil',
     component: Welcome,
+  },
+  {
+    path: '/register',
+    name: 'Register',
+    component: RegisterPage
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: LoginPage
+  },
+  {
+    path: '/user/profile',
+    name: 'Liste des articles',
+    component: UserProfile,
   },
 ]
 
