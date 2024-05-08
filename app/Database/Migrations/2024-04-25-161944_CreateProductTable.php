@@ -41,7 +41,6 @@ class CreateProductTable extends Migration
                 'constraint' => 11,
                 'unsigned' => true,
             ],
-            // Ajoutez d'autres colonnes si nécessaire
             'created_at' => [
                 'type' => 'DATETIME',
                 'null' => true,

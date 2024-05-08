@@ -9,6 +9,8 @@ class Marques extends \CodeIgniter\Controller
 {
     use ResponseTrait;
 
+    
+
     public function index()
     {
         // Récupère toutes les marques
@@ -17,6 +19,7 @@ class Marques extends \CodeIgniter\Controller
 
         return $this->respond($marques);
     }
+    
 
     public function create()
     {

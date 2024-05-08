@@ -16,38 +16,38 @@ class CreateCommandeTable extends Migration
                 'auto_increment' => true,
             ],
             'etat' => [
-                'type' => 'TEXT',
+                'type' => 'VARCHAR',
                 'constraint' => 100,
-                'null' => false, 
+                'null' => false,
             ],
             'date' => [
                 'type' => 'DATE',
-                'null' => false, 
+                'null' => false,
             ],
             'transaction' => [
                 'type' => 'INT',
                 'constraint' => 11,
-                'null' => false, 
+                'null' => false,
             ],
             'method_pay' => [
                 'type' => 'VARCHAR',
-                'constraint' => 100, 
-                'null' => false, 
+                'constraint' => 100,
+                'null' => false,
             ],
             'montant' => [
                 'type' => 'INT',
-                'null' => false, 
+                'null' => false,
             ],
             'idProduit' => [
                 'type' => 'INT',
                 'constraint' => 11,
                 'unsigned' => true,
             ],
-            // 'idUser' => [
-            //     'type' => 'BIGINT',
-            //     'constraint' => 11,
-            //     'unsigned' => true,
-            // ],
+             'idUser' => [
+                'type' => 'INT',
+                'constraint' => 11,
+                'unsigned' => TRUE,
+            ],
             
             // Ajoutez d'autres colonnes si nécessaire
             'created_at' => [
@@ -61,7 +61,7 @@ class CreateCommandeTable extends Migration
         ]);
         $this->forge->addPrimaryKey('id');
         $this->forge->addForeignKey('idProduit', 'produit', 'id', 'CASCADE', 'CASCADE');
-        //$this->forge->addForeignKey('idUser', 'users', 'id', 'CASCADE', 'CASCADE');
+        $this->forge->addForeignKey('idUser', 'users', 'id', 'CASCADE', 'CASCADE');
         $this->forge->createTable('commandes');
     }
 

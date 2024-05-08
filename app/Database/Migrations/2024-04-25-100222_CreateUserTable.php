@@ -4,7 +4,7 @@ namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
 
-class CreateArticleTable extends Migration
+class User extends Migration
 {
     public function up()
     {
@@ -15,31 +15,32 @@ class CreateArticleTable extends Migration
                 'unsigned' => true,
                 'auto_increment' => true,
             ],
-            'contenu' => [
+            
+            'nom' => [
                 'type' => 'VARCHAR',
                 'constraint' => 100,
                 'null' => false,
             ],
-            'image' => [
-                'type' => 'VARCHAR', 
-                'null' => false,
-            ],
-            'description' => [
-                'type' => 'TEXT', 
-                'null' => true,
-            ],
-            'titre' => [
+            'numero' => [
                 'type' => 'VARCHAR',
                 'constraint' => 100,
                 'null' => false,
             ],
-            'idCategorie_article' => [
-                'type' => 'INT',
-                'constraint' => 11,
-                'unsigned' => true,
-                'null' => true,
+            'adresse' => [
+                'type' => 'VARCHAR',
+                'constraint' => 100,
+                'null' => false,
             ],
-            // Ajoutez d'autres colonnes si nécessaire
+            'email' => [
+                'type' => 'VARCHAR',
+                'constraint' => 100,
+                'null' => false,
+            ],
+            'password' => [
+                'type' => 'VARCHAR',
+                'constraint' => 100,
+                'null' => false,
+            ],
             'created_at' => [
                 'type' => 'DATETIME',
                 'null' => true,
@@ -48,14 +49,15 @@ class CreateArticleTable extends Migration
                 'type' => 'DATETIME',
                 'null' => true,
             ],
+            
         ]);
         $this->forge->addPrimaryKey('id');
-        $this->forge->addForeignKey('idCategorie_article', 'categorie_articles', 'id', 'CASCADE', 'CASCADE');
-        $this->forge->createTable('articles');
+        $this->forge->createTable('users');
     }
 
     public function down()
     {
-        $this->forge->dropTable('articles');
+        $this->forge->dropTable('users');
     }
 }
+

@@ -17,7 +17,6 @@ class CreateFavorisTable extends Migration
             ],
             'libelle' => [
                 'type' => 'TEXT',
-                'constraint' => 100,
             ],
             'idProduit' => [
                 'type' => 'INT',
@@ -25,12 +24,12 @@ class CreateFavorisTable extends Migration
                 'unsigned' => true,
                 'null' => true,
             ],
-            // 'idUser' => [
-            //     'type' => 'BIGINT',
-            //     'constraint' => 255,
-            //     'unsigned' => true,
-            //     'null' => true,
-            // ],
+             'idUser' => [
+                'type' => 'INT',
+                'constraint' => 11,
+                'unsigned' => true,
+               'null' => true,
+             ],
             'created_at' => [
                 'type' => 'DATETIME',
                 'null' => true,
@@ -43,7 +42,7 @@ class CreateFavorisTable extends Migration
         ]);
         $this->forge->addPrimaryKey('id');
         $this->forge->addForeignKey('idProduit', 'produit', 'id', 'CASCADE', 'CASCADE');
-        //$this->forge->addForeignKey('idUser', 'users', 'id', 'CASCADE', 'CASCADE');
+        $this->forge->addForeignKey('idUser', 'users', 'id', 'CASCADE', 'CASCADE');
         $this->forge->createTable('favoris');
     }
 

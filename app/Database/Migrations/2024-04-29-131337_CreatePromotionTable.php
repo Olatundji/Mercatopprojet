@@ -40,7 +40,6 @@ class CreatePromotionTable extends Migration
                 'unsigned' => true,
             ],
             
-            // Ajoutez d'autres colonnes si nécessaire
             'created_at' => [
                 'type' => 'DATETIME',
                 'null' => true,

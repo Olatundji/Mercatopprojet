@@ -53,8 +53,8 @@ class AuthController extends BaseController
     {
         $data = [
             'nom' => $this->request->getVar('nom'),
-            'role' => $this->request->getVar('role'),
             'numero' => $this->request->getVar('numero'),
+            'adresse' => $this->request->getVar('adresse'),
             'email' => $this->request->getVar('email'),
             'password' => password_hash($this->request->getVar('password'), PASSWORD_DEFAULT),
         ];
