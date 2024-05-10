@@ -8,6 +8,8 @@ use CodeIgniter\HTTP\IncomingRequest;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use Psr\Log\LoggerInterface;
+use chriskacerguis\RestServer\RestController;
+use Config\Services;
 
 /**
  * Class BaseController
@@ -57,6 +59,13 @@ abstract class BaseController extends Controller
 
         // E.g.: $this->session = \Config\Services::session();
     }
+    // public function __construct() {
+    //     parent::__construct();
+    //     $this->cors = Services::cors();
+    //     $this->cors->allowHeaders(['Content-Type', 'Authorization']);
+    //     $this->cors->allowMethods(['GET', 'POST', 'PUT', 'DELETE']);
+    //     $this->cors->allowOrigins(['http://frontend.example.com']);
+    // }
 }
 
 

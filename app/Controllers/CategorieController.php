@@ -34,7 +34,7 @@ class Categories extends \CodeIgniter\Controller
     public function update($id = null)
     {
         $data = [
-            'libelle' => $this->request->getPost('libelle'),
+            'libelle' => $this->request->getVar('libelle'),
         ];
 
         // Mettre à jour la marque dans la base de données

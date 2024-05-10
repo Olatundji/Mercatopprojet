@@ -24,7 +24,13 @@ class UserModel extends Model
     protected $deletedField         = 'deleted_at';
   
     // Validation
-    protected $validationRules      = [];
+    protected $validationRules = [
+        'nom' => 'required',
+        'numero' => 'required|numeric',
+        'adresse' => 'required',
+        'email' => 'required|valid_email|is_unique[users.email]',
+        'password' => 'required|min_length[8]',
+    ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
@@ -40,12 +46,12 @@ class UserModel extends Model
     protected $beforeDelete         = [];
     protected $afterDelete          = [];
 
-    public function favoris()
-    {
-        return $this->belongsTo(FavorisModel::class);
-    }
-    public function commande()
-    {
-        return $this->belongsTo(CommandeModel::class);
-    }
+    // public function favoris()
+    // {
+    //     return $this->belongsTo(FavorisModel::class);
+    // }
+    // public function commande()
+    // {
+    //     return $this->belongsTo(CommandeModel::class);
+    // }
 }

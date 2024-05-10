@@ -16,6 +16,14 @@ class ProductController extends BaseController
         $this->productModel = new ProductModel();
     }
 
+    public function search() {
+        $keyword = $this->request->getGet('keyword');
+
+        $results = $this->productModel->searchProducts($keyword);
+
+        return $this->respond($results);
+    }
+
     public function index()
     {
         // Récupérer tous les produits depuis la base de données

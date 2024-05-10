@@ -5,7 +5,7 @@ namespace App\Controllers;
 use App\Controllers\BaseController;
 use App\Models\UserModel;
 use CodeIgniter\API\ResponseTrait;
-use Config\Services;
+use \Firebase\JWT\JWT;
 
 class AuthController extends BaseController
 {
@@ -20,74 +20,96 @@ class AuthController extends BaseController
 
     public function login()
     {
-        $email = $this->request->getVar('email');
-        $password = $this->request->getVar('password');
-
-        $user = $this->userModel->where('email', $email)->first();
-
-        if (!$user || !password_verify($password, $user['password'])) {
-            return $this->failUnauthorized('Invalid email or password');
+        try {
+            $userModel = new UserModel();
+  
+            $email = $this->request->getVar('email');
+            $password = $this->request->getVar('password');
+              
+            $user = $userModel->where('email', $email)->first();
+      
+            if(is_null($user)) {
+                return $this->respond(['error' => 'Invalid username or password.'], 401);
+            }
+      
+            $pwd_verify = password_verify($password, $user['password']);
+      
+            if(!$pwd_verify) {
+                return $this->respond(['error' => 'Invalid username or password.'], 401);
+            }
+     
+            $key = getenv('JWT_SECRET');
+            $iat = time(); // current timestamp value
+            $exp = $iat + 3600;
+     
+            $payload = array(
+                "iss" => "Issuer of the JWT",
+                "aud" => "Audience that the JWT",
+                "sub" => "Subject of the JWT",
+                "iat" => $iat, //Time the JWT issued at
+                "exp" => $exp, // Expiration time of token
+                "email" => $user['email'],
+            );
+             
+            $token = JWT::encode($payload, $key, 'HS256');
+     
+            $response = [
+                'message' => 'Login Succesful',
+                'token' => $token
+            ];
+             
+            return $this->respond($response, 200);
         }
-
-        $jwt = Services::jwt();
-
-        $iat = time();
-        $exp = $iat + 3600;
-
-        $payload = [
-            'iat' => $iat,
-            'exp' => $exp,
-            'user_id' => $user['id'],
-            'email' => $user['email'],
-        ];
-
-        $token = $jwt->encode($payload);
-
-        return $this->respond([
-            'message' => 'Login successful',
-            'token' => $token,
-        ]);
+     catch (\Exception $e) {
+            log_message('error', $e->getMessage());
+            return $this->fail('An error occurred: ' . $e->getMessage(), 500);
+        }
     }
 
     public function register()
     {
-        $data = [
-            'nom' => $this->request->getVar('nom'),
-            'numero' => $this->request->getVar('numero'),
-            'adresse' => $this->request->getVar('adresse'),
-            'email' => $this->request->getVar('email'),
-            'password' => password_hash($this->request->getVar('password'), PASSWORD_DEFAULT),
-        ];
-
-        $this->userModel->insert($data);
-
-        return $this->respond(['message' => 'User registered successfully']);
-    }
-
-    public function profile()
-    {
-        $token = $this->request->getServer('HTTP_AUTHORIZATION');
-        if (!$token) {
-            return $this->failUnauthorized('Token is missing');
-        }
-
-        $jwt = Services::jwt();
-
         try {
-            $decoded = $jwt->decode($token);
-            $userId = $decoded->user_id;
+            $data = [
+                'nom' => $this->request->getVar('nom'),
+                'numero' => $this->request->getVar('numero'),
+                'adresse' => $this->request->getVar('adresse'),
+                'email' => $this->request->getVar('email'),
+                'password' => password_hash($this->request->getVar('password'), PASSWORD_DEFAULT),
+            ];
+
+            $this->userModel->insert($data);
+
+            return $this->respond(['message' => 'User registered successfully']);
         } catch (\Exception $e) {
-            return $this->failUnauthorized('Invalid token');
+            log_message('error', $e->getMessage());
+            return $this->fail('An error occurred: ' . $e->getMessage(), 500);
         }
-
-        $user = $this->userModel->find($userId);
-
-        if (!$user) {
-            return $this->failNotFound('User not found');
-        }
-
-        unset($user['password']);
-
-        return $this->respond($user);
     }
+
+    // public function profile()
+    // {
+    //     try {
+    //         $token = $this->request->getServer('HTTP_AUTHORIZATION');
+    //         if (!$token) {
+    //             return $this->failUnauthorized('Token is missing');
+    //         }
+
+    //         $key = "mon_code_keys";
+    //         $decoded = JWT::decode($token, $key, ['HS256']);
+    //         $userId = $decoded->user_id;
+
+    //         $user = $this->userModel->find($userId);
+
+    //         if (!$user) {
+    //             return $this->failNotFound('User not found');
+    //         }
+
+    //         unset($user['password']);
+
+    //         return $this->respond($user);
+    //     } catch (\Exception $e) {
+    //         log_message('error', $e->getMessage());
+    //         return $this->fail('An error occurred: ' . $e->getMessage(), 500);
+    //     }
+    // }
 }

@@ -4,8 +4,110 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "72db527333d083aef05eef53261c0e68",
+    "content-hash": "edf6b7138ad8f28cb278f1f885f7f351",
     "packages": [
+        {
+            "name": "agungsugiarto/codeigniter4-cors",
+            "version": "v3.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/agungsugiarto/codeigniter4-cors.git",
+                "reference": "4b7ed2d0f6dfd6f84983b8e7f2afc99a34e54607"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/agungsugiarto/codeigniter4-cors/zipball/4b7ed2d0f6dfd6f84983b8e7f2afc99a34e54607",
+                "reference": "4b7ed2d0f6dfd6f84983b8e7f2afc99a34e54607",
+                "shasum": ""
+            },
+            "require": {
+                "codeigniter4/framework": "^4.3",
+                "php": "^7.4 || ^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.1"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Fluent\\Cors\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Agung Sugiarto",
+                    "email": "me.agungsugiarto@tgmail.com",
+                    "homepage": "https://agungsugiarto.github.io",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Send CORS Headers in a CodeIgniter 4 application.",
+            "keywords": [
+                "ajax",
+                "api",
+                "codeigniter4",
+                "codeigniter4-cors",
+                "cors",
+                "request"
+            ],
+            "support": {
+                "issues": "https://github.com/agungsugiarto/codeigniter4-cors/issues",
+                "source": "https://github.com/agungsugiarto/codeigniter4-cors/tree/v3.0.0"
+            },
+            "funding": [
+                {
+                    "url": "https://saweria.co/agungsugiarto",
+                    "type": "custom"
+                }
+            ],
+            "time": "2023-02-18T07:33:23+00:00"
+        },
+        {
+            "name": "chriskacerguis/codeigniter-restserver",
+            "version": "3.1.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/chriskacerguis/codeigniter-restserver.git",
+                "reference": "63c5ccad5581c3e0035c400aa929ba1ef0822418"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/chriskacerguis/codeigniter-restserver/zipball/63c5ccad5581c3e0035c400aa929ba1ef0822418",
+                "reference": "63c5ccad5581c3e0035c400aa929ba1ef0822418",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "chriskacerguis\\RestServer\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Chris Kacerguis",
+                    "email": "chriskacerguis@gmail.com"
+                }
+            ],
+            "description": "CI Rest Server",
+            "support": {
+                "issues": "https://github.com/chriskacerguis/codeigniter-restserver/issues",
+                "source": "https://github.com/chriskacerguis/codeigniter-restserver/tree/3.1.5"
+            },
+            "time": "2023-07-29T18:18:15+00:00"
+        },
         {
             "name": "codeigniter4/framework",
             "version": "v4.5.1",

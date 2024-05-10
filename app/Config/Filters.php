@@ -20,6 +20,7 @@ class Filters extends BaseConfig
         'toolbar'  => DebugToolbar::class,
         'honeypot' => Honeypot::class,
         'authFilter' => \App\Filters\AuthFilter::class,
+       'cors'=> \Fluent\cors\Filters\CorsFilter::class,
     ];
  
     /**
@@ -29,11 +30,11 @@ class Filters extends BaseConfig
      * @var array
      */
     public $globals = [
-        'before' => [
-            // ...
-            'session' => ['except' => ['login*', 'register', 'auth/a/*', 'logout']],
-        ],
-        // ...
+        // 'before' => [
+        //     // ...
+        //     'session' => ['except' => ['login*', 'register', 'auth/a/*', 'logout']],
+        // ],
+        // // ...
     ];
  
     /**
@@ -56,5 +57,10 @@ class Filters extends BaseConfig
      *
      * @var array
      */
-    public $filters = [];
+    public $filters = [
+        'cors' => [
+            'before' => ['api/*'],
+            'after'  => ['api/*'],
+        ],
+    ];
 }
