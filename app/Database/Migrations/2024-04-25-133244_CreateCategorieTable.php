@@ -18,7 +18,7 @@ class CreateCategorieTable extends Migration
             'libelle' => [
                 'type' => 'VARCHAR',
                 'constraint' => 100,
-                'null' => false,
+                'null' => true,
             ],
             'created_at' => [
                 'type' => 'DATETIME',

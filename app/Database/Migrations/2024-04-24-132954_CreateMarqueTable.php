@@ -18,7 +18,7 @@ class CreateMarqueTable extends Migration
             'nom' => [
                 'type' => 'VARCHAR',
                 'constraint' => 100,
-                'null' => false,
+                'null' => true,
             ],
             'created_at' => [
                 'type' => 'DATETIME',

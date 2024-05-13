@@ -41,6 +41,10 @@ class MarqueController extends BaseController
 
     public function create()
     {
+        if (!$this->validate($this->marqueModel->validationRules)) {
+            // Si la validation échoue, renvoyer les erreurs de validation
+            return $this->failValidationErrors($this->validator->getErrors());
+        }
         // Récupérer les données envoyées dans la requête
         $data = [
             'nom' => $this->request->getPost('nom')

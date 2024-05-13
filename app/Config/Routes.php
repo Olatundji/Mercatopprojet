@@ -44,7 +44,7 @@ $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection
 //     $routes->put('marques/update/(:num)', 'MarqueController::update/$1');
 //     $routes->delete('marques/delete/(:num)', 'MarqueController::delete/$1');
  });
-// $routes->post('/marque', 'MarqueController::create');
+ $routes->post('api/marque', 'MarqueController::create');
 $routes->get('api/marques/index', 'MarqueController::index');
 //  $routes->get('marques/show/(:num)', 'MarqueController::show/$1');
 //  $routes->put('marques/update/(:num)', 'MarqueController::update/$1');

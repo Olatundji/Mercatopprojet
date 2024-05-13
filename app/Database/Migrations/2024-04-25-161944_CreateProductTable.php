@@ -18,28 +18,40 @@ class CreateProductTable extends Migration
             'nom' => [
                 'type' => 'VARCHAR',
                 'constraint' => 100,
+                'null' => false,
+
             ],
             'prix' => [
                 'type' => 'DECIMAL',
                 'constraint' => '10,2',
+                'null' => true,
+
             ],
             'description' => [
                 'type' => 'TEXT',
+                'null' => true,
+
             ],
             'qte' => [
                 'type' => 'INT',
                 'constraint' => 11,
+                'null' => false,
+
             ],
             'idMarque' => [
                 'type' => 'INT',
                 'constraint' => 11,
                 'unsigned' => true,
+                'null' => false,
+
             ],
             
             'idCategorie' => [
                 'type' => 'INT',
                 'constraint' => 11,
                 'unsigned' => true,
+                'null' => false,
+
             ],
             'created_at' => [
                 'type' => 'DATETIME',

@@ -71,24 +71,34 @@ class ProductController extends BaseController
 
 
 
-    public function create()
-    {
-        // Récupérer les données envoyées dans la requête
-        $data = [
-            'nom' => $this->request->getPost('nom'),
-            'prix' => $this->request->getPost('prix'),
-            'description' => $this->request->getPost('description'),
-            'qte' => $this->request->getPost('qte'),
-            'idMarque' => $this->request->getPost('idMarque'),
-            'idCategorie' => $this->request->getPost('idCategorie'),
-
-        ];
-
-        // Insérer le nouveau produit dans la base de données
-        $this->productModel->insert($data);
-
-        return $this->respond(['message' => 'Product created successfully']);
+public function create()
+{
+    // Valider les données soumises
+    if (!$this->validate($this->productModel->validationRules)) {
+        // Si la validation échoue, renvoyer les erreurs de validation
+        return $this->failValidationErrors($this->validator->getErrors());
     }
+
+    // Les données sont valides, continuez le traitement
+    // Récupérer les données envoyées dans la requête
+    $data = [
+        'nom' => $this->request->getPost('nom'),
+        'prix' => $this->request->getPost('prix'),
+        'description' => $this->request->getPost('description'),
+        'qte' => $this->request->getPost('qte'),
+        'idMarque' => $this->request->getPost('idMarque'),
+        'idCategorie' => $this->request->getPost('idCategorie'),
+    ];
+
+    // Afficher les données soumises pour déboguer
+    var_dump($data);
+
+    // Insérer le nouveau produit dans la base de données
+    $this->productModel->insert($data);
+
+    return $this->respond(['message' => 'Product created successfully']);
+}
+
 
     public function update($id)
     {

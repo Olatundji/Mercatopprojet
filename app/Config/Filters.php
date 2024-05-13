@@ -21,6 +21,7 @@ class Filters extends BaseConfig
         'honeypot' => Honeypot::class,
         'authFilter' => \App\Filters\AuthFilter::class,
        'cors'=> Cors::class,
+       'CORS'     => \CodeIgniter\Filters\CORS::class,
     ];
  
     /**
@@ -30,13 +31,12 @@ class Filters extends BaseConfig
      * @var array
      */
     public $globals = [
-         'before' => [
+        // 'before' => [
         //     // ...
         //     'session' => ['except' => ['login*', 'register', 'auth/a/*', 'logout']],
         // ],
-        'CORS'
+        
         // // ...
-    ],
     ];
  
     /**
@@ -48,10 +48,7 @@ class Filters extends BaseConfig
      *
      * @var array
      */
-    public $methods = [
-        'post' => ['CSRF', 'CORS'], 
-    'get' => ['CORS'], 
-    ];
+    public $methods = [];
  
     /**
      * List of filter aliases that should run on any
