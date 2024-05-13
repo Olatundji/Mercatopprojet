@@ -1,61 +1,76 @@
 <?php
 
-namespace App\Controllers\Api;
+namespace App\Controllers;
 
 use CodeIgniter\API\ResponseTrait;
 use App\Models\MarqueModel;
 
-class Marques extends \CodeIgniter\Controller
+class MarqueController extends BaseController
 {
     use ResponseTrait;
 
-    
+    private $marqueModel;
+
+    public function __construct()
+    {
+        $this->marqueModel = new MarqueModel();
+    }
+
+    public function search() {
+        $keyword = $this->request->getGet('keyword');
+
+        $results = $this->marqueModel->searchMarques($keyword);
+
+        return $this->respond($results);
+    }
 
     public function index()
     {
-        // Récupère toutes les marques
-        $model = new MarqueModel();
-        $marques = $model->findAll();
+        // Récupérer tous les produits depuis la base de données
+        $marques = $this->marqueModel->findAll();
 
+        // Vérifier s'il y a des produits
+        if (empty($marques)) {
+            // Aucun produit trouvé
+            return $this->failNotFound('No Marques found');
+        }
+
+        // Retourner la liste des produits
         return $this->respond($marques);
     }
-    
 
     public function create()
     {
+        // Récupérer les données envoyées dans la requête
         $data = [
-            'nom' => $this->request->getPost('nom'),
+            'nom' => $this->request->getPost('nom')
+
         ];
-        
-        // Insérer la marque dans la base de données
-        $model = new MarqueModel();
-        $model->insert($data);
-        
-        return $this->respondCreated(['message' => 'Marque created successfully']);
+
+        // Insérer le nouveau produit dans la base de données
+        $this->marqueModel->insert($data);
+
+        return $this->respond(['message' => 'Marque created successfully']);
     }
 
-    public function update($id = null)
+    public function update($id)
     {
+        // Récupérer les données envoyées dans la requête
         $data = [
             'nom' => $this->request->getPost('nom'),
         ];
 
-        // Mettre à jour la marque dans la base de données
-        $model = new MarqueModel();
-        $model->update($id, $data);
-        
+        // Mettre à jour le produit dans la base de données
+        $this->marqueModel->update($id, $data);
+
         return $this->respond(['message' => 'Marque updated successfully']);
     }
 
-    public function delete($id = null)
+    public function delete($id)
     {
-        // Supprime une marque
-        $model = new MarqueModel();
+        // Supprimer le produit de la base de données
+        $this->marqueModel->delete($id);
 
-        if ($model->delete($id)) {
-            return $this->respondDeleted(['id' => $id]);
-        }
-
-        return $this->failNotFound('ID non trouvé : ' . $id);
+        return $this->respondDeleted(['message' => 'Marque deleted successfully']);
     }
 }

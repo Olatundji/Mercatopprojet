@@ -19,25 +19,57 @@ class ProductController extends BaseController
     public function search() {
         $keyword = $this->request->getGet('keyword');
 
-        $results = $this->productModel->searchProducts($keyword);
+        $results = $this->productModel->searchProduit($keyword);
 
         return $this->respond($results);
     }
 
     public function index()
-    {
-        // Récupérer tous les produits depuis la base de données
-        $products = $this->productModel->findAll();
+{
+    // Récupérer la page actuelle à partir de la requête GET
+    $page = $this->request->getVar('page') ?? 1;
 
-        // Vérifier s'il y a des produits
-        if (empty($products)) {
-            // Aucun produit trouvé
-            return $this->failNotFound('No products found');
-        }
+    // Définir le nombre d'éléments par page
+    $perPage = 10;
 
-        // Retourner la liste des produits
-        return $this->respond($products);
+    // Récupérer tous les produits depuis la base de données avec les détails de la marque et de la catégorie
+    $produit = $this->productModel
+                    ->select('produit.*, marques.nom as marque_nom, categories.libelle as categorie_nom')
+                    ->join('marques', 'marques.id = produit.idMarque')
+                    ->join('categories', 'categories.id = produit.idCategorie')
+                    ->paginate($perPage, 'default', $page);
+
+    // Vérifier s'il y a des produits
+    if (empty($produit)) {
+        // Aucun produit trouvé
+        return $this->respond(['message' => 'No products found'], 404);
     }
+
+    // Formatter la réponse avec les détails de la marque et de la catégorie
+    $formattedProduit = [];
+    foreach ($produit as $product) {
+        $formattedProduit[] = [
+            'id' => $product['id'],
+            'nom' => $product['nom'],
+            'prix' => $product['prix'],
+            'description' => $product['description'],
+            'qte' => $product['qte'],
+            'marque' => [
+                'id' => $product['idMarque'],
+                'nom' => $product['marque_nom']
+            ],
+            'categorie' => [
+                'id' => $product['idCategorie'],
+                'nom' => $product['categorie_nom']
+            ]
+        ];
+    }
+
+    // Retourner la liste des produits formatés avec les détails de la marque et de la catégorie
+    return $this->respond($formattedProduit);
+}
+
+
 
     public function create()
     {
@@ -46,7 +78,6 @@ class ProductController extends BaseController
             'nom' => $this->request->getPost('nom'),
             'prix' => $this->request->getPost('prix'),
             'description' => $this->request->getPost('description'),
-            'image' => $this->request->getPost('image'),
             'qte' => $this->request->getPost('qte'),
             'idMarque' => $this->request->getPost('idMarque'),
             'idCategorie' => $this->request->getPost('idCategorie'),
@@ -56,7 +87,7 @@ class ProductController extends BaseController
         // Insérer le nouveau produit dans la base de données
         $this->productModel->insert($data);
 
-        return $this->respondCreated(['message' => 'Product created successfully']);
+        return $this->respond(['message' => 'Product created successfully']);
     }
 
     public function update($id)
@@ -66,7 +97,7 @@ class ProductController extends BaseController
             'nom' => $this->request->getPost('nom'),
             'prix' => $this->request->getPost('prix'),
             'description' => $this->request->getPost('description'),
-            'image' => $this->request->getPost('image'),
+            //'image' => $this->request->getPost('image'),
             'qte' => $this->request->getPost('qte'),
             'idMarque' => $this->request->getPost('idMarque'),
             'idCategorie' => $this->request->getPost('idCategorie'),
@@ -87,15 +118,15 @@ class ProductController extends BaseController
     }
     public function rechercheParCategorie($idCategorie) {
         // Récupérer les produits de la catégorie spécifiée depuis la base de données
-        $products = $this->productModel->where('idCategorie', $idCategorie)->findAll();
+        $produit = $this->productModel->where('idCategorie', $idCategorie)->findAll();
     
         // Vérifier s'il y a des produits dans la catégorie spécifiée
-        if (empty($products)) {
+        if (empty($produit)) {
             // Aucun produit trouvé dans la catégorie spécifiée
             return $this->failNotFound('No products found in this category');
         }
     
         // Retourner la liste des produits de la catégorie spécifiée
-        return $this->respond($products);
+        return $this->respond($produit);
     }
 }

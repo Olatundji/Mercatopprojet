@@ -1,58 +1,76 @@
 <?php
 
-namespace App\Controllers\Api;
+namespace App\Controllers;
 
 use CodeIgniter\API\ResponseTrait;
 use App\Models\CategorieModel;
 
-class Categories extends \CodeIgniter\Controller
+class CategorieController extends BaseController
 {
     use ResponseTrait;
 
+    private $categorieModel;
+
+    public function __construct()
+    {
+        $this->categorieModel = new CategorieModel();
+    }
+
+    public function search() {
+        $keyword = $this->request->getGet('keyword');
+
+        $results = $this->categorieModel->searchcategories($keyword);
+
+        return $this->respond($results);
+    }
+
     public function index()
     {
-        // Récupère toutes les marques
-        $model = new CategorieModel();
-        $marques = $model->findAll();
+        // Récupérer tous les produits depuis la base de données
+        $categories = $this->categorieModel->findAll();
 
-        return $this->respond($marques);
+        // Vérifier s'il y a des produits
+        if (empty($categories)) {
+            // Aucun produit trouvé
+            return $this->failNotFound('No categorie found');
+        }
+
+        // Retourner la liste des produits
+        return $this->respond($categories);
     }
 
     public function create()
     {
+        // Récupérer les données envoyées dans la requête
+        $data = [
+            'libelle' => $this->request->getPost('libelle')
+
+        ];
+
+        // Insérer le nouveau produit dans la base de données
+        $this->categorieModel->insert($data);
+
+        return $this->respond(['message' => 'categorie created successfully']);
+    }
+
+    public function update($id)
+    {
+        // Récupérer les données envoyées dans la requête
         $data = [
             'nom' => $this->request->getPost('nom'),
         ];
-        
-        // Insérer la marque dans la base de données
-        $model = new CategorieModel();
-        $model->insert($data);
-        
-        return $this->respondCreated(['message' => 'Categorie created successfully']);
+
+        // Mettre à jour le produit dans la base de données
+        $this->categorieModel->update($id, $data);
+
+        return $this->respond(['message' => 'categorie updated successfully']);
     }
 
-    public function update($id = null)
+    public function delete($id)
     {
-        $data = [
-            'libelle' => $this->request->getVar('libelle'),
-        ];
+        // Supprimer le produit de la base de données
+        $this->categorieModel->delete($id);
 
-        // Mettre à jour la marque dans la base de données
-        $model = new CategorieModel();
-        $model->update($id, $data);
-        
-        return $this->respond(['message' => 'Categorie updated successfully']);
-    }
-
-    public function delete($id = null)
-    {
-        // Supprime une marque
-        $model = new CategorieModel();
-
-        if ($model->delete($id)) {
-            return $this->respondDeleted(['id' => $id]);
-        }
-
-        return $this->failNotFound('ID non trouvé : ' . $id);
+        return $this->respondDeleted(['message' => 'categorie deleted successfully']);
     }
 }

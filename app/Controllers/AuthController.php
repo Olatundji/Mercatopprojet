@@ -55,7 +55,8 @@ class AuthController extends BaseController
      
             $response = [
                 'message' => 'Login Succesful',
-                'token' => $token
+                'token' => $token,
+                'user' => $user // Ajouter les détails de l'utilisateur ici
             ];
              
             return $this->respond($response, 200);

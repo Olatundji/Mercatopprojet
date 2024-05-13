@@ -12,7 +12,7 @@ class ArticleModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields = ['title', 'content', 'image','description', 'idCategorie_article', 'created_at', 'updated_at'];
+    protected $allowedFields = ['contenu', 'titre', 'image','description', 'idCategorie_article'];
 
 
     protected bool $allowEmptyInserts = false;
@@ -29,7 +29,13 @@ class ArticleModel extends Model
     protected $deletedField  = 'deleted_at';
 
     // Validation
-    protected $validationRules      = [];
+    protected $validationRules      = [
+        'contenu' => 'required',
+        'image' => 'required',
+        'description' => 'required',
+        'titre' => 'required',
+        'idCategorie_article' => 'required',
+    ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;

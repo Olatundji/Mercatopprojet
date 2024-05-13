@@ -28,7 +28,16 @@ class CommandeModel extends Model
     protected $deletedField  = 'deleted_at';
 
     // Validation
-    protected $validationRules      = [];
+    protected $validationRules      = [
+        'etat' => 'required',
+        'date' => 'required',
+        'transaction' => 'required',
+        'methode_pay' => 'required',
+        'montant' => 'required',
+        'idProduit' => 'required',
+        'idUser' => 'required',
+
+    ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;

@@ -15,7 +15,7 @@ class ProductModel extends Model
     protected $returnType           = 'array';
     protected $useSoftDeletes       = false;
     protected $protectFields        = true;
-    protected $allowedFields        = ['nom', 'prix', 'description', 'image', 'qte' , 'commentaire']; // Champs autorisés pour la création de produit
+    protected $allowedFields        = ['nom', 'prix', 'description',  'qte' , 'idMarque' , 'idCategorie']; // Champs autorisés pour la création de produit
   
     // Dates
     protected $useTimestamps        = true;
@@ -25,7 +25,15 @@ class ProductModel extends Model
     protected $deletedField         = 'deleted_at';
   
     // Validation
-    protected $validationRules      = [];
+    protected $validationRules      = [
+        'nom' => 'required',
+        'prix' => 'required',
+        'description' => 'required',
+        'qte' => 'required',
+        'idMarque' => 'required',
+        'idCategorie' => 'required',
+
+    ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
@@ -41,29 +49,29 @@ class ProductModel extends Model
     protected $beforeDelete         = [];
     protected $afterDelete          = [];
 
-    public function marques()
-    {
-        return $this->hasMany(MarqueModel::class, 'idMarque');
-    }
-    public function commande()
-    {
-        return $this->belongsTo(CommandeModel::class);
-    }
-    public function promotion()
-    {
-        return $this->belongsTo(PromotionModel::class);
-    }
-    public function favoris()
-    {
-        return $this->belongsTo(FavorisModel::class);
-    }
-    public function categories()
-    {
-        return $this->hasMany(CategorieModel::class, 'idCategorie');
-    }
+//     public function marques()
+//     {
+//         return $this->hasMany(MarqueModel::class, 'idMarque');
+//     }
+//     public function commande()
+//     {
+//         return $this->belongsTo(CommandeModel::class);
+//     }
+//     public function promotion()
+//     {
+//         return $this->belongsTo(PromotionModel::class);
+//     }
+//     public function favoris()
+//     {
+//         return $this->belongsTo(FavorisModel::class);
+//     }
+//     public function categories()
+//     {
+//         return $this->hasMany(CategorieModel::class, 'idCategorie');
+//     }
 
-    public function commentaire()
-    {
-        return $this->belongsTo(CommentaireModel::class);
-    }
+//     public function commentaire()
+//     {
+//         return $this->belongsTo(CommentaireModel::class);
+//     }
 }

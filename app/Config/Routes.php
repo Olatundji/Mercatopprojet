@@ -7,13 +7,13 @@ use CodeIgniter\Router\RouteCollection;
  */
 $routes->get('/', 'Home::index');
 
-// $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection $routes): void {
-//     $routes->resource('user');
+$routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection $routes): void {
+    $routes->resource('user');
 
-//     $routes->post('/login', 'AuthController::login');
-//     $routes->post('/register', 'AuthController::register');
-//     $routes->get('/profile', 'AuthController::profile');
-// });
+     $routes->post('/login', 'AuthController::login');
+     $routes->post('/register', 'AuthController::register');
+     $routes->get('/profile', 'AuthController::profile');
+ });
 $routes->post('/login', 'AuthController::login');
     $routes->post('/register', 'AuthController::register');
     $routes->get('/profile', 'AuthController::profile');
@@ -35,20 +35,20 @@ $routes->post('/login', 'AuthController::login');
  $routes->get('search', 'ProductController::search');
 //Marque
 
-// $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection $routes): void {
-//     $routes->resource('marques');
+$routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection $routes): void {
+     $routes->resource('marques');
 
-//     $routes->get('marques/index', 'MarqueController::index');
-//     $routes->post('marques/create', 'MarqueController::create');
+     $routes->get('marques/index', 'MarqueController::index');
+     //$routes->post('marques/create', 'MarqueController::create');
 //     $routes->get('marques/show/(:num)', 'MarqueController::show/$1');
 //     $routes->put('marques/update/(:num)', 'MarqueController::update/$1');
 //     $routes->delete('marques/delete/(:num)', 'MarqueController::delete/$1');
-// });
-$routes->post('marques/create', 'MarqueController::create');
- $routes->get('marques/index', 'MarqueController::index');
- $routes->get('marques/show/(:num)', 'MarqueController::show/$1');
- $routes->put('marques/update/(:num)', 'MarqueController::update/$1');
- $routes->delete('marques/delete/(:num)', 'MarqueController::delete/$1');
+ });
+// $routes->post('/marque', 'MarqueController::create');
+$routes->get('marques/index', 'MarqueController::index');
+//  $routes->get('marques/show/(:num)', 'MarqueController::show/$1');
+//  $routes->put('marques/update/(:num)', 'MarqueController::update/$1');
+//  $routes->delete('marques/delete/(:num)', 'MarqueController::delete/$1');
 //promotion
 
 $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection $routes): void {
@@ -109,19 +109,19 @@ $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection
 // $routes->delete('categoriearticles/delete/(:num)', 'CategorieArticleController::delete/$1');
 //categorie
 
-$routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection $routes): void {
-    $routes->resource('categorie');
+// $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection $routes): void {
+//     $routes->resource('categorie');
 
-    $routes->get('categories/index', 'CategorieController::index');
-$routes->post('categories/create', 'CategorieController::create');
-$routes->get('categories/show/(:num)', 'CategorieController::show/$1');
-$routes->put('categories/update/(:num)', 'CategorieController::update/$1');
-$routes->delete('categories/delete/(:num)', 'CategorieController::delete/$1');
-$routes->get('produits/categorie/(:num)', 'ControllerProduit::rechercheParCategorie/$1');
-
-});
-// $routes->get('categories/index', 'CategorieController::index');
+//     $routes->get('categories/index', 'CategorieController::index');
 // $routes->post('categories/create', 'CategorieController::create');
+// $routes->get('categories/show/(:num)', 'CategorieController::show/$1');
+// $routes->put('categories/update/(:num)', 'CategorieController::update/$1');
+// $routes->delete('categories/delete/(:num)', 'CategorieController::delete/$1');
+// $routes->get('produits/categorie/(:num)', 'ControllerProduit::rechercheParCategorie/$1');
+
+// });
+ $routes->get('categories/index', 'CategorieController::index');
+$routes->post('categories/create', 'CategorieController::create');
 // $routes->get('categories/show/(:num)', 'CategorieController::show/$1');
 // $routes->put('categories/update/(:num)', 'CategorieController::update/$1');
 // $routes->delete('categories/delete/(:num)', 'CategorieController::delete/$1');
@@ -149,11 +149,9 @@ $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection
 $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection $routes): void {
     $routes->resource('commande');
 
-    $routes->post('commande/nouvelle', 'CommandeController::nouvelleCommande');
-    $routes->get('commande/details/(:num)', 'CommandeController::detailsCommande/$1');
-    $routes->get('commande/historique', 'CommandeController::historiqueCommandes');
-    $routes->get('commande/methodes-paiement', 'CommandeController::listerMethodesPaiement');
-    $routes->post('commande/:numCommande/methode-paiement/:numMethode', 'CommandeController::choisirMethodePaiement/$1/$2');
+    $routes->post('commande/create', 'CommandeController::create');
+    $routes->post('commande/index', 'CommandeController::index');
+    $routes->get('commandes-utilisateur/(:num)', 'CommandeController::commandesUtilisateur/$1');
 });
     // $routes->post('commande/nouvelle', 'CommandeController::nouvelleCommande');
     // $routes->get('commande/details/(:num)', 'CommandeController::detailsCommande/$1');
