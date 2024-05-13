@@ -30,11 +30,13 @@ class Filters extends BaseConfig
      * @var array
      */
     public $globals = [
-        // 'before' => [
+         'before' => [
         //     // ...
         //     'session' => ['except' => ['login*', 'register', 'auth/a/*', 'logout']],
         // ],
+        'CORS'
         // // ...
+    ],
     ];
  
     /**
@@ -46,7 +48,10 @@ class Filters extends BaseConfig
      *
      * @var array
      */
-    public $methods = [];
+    public $methods = [
+        'post' => ['CSRF', 'CORS'], 
+    'get' => ['CORS'], 
+    ];
  
     /**
      * List of filter aliases that should run on any
