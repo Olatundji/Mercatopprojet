@@ -12,8 +12,9 @@ class Cors implements FilterInterface
     {
         $origin = $request->getHeaderLine('Origin');
 
-        header('Access-Control-Allow-Origin: ' . $origin);
-        header('Access-Control-Allow-Headers: Content-Type, Authorization');
+        header('Access-Control-Allow-Origin: http://localhost:3000');
+        header('Access-Control-Allow-Credentials: true'); 
+        header('Access-Control-Allow-Headers: X-API-KEY, Origin, Authorization, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method');
         header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
 
         if ($request->getMethod() === 'OPTIONS') {
@@ -27,7 +28,7 @@ class Cors implements FilterInterface
 
         // Utiliser setHeader() sur l'objet $response pour définir les en-têtes CORS
         $response = $response->setHeader('X-Content-Type-Options', 'nosniff');
-        $response = $response->setHeader('Access-Control-Allow-Origin', '*');
+        // $response = $response->setHeader('Access-Control-Allow-Origin', '*');
 
         // Retourner la réponse mise à jour
         return $response;
