@@ -32,7 +32,7 @@ $routes->post('api/login', 'AuthController::login');
  $routes->put('api/product/update/(:num)', 'ProductController::update/$1');
  $routes->delete('api/product/delete/(:num)', 'ProductController::delete/$1');
  $routes->get('api/products', 'ProductController::index');
- $routes->get('search', 'ProductController::search');
+ $routes->get('api/product/search', 'ProductController::search');
 //Marque
 
 $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection $routes): void {
@@ -46,9 +46,9 @@ $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection
  });
  $routes->post('api/marque', 'MarqueController::create');
 $routes->get('api/marques/index', 'MarqueController::index');
-//  $routes->get('marques/show/(:num)', 'MarqueController::show/$1');
-//  $routes->put('marques/update/(:num)', 'MarqueController::update/$1');
-//  $routes->delete('marques/delete/(:num)', 'MarqueController::delete/$1');
+ $routes->get('api/marques/search', 'MarqueController::search');
+ $routes->put('api/marques/update/(:num)', 'MarqueController::update/$1');
+  $routes->delete('api/marques/delete/(:num)', 'MarqueController::delete/$1');
 //promotion
 
 $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection $routes): void {
@@ -71,7 +71,7 @@ $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection
     $routes->resource('article');
 
     $routes->get('articles/index', 'ArticleController::index');
-    $routes->get('articles/show/(:num)', 'ArticleController::show/$1');
+    $routes->get('articles/search', 'ArticleController::search');
     $routes->post('articles/create', 'ArticleController::create');
     $routes->put('articles/update/(:num)', 'ArticleController::update/$1');
     $routes->delete('articles/delete/(:num)', 'ArticleController::delete/$1');
@@ -98,7 +98,7 @@ $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection
 
     $routes->get('categoriearticles/index', 'CategorieArticleController::index');
     $routes->post('categoriearticles/create', 'CategorieArticleController::create');
-    $routes->get('categoriearticles/show/(:num)', 'CategorieArticleController::show/$1');
+    $routes->get('categoriearticles/search', 'CategorieArticleController::search');
     $routes->put('categoriearticles/update/(:num)', 'CategorieArticleController::update/$1');
     $routes->delete('categoriearticles/delete/(:num)', 'CategorieArticleController::delete/$1');
 });
@@ -122,8 +122,8 @@ $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection
 // });
  $routes->get('api/categories/index', 'CategorieController::index');
 $routes->post('api/categories/create', 'CategorieController::create');
- $routes->get('/apicategories/show/(:num)', 'CategorieController::show/$1');
- $routes->put('/apicategories/update/(:num)', 'CategorieController::update/$1');
+ $routes->get('/api/categories/search', 'CategorieController::search');
+ $routes->put('/api/categories/update/(:num)', 'CategorieController::update/$1');
 $routes->delete('api/categories/delete/(:num)', 'CategorieController::delete/$1');
 //recherche par categorie de produit
 $routes->get('api/produits/categorie/(:num)', 'ControllerProduit::rechercheParCategorie/$1');
