@@ -86,6 +86,7 @@ public function create()
         'prix' => $this->request->getVar('prix'),
         'description' => $this->request->getVar('description'),
         'qte' => $this->request->getVar('qte'),
+        'image' => $this->request->getVar('image'),
         'idMarque' => $this->request->getVar('idMarque'),
         'idCategorie' => $this->request->getVar('idCategorie'),
     ];
@@ -107,7 +108,7 @@ public function create()
             'nom' => $this->request->getVar('nom'),
             'prix' => $this->request->getVar('prix'),
             'description' => $this->request->getVar('description'),
-            //'image' => $this->request->getPost('image'),
+            'image' => $this->request->getVar('image'),
             'qte' => $this->request->getVar('qte'),
             'idMarque' => $this->request->getVar('idMarque'),
             'idCategorie' => $this->request->getVar('idCategorie'),
