@@ -6,14 +6,6 @@
  *---------------------------------------------------------------
  */
 
- header('Access-Control-Allow-Origin: http://localhost:3000');
-header('Access-Control-Allow-Credentials: true'); 
-header("Access-Control-Allow-Headers: X-API-KEY, Origin, Authorization, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method");
-header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
-$method = $_SERVER['REQUEST_METHOD'];
-if($method == "OPTIONS") {
-    die();
-}
 $minPhpVersion = '8.1'; // If you update this, don't forget to update `spark`.
 if (version_compare(PHP_VERSION, $minPhpVersion, '<')) {
     $message = sprintf(
