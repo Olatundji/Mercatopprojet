@@ -34,7 +34,7 @@ class ArticleModel extends Model
         'image' => 'required',
         'description' => 'required',
         'titre' => 'required',
-        'idCategorie_article' => 'required',
+        // 'idCategorie_article' => 'required',
     ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;

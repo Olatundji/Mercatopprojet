@@ -18,24 +18,22 @@ class CommandeController extends BaseController
 
     public function search() {
         $keyword = $this->request->getGet('keyword');
-
-        $results = $this->commandeModel->searchMarques($keyword);
-
+        $results = $this->commandeModel->searchCommandes($keyword);
         return $this->respond($results);
     }
 
     public function index()
     {
-        // Récupérer tous les commande depuis la base de données
+        // Récupérer tous les commandes depuis la base de données
         $commandes = $this->commandeModel->findAll();
 
-        // Vérifier s'il y a des commande
+        // Vérifier s'il y a des commandes
         if (empty($commandes)) {
-            // Aucun commande trouvé
-            return $this->failNotFound('No commande found');
+            // Aucune commande trouvée
+            return $this->failNotFound('No commandes found');
         }
 
-        // Retourner la liste des produits
+        // Retourner la liste des commandes
         return $this->respond($commandes);
     }
 
@@ -43,21 +41,43 @@ class CommandeController extends BaseController
     {
         // Récupérer les données envoyées dans la requête
         $data = [
-            'etat' => $this->request->getPost('etat'),
-            'date' => $this->request->getPost('date'),
-            'transaction' => $this->request->getPost('transaction'),
-            'methode_pay' => $this->request->getPost('methode_pay'),
-            'montant' => $this->request->getPost('montant'),
-            'idProduit' => $this->request->getPost('idProduit'),
-            'idUser' => $this->request->getPost('idUser'),
-
+            'etat' => $this->request->getVar('etat'),
+            'date' => $this->request->getVar('date'),
+            'transaction' => $this->request->getVar('transaction'),
+            'methode_pay' => $this->request->getVar('methode_pay'),
+            'montant' => $this->request->getVar('montant'),
+            'idProduit' => $this->request->getVar('idProduit'),
+            'idUser' => $this->request->getVar('idUser'),
         ];
 
-        // Insérer le nouveau produit dans la base de données
+        // Insérer la nouvelle commande dans la base de données
         $this->commandeModel->insert($data);
 
-        return $this->respond(['message' => 'commande created successfully']);
+        return $this->respond(['message' => 'Commande created successfully']);
     }
 
-    
+    // Méthode pour récupérer les commandes d'un utilisateur spécifique
+    public function commandesUtilisateur($idUser)
+    {
+        // Récupérer les commandes de l'utilisateur depuis la base de données
+        $commandesUtilisateur = $this->commandeModel->where('idUser', $idUser)->findAll();
+
+        // Vérifier s'il y a des commandes pour cet utilisateur
+        if (empty($commandesUtilisateur)) {
+            // Aucune commande trouvée pour cet utilisateur
+            return $this->failNotFound('No commandes found for this user');
+        }
+
+        // Retourner la liste des commandes de l'utilisateur
+        return $this->respond($commandesUtilisateur);
+    }
+
+    public function validerCommande($id)
+{
+    $data = ['etat' => 'validated'];
+    $this->commandeModel->update($id, $data);
+
+    return $this->respond(['message' => 'Commande validée avec succès']);
+}
+
 }

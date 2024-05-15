@@ -43,7 +43,7 @@ class CategorieController extends BaseController
     {
         // Récupérer les données envoyées dans la requête
         $data = [
-            'libelle' => $this->request->getPost('libelle')
+            'libelle' => $this->request->getVar('libelle')
 
         ];
 
@@ -57,7 +57,7 @@ class CategorieController extends BaseController
     {
         // Récupérer les données envoyées dans la requête
         $data = [
-            'nom' => $this->request->getPost('nom'),
+            'nom' => $this->request->getVar('nom'),
         ];
 
         // Mettre à jour le produit dans la base de données

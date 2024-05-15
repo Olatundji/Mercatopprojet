@@ -30,8 +30,8 @@ class ProductModel extends Model
         'prix' => 'required',
         'description' => 'required',
         'qte' => 'required',
-        'idMarque' => 'required',
-        'idCategorie' => 'required',
+        // 'idMarque' => 'required',
+        // 'idCategorie' => 'required',
 
     ];
     protected $validationMessages   = [];
@@ -49,29 +49,29 @@ class ProductModel extends Model
     protected $beforeDelete         = [];
     protected $afterDelete          = [];
 
-//     public function marques()
-//     {
-//         return $this->hasMany(MarqueModel::class, 'idMarque');
-//     }
-//     public function commande()
-//     {
-//         return $this->belongsTo(CommandeModel::class);
-//     }
-//     public function promotion()
-//     {
-//         return $this->belongsTo(PromotionModel::class);
-//     }
-//     public function favoris()
-//     {
-//         return $this->belongsTo(FavorisModel::class);
-//     }
-//     public function categories()
-//     {
-//         return $this->hasMany(CategorieModel::class, 'idCategorie');
-//     }
+    public function marques()
+    {
+        return $this->hasMany(MarqueModel::class, 'idMarque');
+    }
+    public function commande()
+    {
+        return $this->belongsTo(CommandeModel::class);
+    }
+    public function promotion()
+    {
+        return $this->belongsTo(PromotionModel::class);
+    }
+    public function favoris()
+    {
+        return $this->belongsTo(FavorisModel::class);
+    }
+    public function categories()
+    {
+        return $this->hasMany(CategorieModel::class, 'idCategorie');
+    }
 
-//     public function commentaire()
-//     {
-//         return $this->belongsTo(CommentaireModel::class);
-//     }
+    public function commentaire()
+    {
+        return $this->belongsTo(CommentaireModel::class);
+    }
 }

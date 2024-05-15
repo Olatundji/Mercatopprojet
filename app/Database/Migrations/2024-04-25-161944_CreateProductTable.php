@@ -18,40 +18,35 @@ class CreateProductTable extends Migration
             'nom' => [
                 'type' => 'VARCHAR',
                 'constraint' => 100,
-                'null' => false,
-
             ],
             'prix' => [
                 'type' => 'DECIMAL',
                 'constraint' => '10,2',
                 'null' => true,
-
             ],
             'description' => [
                 'type' => 'TEXT',
                 'null' => true,
-
             ],
             'qte' => [
                 'type' => 'INT',
                 'constraint' => 11,
-                'null' => false,
-
+                'unsigned' => true,
+            ],
+            'image' => [
+                'type' => 'VARCHAR',
+                'constraint' => 255, // Taille de la chaîne spécifiée
+                'not null' => true, // Définition de la colonne NOT NULL
             ],
             'idMarque' => [
                 'type' => 'INT',
                 'constraint' => 11,
                 'unsigned' => true,
-                'null' => false,
-
             ],
-            
             'idCategorie' => [
                 'type' => 'INT',
                 'constraint' => 11,
                 'unsigned' => true,
-                'null' => false,
-
             ],
             'created_at' => [
                 'type' => 'DATETIME',
@@ -62,9 +57,11 @@ class CreateProductTable extends Migration
                 'null' => true,
             ],
         ]);
+
         $this->forge->addPrimaryKey('id');
         $this->forge->addForeignKey('idMarque', 'marques', 'id', 'CASCADE', 'CASCADE');
         $this->forge->addForeignKey('idCategorie', 'categories', 'id', 'CASCADE', 'CASCADE');
+
         $this->forge->createTable('produit');
     }
 

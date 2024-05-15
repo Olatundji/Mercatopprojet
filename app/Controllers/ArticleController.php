@@ -74,11 +74,11 @@ class ArticleController extends BaseController
     {
         // Récupérer les données envoyées dans la requête
         $data = [
-            'contenu' => $this->request->getPost('contenu'),
-            'image' => $this->request->getPost('image'),
-            'description' => $this->request->getPost('description'),
-            'titre' => $this->request->getPost('titre'),
-            'idCategorie_article' => $this->request->getPost('idCategorie_article'),
+            'contenu' => $this->request->getVar('contenu'),
+            'image' => $this->request->getVar('image'),
+            'description' => $this->request->getVar('description'),
+            'titre' => $this->request->getVar('titre'),
+            'idCategorie_article' => $this->request->getVar('idCategorie_article'),
 
         ];
 
@@ -92,11 +92,11 @@ class ArticleController extends BaseController
     {
         // Récupérer les données envoyées dans la requête
         $data = [
-            'contenu' => $this->request->getPost('contenu'),
-            'image' => $this->request->getPost('image'),
-            'description' => $this->request->getPost('description'),
-            'titre' => $this->request->getPost('titre'),
-            'idCategorie_article' => $this->request->getPost('idCategorie_article'),
+            'contenu' => $this->request->getVar('contenu'),
+            'image' => $this->request->getVar('image'),
+            'description' => $this->request->getVar('description'),
+            'titre' => $this->request->getVar('titre'),
+            'idCategorie_article' => $this->request->getVar('idCategorie_article'),
 
         ];
 

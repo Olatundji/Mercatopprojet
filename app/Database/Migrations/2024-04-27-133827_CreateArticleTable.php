@@ -18,28 +18,23 @@ class CreateArticleTable extends Migration
             'contenu' => [
                 'type' => 'VARCHAR',
                 'constraint' => 100,
-                'null' => false,
             ],
             'image' => [
-                'type' => 'VARCHAR', 
-                'null' => false,
+                'type' => 'VARCHAR',
+                'constraint' => 100, // Ajout de la contrainte de longueur
             ],
             'description' => [
-                'type' => 'TEXT', 
-                'null' => true,
+                'type' => 'TEXT',
             ],
             'titre' => [
                 'type' => 'VARCHAR',
                 'constraint' => 100,
-                'null' => false,
             ],
             'idCategorie_article' => [
                 'type' => 'INT',
                 'constraint' => 11,
                 'unsigned' => true,
-                'null' => true,
             ],
-            // Ajoutez d'autres colonnes si nécessaire
             'created_at' => [
                 'type' => 'DATETIME',
                 'null' => true,

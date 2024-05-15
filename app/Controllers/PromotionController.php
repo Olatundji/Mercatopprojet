@@ -37,11 +37,11 @@ class PromotionController extends \CodeIgniter\Controller
     public function create()
     {
         $data = [
-            'code' => $this->request->getPost('code'),
-            'reduction' => $this->request->getPost('reduction'),
-            'date_debut' => $this->request->getPost('date_debut'),
-            'date_fin' => $this->request->getPost('date_fin'),
-            'idProduit' => $this->request->getPost('idProduit'),
+            'code' => $this->request->getVar('code'),
+            'reduction' => $this->request->getVar('reduction'),
+            'date_debut' => $this->request->getVar('date_debut'),
+            'date_fin' => $this->request->getVar('date_fin'),
+            'idProduit' => $this->request->getVar('idProduit'),
 
         ];
         
@@ -55,11 +55,11 @@ class PromotionController extends \CodeIgniter\Controller
     public function update($id = null)
     {
         $data = [
-            'code' => $this->request->getPost('code'),
-            'reduction' => $this->request->getPost('reduction'),
-            'date_debut' => $this->request->getPost('date_debut'),
-            'date_fin' => $this->request->getPost('date_fin'),
-            'idProduit' => $this->request->getPost('idProduit'),
+            'code' => $this->request->getVar('code'),
+            'reduction' => $this->request->getVar('reduction'),
+            'date_debut' => $this->request->getVar('date_debut'),
+            'date_fin' => $this->request->getVar('date_fin'),
+            'idProduit' => $this->request->getVar('idProduit'),
 
         ];
         // Mettre à jour la promotion dans la base de données

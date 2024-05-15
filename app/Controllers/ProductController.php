@@ -82,16 +82,16 @@ public function create()
     // Les données sont valides, continuez le traitement
     // Récupérer les données envoyées dans la requête
     $data = [
-        'nom' => $this->request->getPost('nom'),
-        'prix' => $this->request->getPost('prix'),
-        'description' => $this->request->getPost('description'),
-        'qte' => $this->request->getPost('qte'),
-        'idMarque' => $this->request->getPost('idMarque'),
-        'idCategorie' => $this->request->getPost('idCategorie'),
+        'nom' => $this->request->getVar('nom'),
+        'prix' => $this->request->getVar('prix'),
+        'description' => $this->request->getVar('description'),
+        'qte' => $this->request->getVar('qte'),
+        'idMarque' => $this->request->getVar('idMarque'),
+        'idCategorie' => $this->request->getVar('idCategorie'),
     ];
 
     // Afficher les données soumises pour déboguer
-    var_dump($data);
+    //var_dump($data);
 
     // Insérer le nouveau produit dans la base de données
     $this->productModel->insert($data);
@@ -104,13 +104,13 @@ public function create()
     {
         // Récupérer les données envoyées dans la requête
         $data = [
-            'nom' => $this->request->getPost('nom'),
-            'prix' => $this->request->getPost('prix'),
-            'description' => $this->request->getPost('description'),
+            'nom' => $this->request->getVar('nom'),
+            'prix' => $this->request->getVar('prix'),
+            'description' => $this->request->getVar('description'),
             //'image' => $this->request->getPost('image'),
-            'qte' => $this->request->getPost('qte'),
-            'idMarque' => $this->request->getPost('idMarque'),
-            'idCategorie' => $this->request->getPost('idCategorie'),
+            'qte' => $this->request->getVar('qte'),
+            'idMarque' => $this->request->getVar('idMarque'),
+            'idCategorie' => $this->request->getVar('idCategorie'),
         ];
 
         // Mettre à jour le produit dans la base de données

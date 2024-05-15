@@ -34,8 +34,8 @@ class CommandeModel extends Model
         'transaction' => 'required',
         'methode_pay' => 'required',
         'montant' => 'required',
-        'idProduit' => 'required',
-        'idUser' => 'required',
+        // 'idProduit' => 'required',
+        // 'idUser' => 'required',
 
     ];
     protected $validationMessages   = [];

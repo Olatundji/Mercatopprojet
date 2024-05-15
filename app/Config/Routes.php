@@ -152,6 +152,8 @@ $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection
     $routes->post('commande/create', 'CommandeController::create');
     $routes->post('commande/index', 'CommandeController::index');
     $routes->get('commandes-utilisateur/(:num)', 'CommandeController::commandesUtilisateur/$1');
+    $routes->post('admin/valider-commande/(:num)', 'CommandeController::validerCommande/$1');
+
 });
     // $routes->post('commande/nouvelle', 'CommandeController::nouvelleCommande');
     // $routes->get('commande/details/(:num)', 'CommandeController::detailsCommande/$1');
@@ -172,3 +174,4 @@ $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection
     // $routes->post('paiement/commande/:num' , '');
 
 //service('auth')->routes($routes);
+$route['api/upload'] = 'ApiController/uploadFile';

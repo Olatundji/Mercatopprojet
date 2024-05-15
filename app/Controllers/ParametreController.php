@@ -22,10 +22,10 @@ class Parametre extends \CodeIgniter\Controller
         $model = new ParametreModel();
 
         $data = [
-            'name' => $this->request->getPost('nom'),
-            'logo' => $this->request->getPost('logo'),
-            'slogan' => $this->request->getPost('slogan'),
-            'address' => $this->request->getPost('address'),
+            'name' => $this->request->getVar('nom'),
+            'logo' => $this->request->getVar('logo'),
+            'slogan' => $this->request->getVar('slogan'),
+            'address' => $this->request->getVar('address'),
         ];
 
         $model->update($id, $data);
