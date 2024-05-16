@@ -175,4 +175,15 @@ $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection
     // $routes->post('paiement/commande/:num' , '');
 
 //service('auth')->routes($routes);
+
+//favoris
+$routes->post('api/favoris/create', 'FavorisController::create');
+$routes->post('api/favoris/index', 'FavorisController::index');
+$routes->post('api/favoris/delete(:num)', 'FavorisController::delete/$1');
+//commentaire
+$routes->post('api/commentaires/create', 'CommentaireController::create');
+$routes->get('api/commentaires/index', 'CommentaireController::index');
+$routes->delete('api/commentaires/delete(:num)', 'CommentaireController::delete/$1');
+
+
 $route['api/upload'] = 'ApiController/uploadFile';
