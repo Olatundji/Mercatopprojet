@@ -36,7 +36,7 @@ class CategorieController extends BaseController
         }
 
         // Retourner la liste des produits
-        return $this->respond($categories);
+        return $this->respond(['categories' => $categories]);
     }
 
     public function create()
@@ -44,7 +44,6 @@ class CategorieController extends BaseController
         // Récupérer les données envoyées dans la requête
         $data = [
             'libelle' => $this->request->getVar('libelle')
-
         ];
 
         // Insérer le nouveau produit dans la base de données
