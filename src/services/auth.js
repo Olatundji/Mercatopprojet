@@ -1,15 +1,18 @@
 /* eslint-disable no-unused-vars */
 
+import store from '../store';
 import Axios from './caller';
+const user_id = store.getters.getUser.id
 
 // Axios.defaults.withCredentials = true;
 
-let register = (user) =>{
+let register = (user) => {
     return Axios.post('/register',{
-        nom: user.denomination,
-        telephone: user.adresse,
+        nom: user.nom,
+        numero: user.numero,
         email: user.email,
-        password: user.password
+        password: user.password,
+        adresse: user.adresse
     });
 }
 
@@ -21,14 +24,12 @@ let login = (user) => {
 }
 
 
-let updateProfile = (entreprise) =>{
-    return Axios.patch('/updateProfile',{
-        denomination: entreprise.denomination,
-        adresse: entreprise.adresse,
-        rccm: entreprise.rccm,
-        ifu: entreprise.ifu,
-        taille: entreprise.taille,
-        email: entreprise.email,
+let updateProfile = (user) =>{
+    return Axios.patch('/updateProfile/'+ user_id,{
+        nom: user.nom,
+        numero: user.numero,
+        email: user.email,
+        adresse: user.adresse
     })
 };
 
@@ -40,4 +41,4 @@ let resetPassword = (password) =>{
 
 
 
-export const account = {  register, login, updateProfile, resetPassword };
+export const auth = {  register, login, updateProfile, resetPassword };

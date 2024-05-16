@@ -43,7 +43,7 @@
                 <div class="police dashboard-wrapper dashboard-user-profile">
                     <div class="media">
                         <div class="pull-left text-center" href="#!">
-                            <img class="media-object user-img" src="@/assets/images/avater.jpg" alt="Image">
+                            <img class="media-object user-img" src="@/assets/images/avatar.png" alt="Image">
                             <button class="btn btn-success mt-20">Modifier informations</button>
                         </div>
                         <div class="media-body ">
@@ -67,6 +67,12 @@
                                             <input class="form-control" type="text" v-model="user.numero">
                                         </div>
                                     </li>
+                                    <li>
+                                        <div class="form-group">
+                                            <label for="email">Adresse :</label>
+                                            <input class="form-control" type="text" v-model="user.adresse" >
+                                        </div>
+                                    </li>
                                 </ul>
                             </div>
                         </div>
@@ -85,6 +91,7 @@
 
 import TheHeader from '@/components/client/TheHeader'
 import TheFooter from '@/components/client/TheFooter'
+import store from '../../store'
 
 export default {
     name: 'UserProfile',
@@ -93,11 +100,12 @@ export default {
     },
     data() {
         return {
-            isModalOpen: true,
+            isModalOpen: false,
             user: {
-                nom: '',
-                email: '',
-                numero: '',
+                nom: store.getters.getUser.nom,
+                email: store.getters.getUser.email,
+                numero: store.getters.getUser.numero,
+                adresse: store.getters.getUser.adresse
             },
             password: {
                 newPassword: '',

@@ -5,7 +5,7 @@ import Axios from './caller';
 
 
 let createProduit = (produit) =>{
-    return Axios.post('/changePassword', {
+    return Axios.post('/product/create', {
         nom: produit.nom,
         prix: produit.prix,
         description: produit.description,
@@ -15,7 +15,7 @@ let createProduit = (produit) =>{
 }
 
 let allProduit = () => {
-    return Axios.get('/listProduit')
+    return Axios.get('/products')
 }
 
 let allMarque = () => {
@@ -25,4 +25,4 @@ let allMarque = () => {
 let allCategorie = () => {
     return Axios.get('/listCategorie')
 }
-export const account = { createProduit, allProduit, allMarque, allCategorie };
+export const produit = { createProduit, allProduit, allMarque, allCategorie };

@@ -1,34 +1,26 @@
 <template>
+    <div v-if="isModalOpen" class="modal-custom" @click="closeModalOutside">
+        <div class="modal-content">
+            <span class="close" @click="closeModal">&times;</span>
+            <h2>Changer le mot de passe</h2>
+            <form @submit.prevent="changePassword">
+                <div class="form-group">
+                    <input v-model="password.newPassword" type="password" class="form-control" placeholder="Nouveau mot de passe">
+                </div>
+                <div class="form-group">
+                    <input v-model="password.passwordConfirm" type="password" class="form-control" placeholder="Confirmer le mot de passe">
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-success">Changer</button>
+                </div>
+            </form>
+        </div>
+    </div>
     <CRow :xl="12" class="mb-3">
         <CCol>
-            <CButton color="primary" @click="() => {visibleModal = true;}">Changer votre mot de passe</CButton>
-            <CModal :visible="visibleModal" @close="() => {
-                    visibleModal = false;
-                }
-                ">
-                <CForm @submit.prevent="passwordInfos" >
-                    <CModalHeader>
-                        <CModalTitle>Modifier votre mot de passe</CModalTitle>
-                    </CModalHeader>
-                    <CModalBody>
-                        
-                            <div class="mb-2">
-                                <CFormLabel for="exampleFormControlInput1">Nouveau mot de passe</CFormLabel>
-                                <CFormInput v-model="password" id="password" type="password" />
-                            </div>
-                            <div class="mb-2">
-                                <CFormLabel for="exampleFormControlInput1">Confirmer mot de passe</CFormLabel>
-                                <CFormInput v-model="passwordConfirm" id="passwordConfirm" type="password"/>
-                            </div>
-                    </CModalBody>
-                    <CModalFooter>
-                        <CButton color="secondary" @click="() => {visibleModal = false;}">
-                            Close
-                        </CButton>
-                        <CButton color="primary" type="submit" class="bg-success"> Enregistrer </CButton>
-                    </CModalFooter>
-                </CForm>
-            </CModal>
+            <CButton color="primary" class="custom-button" @click="openModal">Changer le mot de passe</CButton>
+
+
         </CCol>
     </CRow>
     <CRow>
@@ -49,7 +41,11 @@
                         </div>
                         <div class="mb-2">
                             <CFormLabel for="exampleFormControlInput1">Numéro</CFormLabel>
-                            <CFormInput v-model="user.tel" id="exampleFormControlInput1" type="text" placeholder="Exp : +2299700257412" />
+                            <CFormInput v-model="user.numero" id="exampleFormControlInput1" type="text" placeholder="Exp : +2299700257412" />
+                        </div>
+                        <div class="mb-2">
+                            <CFormLabel for="exampleFormControlInput1">Adresse</CFormLabel>
+                            <CFormInput v-model="user.adresse" id="exampleFormControlInput1" type="text" placeholder="Exp : +2299700257412" />
                         </div>
                         <div class="col-auto">
                             <CButton type="submit" class="bg-success"> Modifier </CButton>
@@ -64,6 +60,8 @@
 <script>
 
 import { ref } from 'vue'
+import store from '@/store';
+
 
 export default {
     name: "ProfilePage",
@@ -74,21 +72,76 @@ export default {
     data() {
         return {
             user:{
-                nom: "",
-                email: "",
-                tel: "",
+                nom: store.getters.getUser.nom,
+                email: store.getters.getUser.email,
+                numero: store.getters.getUser.numero,
+                adresse: store.getters.getUser.adresse
             },
-            password: "",
-            passwordConfirm:""
+            isModalOpen: false,
+            password: {
+                newPassword: '',
+                passwordConfirm: ''
+            }
         }
     },
     methods: {
+        closeModalOutside(event) {
+            if (event.target.classList.contains('modal-custom')) {
+                this.closeModal();
+            }
+        },
+        
+        openModal() {
+            this.isModalOpen = true;
+        },
+
+        closeModal() {
+            this.isModalOpen = false;
+        },
+
+        changePassword() {
+            console.log(this.password);
+            this.closeModal();
+        },
         infos(){
             console.log(this.user);
-        },
-        passwordInfos(){
-            console.log(this.password+ "||" +this.passwordConfirm);
         }
     },
 };
 </script>
+
+<style scoped>
+.modal-custom {
+    z-index: 1;
+    display: flex;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: scroll;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 30%;
+    height: 40%;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+</style>

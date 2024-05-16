@@ -1,6 +1,7 @@
 // import { h, resolveComponent } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
+import  { authGuard }  from '@/services/auth-guard.js'
 import DefaultLayout from '@/layouts/DefaultLayout'
 import ProfilePage from '@/views/dashboard/pages/Profile.vue'
 import LoginAdmin from '@/views/dashboard/pages/Login.vue'
@@ -16,10 +17,13 @@ import Welcome from '@/views/client/Welcome.vue'
 import RegisterPage from '@/views/client/RegisterPage.vue'
 import LoginPage from '@/views/client/LoginPage.vue'
 import UserProfile from '@/views/client/UserProfile.vue'
+import ShopPage from '@/views/client/ShopPage.vue'
+import CommandePage from '@/views/client/CommandePage.vue'
 
 const routes = [
   {
     path: '/admin/dashboard',
+    meta: {requireAuth: true, type:'admin'},
     name: 'Home',
     component: DefaultLayout,
     redirect: '/admin/dashboard',
@@ -31,47 +35,56 @@ const routes = [
       },
       {
         path: '/admin/profile',
+        meta: {requireAuth: true, type:'admin'},
         name: 'Profile',
         component: ProfilePage ,
       },
       {
         path: "/admin/produit-create",
         name: 'CreateProduit',
+        meta: {requireAuth: true, type:'admin'},
         component: CreateProduit
       },
       {
         path: "/admin/produits-list",
         name: "Liste des Produits",
+        meta: {requireAuth: true, type:'admin'},
         component: ListProduit
       },
       {
         path: "/admin/commandes", 
-        name: "Commandes",
+        name: "AdminCommandes",
+        meta: {requireAuth: true, type:'admin'},
         component: ListeCommande
       },
       {
         path: "/admin/liste-categorie",
-        name: "Categorie",
+        name: "CategorieListe",
+        meta: {requireAuth: true, type:'admin'},
         component: Categorie
       },
       {
         path: "/admin/liste-marque",
         name: "Marque",
+        meta: {requireAuth: true, type:'admin'},
         component: Marque
       },
       {
         path: "/admin/boutique",
         name: "Ma Boutique",
+        meta: {requireAuth: true, type:'admin'},
         component: MaBoutique
       },
       {
-        path: "/admin/article-create", // /admin/liste/categorie-article
+        path: "/admin/article-create",
         name: "Publier un article ",
+        meta: {requireAuth: true, type:'admin'},
         component: CreateArticle
       },
       {
         path: "/admin/liste/liste-article",
         name: "Liste des articles",
+        meta: {requireAuth: true, type:'admin'},
         component: ListeArticle
       },
     ]
@@ -98,9 +111,24 @@ const routes = [
   },
   {
     path: '/user/profile',
-    name: 'Liste des articles',
+    name: 'Profile Utilisateur',
+    meta: {requireAuth: true, type:'user'},
     component: UserProfile,
   },
+  {
+    path: '/articles',
+    name: 'Liste des articles',
+    component: ShopPage,
+  },
+  {
+    path: '/user/commandes', 
+    meta: {requireAuth: true, type:'user'},
+    name: "AdminCommandes",
+    component: CommandePage,
+  },
+  {
+    path: '/:pathMatch(.*)*',redirect: '/'
+  }
 ]
 
 const router = createRouter({
@@ -109,6 +137,18 @@ const router = createRouter({
   scrollBehavior() {
     return { top: 0 }
   },
+})
+
+
+router.beforeEach((to,from,next)=>{
+  if(to.meta.requireAuth && to.meta.type == 'admin'){
+      authGuard('admin')
+  }
+  if(to.meta.requireAuth && to.meta.type == 'user')
+  {
+      authGuard('user')
+  }
+  next()
 })
 
 export default router

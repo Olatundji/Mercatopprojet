@@ -29,17 +29,17 @@
                             <CCol :md="6">
                                 <div class="mb-2">
                                     <CFormLabel for="marque">Marque</CFormLabel>
-                                    <CFormSelect id="marque" v-model="produit.marque_id" aria-label="Default select example">
+                                    <CFormSelect id="marque" v-model="produit.idMarque" aria-label="Default select example">
                                         <option>Open this select menu</option>
                                         <option value="1">Gucuci</option>
-                                        <option value="1">Nike</option>
+                                        <option value="2">Nike</option>
                                     </CFormSelect>
                                 </div>
                             </CCol>
                             <CCol :md="6">
                                 <div class="mb-2">
                                     <CFormLabel for="categorie">Categorie</CFormLabel>
-                                    <CFormSelect v-model="produit.categorie_id" aria-label="Default select example" id="categorie">
+                                    <CFormSelect v-model="produit.idCategorie" aria-label="Default select example" id="categorie">
                                         <option>Open this select menu</option>
                                         <option value="1">One</option>
                                         <option value="2">Two</option>
@@ -74,6 +74,8 @@
 
 <script>
 
+import { produit } from '../../../services';
+
 export default {
     name: "CreateProduit",
     data() {
@@ -84,9 +86,10 @@ export default {
                 description: "",
                 image: "",
                 prix: "",
-                categorie_id: "",
-                marque_id: ''
-            }
+                idCategorie: '',
+                idMarque: ''
+            },
+            errors: []
         }
     },
     methods: {
@@ -95,15 +98,16 @@ export default {
             console.log(event.target.files[0]);
         },
         addProduit(){
-            var formData = new FormData()
-            formData.append("nom", this.produit.nom)
-            formData.append("description", this.produit.description)
-            formData.append("qte", this.produit.qte)
-            formData.append("image", this.produit.image)
-            formData.append("prix", this.produit.prix)
-            formData.append("categorie_id", this.produit.categorie_id)
-            formData.append("marque_id", this.produit.marque_id)
-            console.log(formData);
+            console.log(this.produit);
+            produit.createProduit(this.produit).then((response) => {
+                console.log(response);
+            }).catch(error => {
+                console.log(error.response);
+                // if(error.response.data.status == 500){
+                //     const obj = {message: "Une erreur s'est produite lors de la création "}
+                //     this.errors.push(obj)
+                // }
+            })
         }
     },
 }

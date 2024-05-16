@@ -1,68 +1,37 @@
 <template>
 
-    <CModal :visible="modalUpdate" @close="() => { modalUpdate = false }">
-        <CForm id="form" @submit.prevent="addCategorie">
-            <CModalHeader dismiss @close="() => { modalUpdate = false }">
-                <CModalTitle>Ajouter une categorie</CModalTitle>
-            </CModalHeader>
-            <CModalBody>
+    <div v-if="isModalOpen" class="modal-custom" @click="closeModalOutside">
+        <div class="modal-content">
+            <span class="close" @click="closeModal">&times;</span>
+            <h2>Ajouter une catégorie</h2>
+            <form @submit.prevent="addCategorie">
+                <div class="form-group">
+                    <input v-model="categorie.libelle" type="text" class="form-control" placeholder="Le nom de la cétégorie">
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-success">Ajouter</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-                <CRow>
-                    <CCol :md="12">
-                        <div class="mb-2">
-                            <CFormLabel for="categorie">Libelle</CFormLabel>
-                            <CFormInput v-model="categorie.libelle" id="categorie" type="text"
-                                placeholder="Barcelet Guici" />
-                        </div>
-                    </CCol>
-                </CRow>
-            </CModalBody>
-            <CModalFooter>
-                <CButton color="secondary" @click="() => {
-                    modalUpdate = false
-                }
-                    ">
-                    Fermer
-                </CButton>
-                <CButton type="submit" color="primary">Ajouter</CButton>
-            </CModalFooter>
-        </CForm>
-
-    </CModal>
-
-
-    <CModal :visible="visibleModal" @close="() => { visibleModal = false }">
-        <CForm id="form" @submit.prevent="updateCategorie">
-            <CModalHeader dismiss @close="() => {visibleModal = false}
-                ">
-                <CModalTitle>Modifier les informations de la catégorie </CModalTitle>
-            </CModalHeader>
-            <CModalBody>
-
-                <CRow>
-                    <CCol :md="12">
-                        <div class="mb-2">
-                            <CFormLabel for="categorie">Libellé</CFormLabel>
-                            <CFormInput v-model="libelle" id="categorie" type="text" placeholder="Barcelet Guici" />
-                        </div>
-                    </CCol>
-                </CRow>
-            </CModalBody>
-            <CModalFooter>
-                <CButton color="secondary" @click="() => {
-                    visibleModal = false
-                }
-                    ">
-                    Fermer
-                </CButton>
-                <CButton type="submit" color="primary">Modifier</CButton>
-            </CModalFooter>
-        </CForm>
-    </CModal>
+    <div v-if="updateModal" class="modal-custom" @click="closeModalOutside">
+        <div class="modal-content">
+            <span class="close" @click="closeModal">&times;</span>
+            <h2>Modifier une catégorie</h2>
+            <form @submit.prevent="changePassword">
+                <div class="form-group">
+                    <input v-model="libelle" type="text" class="form-control" placeholder="Le nom de la cétégorie">
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-success">Changer</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <CRow>
-        <CButton class="mr" color="success" @click="() => { modalUpdate = true }
-            ">Ajouter une Catégorie</CButton>
+        <CButton class="mr" color="success" @click="openModal">Ajouter une Catégorie</CButton>
     </CRow>
     <CRow>
         <CTable caption="top">
@@ -91,36 +60,33 @@
 <script>
 
 import Swal from 'sweetalert2';
-import { ref } from 'vue';
+import { categorie } from '../../../services';
+
 export default {
-    name: "ListeCategorie",
-    setup() {
-        const visibleModal = ref(false)
-        const modalUpdate = ref(false)
-        return { visibleModal, modalUpdate }
+    mounted() {
+        categorie.allCategorie().then((response) => {
+            this.categories = response.data.categories
+            console.log(response);
+        } )
     },
+    name: "ListeCategorie",
     data() {
         return {
+            isModalOpen: false,
+            updateModal: false,
             id: '',
             categorie: {
                 libelle: "",
             },
             libelle: '',
-            categories: [
-                { libelle: "Montre", id: 1 },
-                { libelle: "Bracelet", id: 2 },
-                { libelle: "Parfum", id: 3 },
-                { libelle: "Collier", id: 4 },
-                { libelle: "Maquillage", id: 5 },
-                { libelle: "Masque", id: 6 },
-            ]
+            categories: []
         }
     },
     methods: {
-        // eslint-disable-next-line no-unused-vars
         deleteCategorie(id) {
+            console.log(id);
             Swal.fire({
-                title: 'Êtes vous sûr?',
+                title: 'Êtes vous sûr ?',
                 text: "Cette catégorie sera définitivement supprimé",
                 icon: 'warning',
                 showCancelButton: true,
@@ -130,6 +96,9 @@ export default {
                 cancelButtonText: 'Annuler'
             }).then((result) => {
                 if (result.isConfirmed) {
+                    // categorie.deleteCategorie(id).then((response) => {
+                    //     console.log(response);
+                    // })
                     Swal.fire(
                         'Supprimé !',
                         'La catégorie a bien été supprimé',
@@ -144,17 +113,72 @@ export default {
         showModal(id) {
             const data = this.categories.find((element) => element.id == id)
             this.libelle = data.libelle
-            this.visibleModal = true
+            this.updateModal = true
             this.id = id
         },
         addCategorie() {
-            console.log("Vous venez d'ajouter la catégorie" + this.categorie.libelle);
-        }
+            categorie.createCategorie(this.categorie.libelle).then((response) => {
+                if(response.status == 200){
+                    console.log("hello");
+                    location.reload();
+                }
+                
+            })
+            this.closeModal();
+        },
+        closeModalOutside(event) {
+            if (event.target.classList.contains('modal-custom')) {
+                this.closeModal();
+            }
+        },
+        openModal() {
+            this.isModalOpen = true;
+        },
+
+        closeModal() {
+            this.isModalOpen = false;
+            this.updateModal = false
+        },
     },
 }
 </script>
 
 <style scoped>
+
+.modal-custom {
+    z-index: 1;
+    display: flex;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: scroll;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 30%;
+    height: 40%;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
 .mr {
     margin-right: 20px;
 }

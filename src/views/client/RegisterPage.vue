@@ -22,6 +22,9 @@
                                 <input v-model="user.numero" type="text" class="form-control" placeholder="Numéro">
                             </div>
                             <div class="form-group">
+                                <input v-model="user.adresse" type="text" class="form-control" placeholder="Adresse">
+                            </div>
+                            <div class="form-group">
                                 <input v-model="user.password" type="password" class="form-control" placeholder="Password">
                             </div>
                             <div class="form-group">
@@ -41,6 +44,11 @@
 </template>
 
 <script>
+
+
+import router from "../../router";
+import { auth } from "../../services";
+
 export default {
     name: 'RegisterPage',
     data() {
@@ -49,7 +57,8 @@ export default {
                 nom: '',
                 email: '',
                 numero: '',
-                password: ''
+                password: '',
+                adresse: '',
             },
             passwordConfirm: '',
             errors: [],
@@ -59,10 +68,16 @@ export default {
 
     methods: {
         register(){
+            
             if(this.user.password == this.passwordConfirm){
-                console.log(this.user);
+                auth.register(this.user).then((response) => {
+                    console.log(response);
+                    if(response.status == 200){
+                        router.push({name: `Login`})
+                    }
+                })
             }else {
-                const error = {message: "Les mots de passe ne sont pas identique"}
+                const error = {message: "Les mots de passes ne sont pas identique"}
                 this.errors.push(error)
                 console.log(this.errors.length);
             }

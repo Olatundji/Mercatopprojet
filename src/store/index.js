@@ -13,23 +13,31 @@ export default createStore({
         },
     }),
     ],
-  state() {
-    return {
-      sidebarVisible: '',
-      sidebarUnfoldable: false,
-      theme: 'light',
-      token: null,
-      type: null,
-      user: null,
-      cartBadge: 0,
-    }
+  state: {
+    sidebarVisible: '',
+    sidebarUnfoldable: false,
+    theme: 'light',
+    token: null,
+    type: null,
+    user: null,
+    favori: [],
+    panier: [],
+    cartBadge: 0,
   },
   mutations: {
     setToken(state, token){
       state.token = token
     },
+    setType(state, type){
+      state.type = type
+    },
     setUser(state, user){
       state.user = user
+    },
+    logout(state){
+      state.token = null
+      state.user = null
+      state.type = null
     },
     toggleSidebar(state) {
       state.sidebarVisible = !state.sidebarVisible
@@ -54,6 +62,9 @@ export default createStore({
     },
     getToken(state){
       return state.token
+    },
+    getType(state){
+      return state.type
     },
   },
   actions: {},

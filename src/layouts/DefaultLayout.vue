@@ -28,3 +28,8 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+  body{
+  }
+</style>

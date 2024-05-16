@@ -49,20 +49,32 @@
                         </li>
 
                         <li class="dropdown ">
-                            <a href="#">Nos articles</a>
+                            <a href="/articles">Nos articles</a>
                         </li>
 
-                        <li class="dropdown ">
-                            <a href="#">Mon compte</a>
+                        <li v-if="islogged" class="dropdown ">
+                            <a href="/user/profile">Mon compte</a>
                         </li>
 
-                        <li @mouseenter="visible = true" @mouseleave="visible = false" class="dropdown hover-effet">
+                        <li @click="logout" v-if="value == 'user' " class="dropdown ">
+                            <a href="#"  >Deconnexion</a>
+                        </li>
+
+                        <li v-if="value == 'faux'" @mouseenter="visible = true" @mouseleave="visible = false" class="dropdown hover-effet">
                             <a class="dropdown-toggle" href="#">S'authentifier</a>
                             <div v-show="visible" class="auth">
-                                <a href="" class="btn-item">Se connecter </a>
+                                <a href="/login" class="btn-item">Se connecter </a>
                                 <hr>
-                                <a href="" class="btn-item">S'inscrire </a>
+                                <a href="/register" class="btn-item">S'inscrire </a>
                             </div>
+                        </li>
+
+                        <li v-if="value == 'user'" class="dropdown ">
+                            <a href="/user/commandes">Dashboard</a>
+                        </li>
+                        
+                        <li v-if="value == 'admin'" class="dropdown ">
+                            <a href="/admin/dashboard">Dashboard</a>
                         </li>
                     </ul>
                 </div>
@@ -72,17 +84,44 @@
 </template>
 
 <script>
+
+import store from '../../store';
+import router from '../../router'
+
+
 export default {
+    mounted() {
+        this.isLogged()
+    },
     name: 'TheHeader',
     data() {
         return {
-            visible: false
+            visible: false,
+            user: store.getters.getUser,
+            type: store.getters.getType,
+            token: store.getters.getToken,
+            value:'faux',
+            islogged: false
         }
     },
     methods: {
         toggleElement(event) {
             console.log(event);
             this.visible = !this.visible
+        },
+        isLogged(){
+            if (this.user != null && this.token != null && this.type == 'user') {
+                this.value = 'user'
+                this.isLogged = true
+            }else if (this.user != null && this.token != null && this.type == 'admin') {
+                this.value = 'admin'
+            } else if (this.user == null && this.token == null && this.type == null) {
+                this.value = 'faux'
+            }
+        },
+        logout(){
+            store.commit('logout')
+            router.push('/')
         }
     },
 }
@@ -185,7 +224,7 @@ h1 {
     border: 1px solid white;
     border-radius: 15px;
     width: 10%;
-    height: 70px;
+    height: 80px;
 }
 
 .auth a:hover {

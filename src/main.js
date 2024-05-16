@@ -1,4 +1,3 @@
-
 import "./assets/plugins/themefisher-font/style.css"
 import "./assets/plugins/bootstrap/css/bootstrap.min.css"
 import "./assets/plugins/animate/animate.css"
@@ -10,7 +9,6 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-// import Vuelidate from '@vuelidate/core'
 
 import CoreuiVue from '@coreui/vue'
 import CIcon from '@coreui/icons-vue'
