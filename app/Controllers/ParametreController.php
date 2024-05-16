@@ -1,26 +1,43 @@
 <?php
 
-namespace App\Controllers\Api;
+namespace App\Controllers;
 
-use App\Models\ParametreModel;
 use CodeIgniter\API\ResponseTrait;
-use App\Models\SettingModel;
+use App\Models\ParametreModel;
 
-class Parametre extends \CodeIgniter\Controller
+class ParametreController extends BaseController
 {
     use ResponseTrait;
 
-    public function index()
+    private $parametreModel;
+
+    public function __construct()
     {
-        $model = new ParametreModel();
-        $settings = $model->findAll();
-        return $this->respond($settings);
+        $this->parametreModel = new ParametreModel();
     }
 
-    public function update($id)
+    public function index()
     {
-        $model = new ParametreModel();
+        // Récupérer tous les produits depuis la base de données
+        $parametres = $this->parametreModel->findAll();
 
+        // Vérifier s'il y a des produits
+        if (empty($parametres)) {
+            // Aucun produit trouvé
+            return $this->failNotFound('No Marques found');
+        }
+
+        // Retourner la liste des produits
+        return $this->respond($parametres);
+    }
+
+    public function create()
+    {
+        if (!$this->validate($this->parametreModel->validationRules)) {
+            // Si la validation échoue, renvoyer les erreurs de validation
+            return $this->failValidationErrors($this->validator->getErrors());
+        }
+        // Récupérer les données envoyées dans la requête
         $data = [
             'name' => $this->request->getVar('nom'),
             'logo' => $this->request->getVar('logo'),
@@ -28,8 +45,28 @@ class Parametre extends \CodeIgniter\Controller
             'address' => $this->request->getVar('address'),
         ];
 
-        $model->update($id, $data);
+        // Insérer le nouveau produit dans la base de données
+        $this->parametreModel->insert($data);
 
-        return $this->respond(['message' => 'Settings updated successfully']);
+        return $this->respond(['message' => 'parametre created successfully']);
+    }
+
+    public function update($id)
+    {
+        // Récupérer les données envoyées dans la requête
+        $data = [
+            'name' => $this->request->getVar('nom'),
+            'logo' => $this->request->getVar('logo'),
+            'slogan' => $this->request->getVar('slogan'),
+            'address' => $this->request->getVar('address'),
+        ];
+
+        // Mettre à jour le produit dans la base de données
+        $this->parametreModel->update($id, $data);
+
+        return $this->respond(['message' => 'parametre updated successfully']);
     }
 }
+
+
+

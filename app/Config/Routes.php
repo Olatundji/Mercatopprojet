@@ -86,6 +86,7 @@ $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection
 $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection $routes): void {
     $routes->resource('parametre');
 
+    $routes->get('parametres/create', 'ParametreController::create');
     $routes->get('parametres/index', 'ParametreController::index');
     $routes->put('parametres/update/(:num)', 'ParametreController::update/$1');
 });

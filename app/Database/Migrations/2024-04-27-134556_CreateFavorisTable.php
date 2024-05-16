@@ -15,9 +15,6 @@ class CreateFavorisTable extends Migration
                 'unsigned' => true,
                 'auto_increment' => true,
             ],
-            'libelle' => [
-                'type' => 'TEXT',
-            ],
             'idProduit' => [
                 'type' => 'INT',
                 'constraint' => 11,

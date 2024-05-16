@@ -15,7 +15,7 @@ class ProductModel extends Model
     protected $returnType           = 'array';
     protected $useSoftDeletes       = false;
     protected $protectFields        = true;
-    protected $allowedFields        = ['nom', 'prix', 'description',  'qte' , 'idMarque' , 'idCategorie']; // Champs autorisés pour la création de produit
+    protected $allowedFields        = ['nom', 'prix', 'description',  'qte' , 'image' , 'idMarque' , 'idCategorie']; // Champs autorisés pour la création de produit
   
     // Dates
     protected $useTimestamps        = true;
