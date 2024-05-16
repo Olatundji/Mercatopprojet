@@ -12,9 +12,6 @@ class Cors implements FilterInterface
     public function before(RequestInterface $request,$arguments=null)
     {
         $origin = $request->getHeaderLine('Origin');
-        header('Access-Control-Allow-Origin: ' . $origin);
-
-        header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
         header('Access-Control-Allow-Origin: http://localhost:3000');
         header('Access-Control-Allow-Credentials: true'); 
@@ -28,13 +25,10 @@ class Cors implements FilterInterface
 
     public function after(RequestInterface $request, ResponseInterface $response,$arguments=null)
     {
-        $response = $response->setHeader('X-Content-Type-Options', 'nosniff'); 
-        $response = $response->setHeader('Access-Control-Allow-Origin', '*');
-
+        $response = $response->setHeader('X-Content-Type-Options', 'nosniff');
         // $response = $response->setHeader('Access-Control-Allow-Origin', '*');
 
         // Retourner la réponse mise à jour
-
         return $response;
     }
 }

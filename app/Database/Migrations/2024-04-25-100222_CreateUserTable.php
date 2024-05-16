@@ -41,6 +41,12 @@ class User extends Migration
                 'constraint' => 100,
                 'null' => false,
             ],
+            'user_type' => [
+                'type' => 'VARCHAR',
+                'constraint' => 10,
+                'null' => true,
+                'default' => 'user'
+            ],
             'created_at' => [
                 'type' => 'DATETIME',
                 'null' => true,
