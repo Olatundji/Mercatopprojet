@@ -16,7 +16,8 @@ $routes->get('/', 'Home::index');
 //  });
 $routes->post('api/login', 'AuthController::login');
     $routes->post('api/register', 'AuthController::register');
-    $routes->get('api/profile', 'AuthController::profile');
+    $routes->get('api/profile/(:num)', 'AuthController::show/$1');
+    $routes->put('api/users/update/(:num)', 'AuthController::update/$1');
 
 //produit
 // $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection $routes): void {
@@ -35,15 +36,15 @@ $routes->post('api/login', 'AuthController::login');
  $routes->get('api/product/search', 'ProductController::search');
 //Marque
 
-$routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection $routes): void {
-     $routes->resource('marques');
+// $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection $routes): void {
+//      $routes->resource('marques');
 
-     $routes->get('marques/index', 'MarqueController::index');
+//      $routes->get('marques/index', 'MarqueController::index');
      //$routes->post('marques/create', 'MarqueController::create');
 //     $routes->get('marques/show/(:num)', 'MarqueController::show/$1');
 //     $routes->put('marques/update/(:num)', 'MarqueController::update/$1');
 //     $routes->delete('marques/delete/(:num)', 'MarqueController::delete/$1');
- });
+ //});
  $routes->post('api/marque', 'MarqueController::create');
 $routes->get('api/marques/index', 'MarqueController::index');
  $routes->get('api/marques/search', 'MarqueController::search');
@@ -52,13 +53,10 @@ $routes->get('api/marques/index', 'MarqueController::index');
 //promotion
 
 $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection $routes): void {
-    $routes->resource('promotion');
+    $routes->resource('promotions');
 
-    $routes->get('promotions/index', 'PromotionController::index');
-    $routes->get('promotions/show/(:num)', 'PromotionController::show/$1');
     $routes->post('promotions/create', 'PromotionController::create');
-    $routes->put('promotions/update/(:num)', 'PromotionController::update/$1');
-    $routes->delete('promotions/delete/(:num)', 'PromotionController::delete/$1');
+    $routes->post('promotions/use', 'PromotionController::usePromoCode');
 });
 // $routes->get('promotions/index', 'PromotionController::index');
 // $routes->get('promotions/show/(:num)', 'PromotionController::show/$1');

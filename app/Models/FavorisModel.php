@@ -12,7 +12,7 @@ class FavorisModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['idProduit' ,'idUser'];
+    protected $allowedFields    = ['idProduit' ,'idUser' , 'libelle'];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;

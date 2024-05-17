@@ -27,7 +27,7 @@ class CategorieArticleController extends BaseController
     public function index()
     {
         // Récupérer tous les produits depuis la base de données
-        $categories = $this->categorieArticleModel->findAll();
+        $categorieArticles = $this->categorieArticleModel->findAll();
 
         // Vérifier s'il y a des produits
         if (empty($categorieArticles)) {

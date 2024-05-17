@@ -1,85 +1,94 @@
 <?php
 
-namespace App\Controllers\Api;
+namespace App\Controllers;
 
-use CodeIgniter\API\ResponseTrait;
+use CodeIgniter\RESTful\ResourceController;
 use App\Models\PromotionModel;
+use App\Models\ProductModel;
 
-class PromotionController extends \CodeIgniter\Controller
+
+class PromotionController extends ResourceController
 {
-    use ResponseTrait;
-
-    protected $promotionModel;
-
+    protected $modelName = 'App\Models\PromotionModel';
+    protected $format    = 'json';
+    protected $produitModel; 
     public function __construct()
     {
-        $this->promotionModel = new PromotionModel();
+        $this->produitModel = new ProductModel();
     }
 
-    // Afficher la liste des promotions
-    public function index()
-    {
-        $promotions = $this->promotionModel->findAll();
-        return $this->respond($promotions);
-    }
 
-    // Afficher une promotion spécifique
-    public function show($id = null)
-    {
-        $promotion = $this->promotionModel->find($id);
-        if (!$promotion) {
-            return $this->failNotFound('Promotion not found');
-        }
-        return $this->respond($promotion);
-    }
-
-    // Créer une nouvelle promotion
+    // Création d'un code promotionnel
     public function create()
     {
-        $data = [
-            'code' => $this->request->getVar('code'),
-            'reduction' => $this->request->getVar('reduction'),
-            'date_debut' => $this->request->getVar('date_debut'),
-            'date_fin' => $this->request->getVar('date_fin'),
-            'idProduit' => $this->request->getVar('idProduit'),
+        $data = $this->request->getVar();
 
-        ];
-        
-        // Insérer la promotion dans la base de données
-        $this->promotionModel->insert($data);
-        
-        return $this->respondCreated(['message' => 'Promotion created successfully']);
-    }
-
-    // Mettre à jour une promotion existante
-    public function update($id = null)
-    {
-        $data = [
-            'code' => $this->request->getVar('code'),
-            'reduction' => $this->request->getVar('reduction'),
-            'date_debut' => $this->request->getVar('date_debut'),
-            'date_fin' => $this->request->getVar('date_fin'),
-            'idProduit' => $this->request->getVar('idProduit'),
-
-        ];
-        // Mettre à jour la promotion dans la base de données
-        $this->promotionModel->update($id, $data);
-        
-        return $this->respond(['message' => 'Promotion updated successfully']);
-    }
-
-    // Supprimer une promotion
-    public function delete($id = null)
-    {
-        // Vérifier si la promotion existe
-        $promotion = $this->promotionModel->find($id);
-        if (!$promotion) {
-            return $this->failNotFound('Promotion not found');
+        if (!$this->validate([
+            'code'       => 'required',
+            'reduction'  => 'required',
+            'date_debut' => 'required|valid_date',
+            'date_fin'   => 'required|valid_date',
+            'idProduit'  => 'required|is_natural_no_zero',
+        ])) {
+            return $this->failValidationErrors($this->validator->getErrors());
         }
-        
-        // Supprimer la promotion de la base de données
-        $this->promotionModel->delete($id);
-        
-        return $this->respondDeleted(['message' => 'Promotion deleted successfully']);
+
+        if ($this->model->save($data)) {
+            return $this->respondCreated(['message' => 'Promotion created successfully']);
+        } else {
+            return $this->failServerError('Failed to create promotion');
+        }
+    }
+
+    // Vérification et utilisation d'un code promotionnel
+    public function usePromoCode()
+    {
+        $code = $this->request->getVar('code');
+        $idProduit = $this->request->getVar('idProduit');
+        $idUser = $this->request->getVar('idUser');
+
+        if (empty($code)) {
+            return $this->failValidationErrors(['code' => 'Promotion code is required']);
+        }
+
+        if (empty($idProduit)) {
+            return $this->failValidationErrors(['idProduit' => 'Product ID is required']);
+        }
+
+        if (empty($idUser)) {
+            return $this->failValidationErrors(['idUser' => 'User ID is required']);
+        }
+
+        // Vérifier si le code promo est valide
+        $promotion = $this->model->isValidPromotion($code);
+
+        if ($promotion) {
+            // Vérifier si le produit de la promotion correspond au produit spécifié
+            if ($promotion['idProduit'] != $idProduit) {
+                return $this->failNotFound('Promotion code is not valid for this product');
+            }
+
+            // Récupérer le produit
+            $produit = $this->produitModel->find($idProduit);
+            if (!$produit) {
+                return $this->failNotFound('Product not found');
+            }
+
+            // Appliquer la réduction sur le prix du produit
+            $reduction = floatval($promotion['reduction']);
+            $prixOriginal = floatval($produit['prix']);
+            $nouveauPrix = $prixOriginal - ($prixOriginal * ($reduction / 100));
+
+            // Mettre à jour le prix du produit
+            $this->produitModel->update($idProduit, ['prix' => $nouveauPrix]);
+
+            return $this->respond([
+                'message' => 'Promotion code applied successfully',
+                'promotion' => $promotion,
+                'nouveauPrix' => $nouveauPrix
+            ]);
+        } else {
+            return $this->failNotFound('Promotion code is invalid or expired');
+        }
     }
 }

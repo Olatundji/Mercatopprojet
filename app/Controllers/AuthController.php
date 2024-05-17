@@ -113,4 +113,35 @@ class AuthController extends BaseController
     //         return $this->fail('An error occurred: ' . $e->getMessage(), 500);
     //     }
     // }
+
+    public function show($id)
+    {
+        $user = $this->userModel->find($id);
+
+        if (!$user) {
+            return $this->failNotFound('User not found');
+        }
+
+        return $this->respond($user);
+    }
+
+    public function update($id)
+    {
+        $data = [
+            'nom' => $this->request->getVar('nom'),
+                'numero' => $this->request->getVar('numero'),
+                'adresse' => $this->request->getVar('adresse'),
+                'email' => $this->request->getVar('email'),
+                'password' => password_hash($this->request->getVar('password'), PASSWORD_DEFAULT),
+        ];
+
+        $user = $this->userModel->find($id);
+        if (!$user) {
+            return $this->failNotFound('User not found');
+        }
+
+        $this->userModel->update($id, $data);
+
+        return $this->respond(['message' => 'User information updated successfully']);
+    }
 }

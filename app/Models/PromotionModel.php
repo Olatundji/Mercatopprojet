@@ -12,7 +12,7 @@ class PromotionModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields = ['code', 'reduction', 'date_debut', 'date_fin', 'idProduit', 'created_at', 'updated_at'];
+    protected $allowedFields = ['code', 'reduction', 'date_debut', 'date_fin', 'idProduit', 'idUser' , 'created_at', 'updated_at'];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
@@ -21,7 +21,7 @@ class PromotionModel extends Model
     protected array $castHandlers = [];
 
     // Dates
-    protected $useTimestamps = false;
+    protected $useTimestamps = true;
     protected $dateFormat    = 'datetime';
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
@@ -43,6 +43,14 @@ class PromotionModel extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
+
+    public function isValidPromotion($code)
+    {
+        return $this->where('code', $code)
+                    ->where('date_debut <=', date('Y-m-d'))
+                    ->where('date_fin >=', date('Y-m-d'))
+                    ->first();
+    }
 
     public function produit()
     {
