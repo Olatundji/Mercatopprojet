@@ -16,9 +16,6 @@ class PromotionController extends ResourceController
     {
         $this->produitModel = new ProductModel();
     }
-
-
-    // Création d'un code promotionnel
     public function create()
     {
         $data = $this->request->getVar();
@@ -40,55 +37,50 @@ class PromotionController extends ResourceController
         }
     }
 
-    // Vérification et utilisation d'un code promotionnel
-    public function usePromoCode()
-    {
-        $code = $this->request->getVar('code');
-        $idProduit = $this->request->getVar('idProduit');
-        $idUser = $this->request->getVar('idUser');
+public function usePromoCode()
+{
+    $code = $this->request->getVar('code');
+    $idProduit = $this->request->getVar('idProduit');
+    $idUser = $this->request->getVar('idUser');
 
-        if (empty($code)) {
-            return $this->failValidationErrors(['code' => 'Promotion code is required']);
-        }
-
-        if (empty($idProduit)) {
-            return $this->failValidationErrors(['idProduit' => 'Product ID is required']);
-        }
-
-        if (empty($idUser)) {
-            return $this->failValidationErrors(['idUser' => 'User ID is required']);
-        }
-
-        // Vérifier si le code promo est valide
-        $promotion = $this->model->isValidPromotion($code);
-
-        if ($promotion) {
-            // Vérifier si le produit de la promotion correspond au produit spécifié
-            if ($promotion['idProduit'] != $idProduit) {
-                return $this->failNotFound('Promotion code is not valid for this product');
-            }
-
-            // Récupérer le produit
-            $produit = $this->produitModel->find($idProduit);
-            if (!$produit) {
-                return $this->failNotFound('Product not found');
-            }
-
-            // Appliquer la réduction sur le prix du produit
-            $reduction = floatval($promotion['reduction']);
-            $prixOriginal = floatval($produit['prix']);
-            $nouveauPrix = $prixOriginal - ($prixOriginal * ($reduction / 100));
-
-            // Mettre à jour le prix du produit
-            $this->produitModel->update($idProduit, ['prix' => $nouveauPrix]);
-
-            return $this->respond([
-                'message' => 'Promotion code applied successfully',
-                'promotion' => $promotion,
-                'nouveauPrix' => $nouveauPrix
-            ]);
-        } else {
-            return $this->failNotFound('Promotion code is invalid or expired');
-        }
+    if (empty($code)) {
+        return $this->failValidationErrors(['code' => 'Promotion code is required']);
     }
+
+    if (empty($idProduit)) {
+        return $this->failValidationErrors(['idProduit' => 'Product ID is required']);
+    }
+
+    if (empty($idUser)) {
+        return $this->failValidationErrors(['idUser' => 'User ID is required']);
+    }
+
+    $promotion = $this->model->isValidPromotion($code);
+
+    if ($promotion) {
+        if ($promotion['idProduit'] != $idProduit) {
+            return $this->failNotFound('Promotion code is not valid for this product');
+        }
+
+        $produit = $this->produitModel->find($idProduit);
+        if (!$produit) {
+            return $this->failNotFound('Product not found');
+        }
+
+        $reduction = floatval($promotion['reduction']);
+        $prixOriginal = floatval($produit['prix']);
+        $nouveauPrix = $prixOriginal - ($prixOriginal * ($reduction / 100));
+
+        $this->produitModel->update($idProduit, ['prix' => $nouveauPrix]);
+
+        return $this->respond([
+            'message' => 'Promotion code applied successfully',
+            'promotion' => $promotion,
+            'nouveauPrix' => $nouveauPrix
+        ]);
+    } else {
+        return $this->failNotFound('Promotion code is invalid or expired');
+    }
+}
+
 }

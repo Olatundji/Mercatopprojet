@@ -184,4 +184,5 @@ $routes->get('api/commentaires/index', 'CommentaireController::index');
 $routes->delete('api/commentaires/delete(:num)', 'CommentaireController::delete/$1');
 
 
-$route['api/upload'] = 'ApiController/uploadFile';
+$routes->post('api/upload', 'FileController::uploadFile');
+

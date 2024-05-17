@@ -39,11 +39,11 @@ class CreatePromotionTable extends Migration
                 'constraint' => 11,
                 'unsigned' => true,
             ],
-            'idUser' => [
-                'type' => 'INT',
-                'constraint' => 11,
-                'unsigned' => true,
-            ],
+            // 'idUser' => [
+            //     'type' => 'INT',
+            //     'constraint' => 11,
+            //     'unsigned' => true,
+            // ],
             
             'created_at' => [
                 'type' => 'DATETIME',
@@ -56,7 +56,7 @@ class CreatePromotionTable extends Migration
         ]);
         $this->forge->addPrimaryKey('id');
         $this->forge->addForeignKey('idProduit', 'produit', 'id', 'CASCADE', 'CASCADE');
-        $this->forge->addForeignKey('idUser', 'users', 'id', 'CASCADE', 'CASCADE');
+        //$this->forge->addForeignKey('idUser', 'users', 'id', 'CASCADE', 'CASCADE');
         $this->forge->createTable('promotions');
     }
 
