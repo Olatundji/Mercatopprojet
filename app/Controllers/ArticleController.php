@@ -78,7 +78,14 @@ class ArticleController extends BaseController
     public function update($id)
     {
         $file = $this->request->getFile('image');
-        $data = $this->request->getPost();
+        $data = [
+            'contenu' => $this->request->getVar('contenu'),
+            'description' => $this->request->getVar('description'),
+            'titre' => $this->request->getVar('titre'),
+            'idCatégorie_article' => $this->request->getVar('idCategorie_article')
+
+
+        ];
 
         if ($file && $file->isValid() && !$file->hasMoved()) {
             $fileName = $file->getRandomName();

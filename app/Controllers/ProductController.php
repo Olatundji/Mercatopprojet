@@ -65,7 +65,7 @@ class ProductController extends BaseController
         }
 
         $file = $this->request->getFile('image');
-        $data = $this->request->getPost();
+        $data = $this->request->getVar();
 
         if ($file && $file->isValid() && !$file->hasMoved()) {
             $fileName = $file->getRandomName();
@@ -86,7 +86,17 @@ class ProductController extends BaseController
     public function update($id)
     {
         $file = $this->request->getFile('image');
-        $data = $this->request->getPost();
+        
+        $data = [
+            'nom' => $this->request->getVar('nom'),
+            'prix' => $this->request->getVar('prix'),
+            'description' => $this->request->getVar('description'),
+            'qte' => $this->request->getVar('qte'),
+            'idMarque' => $this->request->getVar('idMarque'),
+            'idCatégorie' => $this->request->getVar('idCategorie')
+
+
+        ];
 
         if ($file && $file->isValid() && !$file->hasMoved()) {
             $fileName = $file->getRandomName();
