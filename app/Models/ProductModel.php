@@ -32,7 +32,7 @@ class ProductModel extends Model
         'qte' => 'required',
         'idMarque' => 'required',
         'idCategorie' => 'required',
-        // 'image' => 'required'
+        //'image' => 'uploaded[image]|is_image[image]|mime_in[image,image/jpg,image/jpeg,image/png]'
 
     ];
     protected $validationMessages   = [];

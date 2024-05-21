@@ -31,7 +31,7 @@ class ArticleModel extends Model
     // Validation
     protected $validationRules      = [
         'contenu' => 'required',
-        'image' => 'required',
+        //'image' => 'required',
         'description' => 'required',
         'titre' => 'required',
         // 'idCategorie_article' => 'required',

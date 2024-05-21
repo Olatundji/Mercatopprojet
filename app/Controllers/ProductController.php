@@ -55,62 +55,79 @@ class ProductController extends BaseController
             ];
         }
 
-       // return $this->respond($formattedProduit);
-        return $this->respond(['produits' => $formattedProduit ]);
+        return $this->respond(['produits' => $formattedProduit]);
     }
 
     public function create()
     {
-        if (!$this->validate($this->productModel->validationRules)) {
-            return $this->failValidationErrors($this->validator->getErrors());
+        $validation = \Config\Services::validation();
+        $validation->setRules($this->productModel->validationRules);
+
+        if (!$validation->withRequest($this->request)->run()) {
+            return $this->failValidationErrors($validation->getErrors());
         }
 
         $file = $this->request->getFile('image');
-        $data = $this->request->getVar();
-
-        if ($file && $file->isValid() && !$file->hasMoved()) {
-            $fileName = $file->getRandomName();
-            $filePath = 'uploads/' . $fileName;
-            $file->move('uploads', $fileName);
-
-            $baseURL = config('App')->baseURL;
-            $fullPath = $baseURL . $filePath;
-
-            $data['image'] = $fullPath;
-        }
-
-        $this->productModel->insert($data);
-
-        return $this->respond(['message' => 'Product created successfully', 'data' => $data]);
-    }
-
-    public function update($id)
-    {
-        $file = $this->request->getFile('image');
-        
         $data = [
             'nom' => $this->request->getVar('nom'),
             'prix' => $this->request->getVar('prix'),
             'description' => $this->request->getVar('description'),
             'qte' => $this->request->getVar('qte'),
             'idMarque' => $this->request->getVar('idMarque'),
-            'idCatégorie' => $this->request->getVar('idCategorie')
-
-
+            'idCategorie' => $this->request->getVar('idCategorie')
         ];
 
         if ($file && $file->isValid() && !$file->hasMoved()) {
             $fileName = $file->getRandomName();
             $filePath = 'uploads/' . $fileName;
-            $file->move('uploads', $fileName);
-
-            $baseURL = config('App')->baseURL;
-            $fullPath = $baseURL . $filePath;
-
-            $data['image'] = $fullPath;
+            $file->move(WRITEPATH . 'uploads', $fileName);
+            
+            $data['image'] = base_url('uploads/' . $fileName);
         }
 
-        $this->productModel->update($id, $data);
+        log_message('info', 'Data to be inserted: ' . json_encode($data));
+
+        if (!$this->productModel->insert($data)) {
+            log_message('error', 'Failed to insert product: ' . json_encode($this->productModel->errors()));
+            return $this->failServerError('Failed to create product');
+        }
+
+        return $this->respondCreated(['message' => 'Product created successfully', 'data' => $data]);
+    }
+
+    public function update($id)
+    {
+        $validation = \Config\Services::validation();
+        $validation->setRules($this->productModel->validationRules);
+
+        if (!$validation->withRequest($this->request)->run()) {
+            return $this->failValidationErrors($validation->getErrors());
+        }
+
+        $file = $this->request->getFile('image');
+        $data = [
+            'nom' => $this->request->getVar('nom'),
+            'prix' => $this->request->getVar('prix'),
+            'description' => $this->request->getVar('description'),
+            'qte' => $this->request->getVar('qte'),
+            'idMarque' => $this->request->getVar('idMarque'),
+            'idCategorie' => $this->request->getVar('idCategorie')
+        ];
+
+        if ($file && $file->isValid() && !$file->hasMoved()) {
+            $fileName = $file->getRandomName();
+            $filePath = 'uploads/' . $fileName;
+            $file->move(WRITEPATH . 'uploads', $fileName);
+            
+            $data['image'] = base_url('uploads/' . $fileName);
+        }
+
+        log_message('info', 'Data to be updated for ID ' . $id . ': ' . json_encode($data));
+
+        if (!$this->productModel->update($id, $data)) {
+            log_message('error', 'Failed to update product: ' . json_encode($this->productModel->errors()));
+            return $this->failServerError('Failed to update product');
+        }
 
         return $this->respond(['message' => 'Product updated successfully']);
     }
@@ -121,7 +138,8 @@ class ProductController extends BaseController
         return $this->respondDeleted(['message' => 'Product deleted successfully']);
     }
 
-    public function rechercheParCategorie($idCategorie) {
+    public function rechercheParCategorie($idCategorie)
+    {
         $produit = $this->productModel->where('idCategorie', $idCategorie)->findAll();
 
         if (empty($produit)) {

@@ -56,23 +56,44 @@ class ArticleController extends BaseController
 
     public function create()
     {
+        $validation = \Config\Services::validation();
+        $validation->setRules($this->articleModel->validationRules);
+
+        if (!$validation->withRequest($this->request)->run()) {
+            return $this->failValidationErrors($validation->getErrors());
+        }
+
         $file = $this->request->getFile('image');
-        $data = $this->request->getPost();
+        $data = [
+            'contenu' => $this->request->getVar('contenu'),
+            'description' => $this->request->getVar('description'),
+            'titre' => $this->request->getVar('titre'),
+            'idCategorie_article' => $this->request->getVar('idCategorie_article')
+        ];
 
         if ($file && $file->isValid() && !$file->hasMoved()) {
             $fileName = $file->getRandomName();
             $filePath = 'uploads/' . $fileName;
-            $file->move('uploads', $fileName);
 
-            $baseURL = config('App')->baseURL;
-            $fullPath = $baseURL . $filePath;
+            if (!$file->move(WRITEPATH . 'uploads', $fileName)) {
+                log_message('error', 'Failed to move file: ' . $file->getErrorString());
+                return $this->failServerError('Failed to move file');
+            }
 
-            $data['image'] = $fullPath;
+            $data['image'] = base_url('uploads/' . $fileName);
         }
 
-        $this->articleModel->insert($data);
+        try {
+            if (!$this->articleModel->insert($data)) {
+                log_message('error', 'Failed to insert article: ' . json_encode($this->articleModel->errors()));
+                return $this->failServerError('Failed to create article');
+            }
+        } catch (\Exception $e) {
+            log_message('error', 'Exception caught: ' . $e->getMessage());
+            return $this->failServerError('Exception: ' . $e->getMessage());
+        }
 
-        return $this->respond(['message' => 'Article created successfully']);
+        return $this->respondCreated(['message' => 'Article created successfully', 'data' => $data]);
     }
 
     public function update($id)
@@ -82,30 +103,46 @@ class ArticleController extends BaseController
             'contenu' => $this->request->getVar('contenu'),
             'description' => $this->request->getVar('description'),
             'titre' => $this->request->getVar('titre'),
-            'idCatégorie_article' => $this->request->getVar('idCategorie_article')
-
-
+            'idCategorie_article' => $this->request->getVar('idCategorie_article')
         ];
 
         if ($file && $file->isValid() && !$file->hasMoved()) {
             $fileName = $file->getRandomName();
             $filePath = 'uploads/' . $fileName;
-            $file->move('uploads', $fileName);
 
-            $baseURL = config('App')->baseURL;
-            $fullPath = $baseURL . $filePath;
+            if (!$file->move(WRITEPATH . 'uploads', $fileName)) {
+                log_message('error', 'Failed to move file: ' . $file->getErrorString());
+                return $this->failServerError('Failed to move file');
+            }
 
-            $data['image'] = $fullPath;
+            $data['image'] = base_url('uploads/' . $fileName);
         }
 
-        $this->articleModel->update($id, $data);
+        try {
+            if (!$this->articleModel->update($id, $data)) {
+                log_message('error', 'Failed to update article: ' . json_encode($this->articleModel->errors()));
+                return $this->failServerError('Failed to update article');
+            }
+        } catch (\Exception $e) {
+            log_message('error', 'Exception caught: ' . $e->getMessage());
+            return $this->failServerError('Exception: ' . $e->getMessage());
+        }
 
         return $this->respond(['message' => 'Article updated successfully']);
     }
 
     public function delete($id)
     {
-        $this->articleModel->delete($id);
+        try {
+            if (!$this->articleModel->delete($id)) {
+                log_message('error', 'Failed to delete article: ' . json_encode($this->articleModel->errors()));
+                return $this->failServerError('Failed to delete article');
+            }
+        } catch (\Exception $e) {
+            log_message('error', 'Exception caught: ' . $e->getMessage());
+            return $this->failServerError('Exception: ' . $e->getMessage());
+        }
+
         return $this->respondDeleted(['message' => 'Article deleted successfully']);
     }
 
