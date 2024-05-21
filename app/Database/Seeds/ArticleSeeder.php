@@ -8,10 +8,7 @@ class ArticleSeeder extends Seeder
 {
     public function run()
     {
-        // Définissez votre chemin de téléchargement
         $uploadPath = WRITEPATH . 'uploads/';
-
-        // Définissez les noms des images pour chaque article
         $images = [
             'image1.jpeg',
             'image2.jpeg',
@@ -24,23 +21,18 @@ class ArticleSeeder extends Seeder
             'image9.jpeg',
         ];
 
-        // Boucle pour insérer 9 articles
         foreach ($images as $imageName) {
-            // Définissez le chemin complet de l'image source
             $sourceImagePath = FCPATH . 'images/' . $imageName;
 
-            // Définissez le chemin complet de l'image de destination
             $destinationImagePath = $uploadPath . $imageName;
 
-            // Copiez l'image
             if (copy($sourceImagePath, $destinationImagePath)) {
-                // Insérez les données dans la base de données avec le chemin de l'image
                 $data = [
                     'contenu' => 'Contenu de l\'article',
-                    'image' => $imageName, // Enregistrez le nom du fichier de l'image dans la colonne 'image'
+                    'image' => $imageName, 
                     'description' => 'Description de l\'article',
                     'titre' => 'Titre de l\'article',
-                    'idCategorie_article' => 1, // ID de la catégorie de l'article
+                    'idCategorie_article' => 1, 
                     'created_at' => date('Y-m-d H:i:s'),
                     'updated_at' => date('Y-m-d H:i:s'),
                 ];

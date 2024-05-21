@@ -46,12 +46,16 @@ class UserModel extends Model
     protected $beforeDelete         = [];
     protected $afterDelete          = [];
 
-    // public function favoris()
-    // {
-    //     return $this->belongsTo(FavorisModel::class);
-    // }
-    // public function commande()
-    // {
-    //     return $this->belongsTo(CommandeModel::class);
-    // }
+     public function favoris()
+     {
+         return $this->belongsTo(FavorisModel::class);
+     }
+     public function commande()
+    {
+    return $this->belongsTo(CommandeModel::class);
+    }
+    public function commentaire()
+{
+    return $this->belongsTo(CommentaireModel::class);
+}
 }

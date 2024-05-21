@@ -4,15 +4,11 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class FavorisModel extends Model
+class UploadModel extends Model
 {
-    protected $table            = 'favoris';
-    protected $primaryKey       = 'id';
-    protected $useAutoIncrement = true;
-    protected $returnType       = 'array';
-    protected $useSoftDeletes   = false;
-    protected $protectFields    = true;
-    protected $allowedFields    = ['idProduit' ,'idUser' , 'libelle'];
+    protected $table = 'uploads';
+    protected $primaryKey = 'id';
+    protected $allowedFields = ['file_name', 'original_name', 'file_type', 'file_size', 'file_path', 'uploaded_at'];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
@@ -21,7 +17,7 @@ class FavorisModel extends Model
     protected array $castHandlers = [];
 
     // Dates
-    protected $useTimestamps = false;
+    protected $useTimestamps = true;
     protected $dateFormat    = 'datetime';
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
@@ -43,13 +39,4 @@ class FavorisModel extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
-
-    public function produit()
-    {
-        return $this->hasMany(ProductModel::class, 'idProduit');
-    }
-    public function users()
-    {
-        return $this->hasMany(UserModel::class, 'idUser');
-    }
 }

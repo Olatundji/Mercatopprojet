@@ -39,7 +39,7 @@ class ParametreController extends BaseController
         }
         // Récupérer les données envoyées dans la requête
         $data = [
-            'name' => $this->request->getVar('nom'),
+            'nom' => $this->request->getVar('nom'),
             'logo' => $this->request->getVar('logo'),
             'slogan' => $this->request->getVar('slogan'),
             'address' => $this->request->getVar('address'),

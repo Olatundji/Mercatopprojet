@@ -84,20 +84,6 @@ public function create()
 }
 
 
-    public function update($id)
-    {
-        // Récupérer les données envoyées dans la requête
-        $data = [
-            'idProduit' => $this->request->getVar('idProduit'),
-            'idUser' => $this->request->getVar('idUser'),
-        ];
-
-        // Mettre à jour le produit dans la base de données
-        $this->favorisModel->update($id, $data);
-
-        return $this->respond(['message' => 'favoris updated successfully']);
-    }
-
     public function delete($id)
     {
         // Supprimer le produit de la base de données
