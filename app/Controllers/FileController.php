@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use CodeIgniter\RESTful\ResourceController;
+use App\Models\UploadModel;
 
 class FileController extends ResourceController {
 
@@ -16,6 +17,17 @@ class FileController extends ResourceController {
         if ($file && $file->isValid() && !$file->hasMoved()) {
             $newName = $file->getRandomName();
             $file->move(ROOTPATH . 'uploads', $newName);
+
+            // Enregistrer les informations du fichier dans la base de données
+            $uploadModel = new UploadModel();
+            $uploadData = [
+                'file_name' => $newName,
+                'original_name' => $file->getClientName(),
+                'file_type' => $file->getClientMimeType(),
+                'file_size' => $file->getSize(),
+                'file_path' => 'uploads/' . $newName, // Adjusted path for portability
+            ];
+            $uploadModel->insert($uploadData);
 
             return $this->respondCreated([
                 'status' => 'success',
