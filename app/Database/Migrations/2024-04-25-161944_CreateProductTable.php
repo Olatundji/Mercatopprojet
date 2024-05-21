@@ -36,7 +36,7 @@ class CreateProductTable extends Migration
             'image' => [
                 'type' => 'VARCHAR',
                 'constraint' => 255, // Taille de la chaîne spécifiée
-                'not null' => true, // Définition de la colonne NOT NULL
+                'null' => true, // Définition de la colonne NOT NULL
             ],
             'idMarque' => [
                 'type' => 'INT',

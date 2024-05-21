@@ -66,7 +66,7 @@ class ProductController extends BaseController
     }
 
     // Retourner la liste des produits formatés avec les détails de la marque et de la catégorie
-    return $this->respond($formattedProduit);
+    return $this->respond(['produits' => $formattedProduit ]);
 }
 
 
@@ -86,7 +86,7 @@ public function create()
         'prix' => $this->request->getVar('prix'),
         'description' => $this->request->getVar('description'),
         'qte' => $this->request->getVar('qte'),
-        'image' => $this->request->getVar('image'),
+        // 'image' => $this->request->getVar('image'),
         'idMarque' => $this->request->getVar('idMarque'),
         'idCategorie' => $this->request->getVar('idCategorie'),
     ];

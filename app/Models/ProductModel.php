@@ -30,8 +30,9 @@ class ProductModel extends Model
         'prix' => 'required',
         'description' => 'required',
         'qte' => 'required',
-        // 'idMarque' => 'required',
-        // 'idCategorie' => 'required',
+        'idMarque' => 'required',
+        'idCategorie' => 'required',
+        // 'image' => 'required'
 
     ];
     protected $validationMessages   = [];
