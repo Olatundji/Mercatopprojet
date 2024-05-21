@@ -55,7 +55,8 @@ class ProductController extends BaseController
             ];
         }
 
-        return $this->respond($formattedProduit);
+       // return $this->respond($formattedProduit);
+        return $this->respond(['produits' => $formattedProduit ]);
     }
 
     public function create()

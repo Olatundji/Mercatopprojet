@@ -36,7 +36,7 @@ class MarqueController extends BaseController
         }
 
         // Retourner la liste des produits
-        return $this->respond($marques);
+        return $this->respond(['marques' => $marques]);
     }
 
     public function create()
