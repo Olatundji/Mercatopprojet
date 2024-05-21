@@ -34,6 +34,8 @@ $routes->post('api/login', 'AuthController::login');
  $routes->delete('api/product/delete/(:num)', 'ProductController::delete/$1');
  $routes->get('api/products', 'ProductController::index');
  $routes->get('api/product/search', 'ProductController::search');
+ $routes->get('api/product/detail/(:num)', 'ProductController::detail/$1');
+
 //Marque
 
 // $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection $routes): void {

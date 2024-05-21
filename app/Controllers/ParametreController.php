@@ -16,57 +16,43 @@ class ParametreController extends BaseController
         $this->parametreModel = new ParametreModel();
     }
 
-    public function index()
-    {
-        // Récupérer tous les produits depuis la base de données
-        $parametres = $this->parametreModel->findAll();
-
-        // Vérifier s'il y a des produits
-        if (empty($parametres)) {
-            // Aucun produit trouvé
-            return $this->failNotFound('No Marques found');
-        }
-
-        // Retourner la liste des produits
-        return $this->respond($parametres);
-    }
-
-    public function create()
-    {
-        if (!$this->validate($this->parametreModel->validationRules)) {
-            // Si la validation échoue, renvoyer les erreurs de validation
-            return $this->failValidationErrors($this->validator->getErrors());
-        }
-        // Récupérer les données envoyées dans la requête
-        $data = [
-            'nom' => $this->request->getVar('nom'),
-            'logo' => $this->request->getVar('logo'),
-            'slogan' => $this->request->getVar('slogan'),
-            'address' => $this->request->getVar('address'),
-        ];
-
-        // Insérer le nouveau produit dans la base de données
-        $this->parametreModel->insert($data);
-
-        return $this->respond(['message' => 'parametre created successfully']);
-    }
-
     public function update($id)
     {
-        // Récupérer les données envoyées dans la requête
+        log_message('debug', 'Updating parameters with ID: ' . $id);
+
+        $validation = \Config\Services::validation();
+        $validation->setRules($this->parametreModel->validationRules);
+
+        if (!$validation->withRequest($this->request)->run()) {
+            return $this->failValidationErrors($validation->getErrors());
+        }
+
         $data = [
-            'name' => $this->request->getVar('nom'),
-            'logo' => $this->request->getVar('logo'),
+            'nom' => $this->request->getVar('nom'),
             'slogan' => $this->request->getVar('slogan'),
-            'address' => $this->request->getVar('address'),
+            'adresse' => $this->request->getVar('adresse')
         ];
 
-        // Mettre à jour le produit dans la base de données
-        $this->parametreModel->update($id, $data);
+        $file = $this->request->getFile('logo');
+        if ($file && $file->isValid() && !$file->hasMoved()) {
+            $fileName = $file->getRandomName();
+            $filePath = WRITEPATH . 'uploads/' . $fileName;
+            if ($file->move(WRITEPATH . 'uploads', $fileName)) {
+                log_message('debug', 'Logo file moved successfully to: ' . $filePath);
+                $data['logo'] = $filePath;
+            } else {
+                log_message('error', 'Failed to move logo file');
+                return $this->failServerError('Failed to move logo file');
+            }
+        }
 
-        return $this->respond(['message' => 'parametre updated successfully']);
+        if (!$this->parametreModel->update($id, $data)) {
+            log_message('error', 'Failed to update parameters: ' . json_encode($this->parametreModel->errors()));
+            return $this->failValidationErrors($this->parametreModel->errors());
+        }
+
+        log_message('debug', 'Parameters updated successfully');
+
+        return $this->respond(['message' => 'Parameters updated successfully']);
     }
 }
-
-
-

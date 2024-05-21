@@ -16,7 +16,8 @@ class ProductController extends BaseController
         $this->productModel = new ProductModel();
     }
 
-    public function search() {
+    public function search()
+    {
         $keyword = $this->request->getGet('keyword');
         $results = $this->productModel->searchProduit($keyword);
         return $this->respond($results);
@@ -56,6 +57,40 @@ class ProductController extends BaseController
         }
 
         return $this->respond(['produits' => $formattedProduit]);
+    }
+
+    public function detail($id)
+    {
+        // Récupérer le produit par son ID
+        $product = $this->productModel
+                        ->select('produit.*, marques.nom as marque_nom, categories.libelle as categorie_nom')
+                        ->join('marques', 'marques.id = produit.idMarque')
+                        ->join('categories', 'categories.id = produit.idCategorie')
+                        ->find($id);
+
+        if (!$product) {
+            return $this->failNotFound('Product not found');
+        }
+
+        // Formater les données du produit
+        $formattedProduct = [
+            'id' => $product['id'],
+            'nom' => $product['nom'],
+            'prix' => $product['prix'],
+            'description' => $product['description'],
+            'qte' => $product['qte'],
+            'marque' => [
+                'id' => $product['idMarque'],
+                'nom' => $product['marque_nom']
+            ],
+            'categorie' => [
+                'id' => $product['idCategorie'],
+                'nom' => $product['categorie_nom']
+            ],
+            'image' => $product['image']
+        ];
+
+        return $this->respond($formattedProduct);
     }
 
     public function create()
