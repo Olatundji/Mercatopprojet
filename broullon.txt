@@ -2,7 +2,7 @@ Pas de problème, vous pouvez afficher les produits filtrés au même endroit qu
 
 Supprimez la propriété produitsFiltres de votre objet de données.
 
-jsCopy codedata() {
+data() {
     return {
         produits: [], // Votre liste de produits initiale
         filtre: {
@@ -15,7 +15,7 @@ jsCopy codedata() {
 
 Dans votre méthode filtrerProduits, filtrez directement la liste produits au lieu de créer un nouveau tableau.
 
-jsCopy codemethods: {
+methods: {
     filtrerProduits() {
         // Récupérer les valeurs du formulaire
         this.filtre.categorie_id = // Valeur du champ catégorie
@@ -26,7 +26,7 @@ jsCopy codemethods: {
 
 Dans votre template, utilisez une seule boucle v-for sur produits, mais filtrez les produits à l'intérieur de cette boucle en utilisant une méthode de filtre calculée.
 
-htmlCopy code<div v-for="produit in produits" :key="produit.id">
+<div v-for="produit in produits" :key="produit.id">
     <div v-if="produitEstFiltre(produit)">
         <!-- Code pour afficher chaque produit -->
     </div>
@@ -34,7 +34,7 @@ htmlCopy code<div v-for="produit in produits" :key="produit.id">
 
 Ajoutez la méthode produitEstFiltre à votre instance Vue pour filtrer les produits en fonction des critères du formulaire.
 
-jsCopy codemethods: {
+methods: {
     filtrerProduits() {
         // Récupérer les valeurs du formulaire
     },

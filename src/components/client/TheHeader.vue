@@ -17,7 +17,7 @@
                 <div class="col-md-4 col-xs-12 col-sm-4">
                     <ul class="top-menu text-right list-inline">
                         <li class="dropdown cart-nav dropdown-slide">
-                            <a href="#"><i class="tf-ion-android-cart"></i>Cart <span class="badge">4</span> </a>
+                            <router-link to="/user/cart"> <i class="tf-ion-android-cart"></i>Cart<span class="badge">{{ cartNumber }}</span></router-link>
                         </li>
 
                     </ul>
@@ -45,15 +45,15 @@
                     <ul class="nav navbar-nav">
 
                         <li class="dropdown ">
-                            <a href="#">Accueil</a>
+                            <router-link to="/">Accueil</router-link>
                         </li>
 
                         <li class="dropdown ">
-                            <a href="/articles">Nos articles</a>
+                            <router-link to="/produits">Nos produits</router-link>
                         </li>
 
-                        <li v-if="islogged" class="dropdown ">
-                            <a href="/user/profile">Mon compte</a>
+                        <li v-if="value == 'user' " class="dropdown ">
+                            <router-link to="/user/profile">Profile</router-link>
                         </li>
 
                         <li @click="logout" v-if="value == 'user' " class="dropdown ">
@@ -63,18 +63,18 @@
                         <li v-if="value == 'faux'" @mouseenter="visible = true" @mouseleave="visible = false" class="dropdown hover-effet">
                             <a class="dropdown-toggle" href="#">S'authentifier</a>
                             <div v-show="visible" class="auth">
-                                <a href="/login" class="btn-item">Se connecter </a>
+                                <router-link class="btn-item" to="/login">Se connecter</router-link>
                                 <hr>
-                                <a href="/register" class="btn-item">S'inscrire </a>
+                                <router-link class="btn-item" to="/register">S'inscrire</router-link>
                             </div>
                         </li>
 
                         <li v-if="value == 'user'" class="dropdown ">
-                            <a href="/user/commandes">Dashboard</a>
+                            <router-link to="/user/commandes">Dashboard</router-link>
                         </li>
                         
                         <li v-if="value == 'admin'" class="dropdown ">
-                            <a href="/admin/dashboard">Dashboard</a>
+                            <router-link to="/admin/dashboard">Dashboard</router-link>
                         </li>
                     </ul>
                 </div>
@@ -90,6 +90,11 @@ import router from '../../router'
 
 
 export default {
+    computed: {
+        cartNumber(){
+            return store.getters.getCartNumber
+        }
+    },
     mounted() {
         this.isLogged()
     },

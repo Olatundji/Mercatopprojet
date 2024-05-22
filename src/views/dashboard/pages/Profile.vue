@@ -30,7 +30,7 @@
                     <strong>Vos informations</strong>
                 </CCardHeader>
                 <CCardBody>
-                    <CForm @submit.prevent="infos">
+                    <CForm @submit.prevent="updateProfile">
                         <div class="mb-2">
                             <CFormLabel for="exampleFormControlInput1">Nom</CFormLabel>
                             <CFormInput v-model="user.nom" id="name" type="text" placeholder="Exp : John Doe " />
@@ -61,6 +61,7 @@
 
 import { ref } from 'vue'
 import store from '@/store';
+import { auth } from '../../../services';
 
 
 export default {
@@ -103,8 +104,11 @@ export default {
             console.log(this.password);
             this.closeModal();
         },
-        infos(){
+        updateProfile(){
             console.log(this.user);
+            auth.updateProfile(this.user).then((response) => {
+                console.log(response);
+            } )
         }
     },
 };
@@ -118,7 +122,7 @@ export default {
     left: 0;
     top: 0;
     width: 100%;
-    height: 100%;
+    height: auto;
     overflow: scroll;
 }
 
@@ -128,7 +132,7 @@ export default {
     padding: 20px;
     border: 1px solid #888;
     width: 30%;
-    height: 40%;
+    height: auto;
 }
 
 .close {

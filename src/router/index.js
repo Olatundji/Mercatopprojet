@@ -19,6 +19,8 @@ import LoginPage from '@/views/client/LoginPage.vue'
 import UserProfile from '@/views/client/UserProfile.vue'
 import ShopPage from '@/views/client/ShopPage.vue'
 import CommandePage from '@/views/client/CommandePage.vue'
+import DetailsProduit from '../views/client/DetailsProduit.vue'
+import CartPage from '@/views/client/CartPage.vue'
 
 const routes = [
   {
@@ -76,16 +78,16 @@ const routes = [
         component: MaBoutique
       },
       {
+        path: "/admin/liste-article",
+        name: "Liste des articles",
+        meta: {requireAuth: true, type:'admin'},
+        component: ListeArticle
+      },
+      {
         path: "/admin/article-create",
         name: "Publier un article ",
         meta: {requireAuth: true, type:'admin'},
         component: CreateArticle
-      },
-      {
-        path: "/admin/liste/liste-article",
-        name: "Liste des articles",
-        meta: {requireAuth: true, type:'admin'},
-        component: ListeArticle
       },
     ]
   },
@@ -116,14 +118,24 @@ const routes = [
     component: UserProfile,
   },
   {
-    path: '/articles',
-    name: 'Liste des articles',
+    path: '/produits',
+    name: 'Liste des produits',
     component: ShopPage,
+  },
+  {
+    path: '/produit/single',
+    name: 'DetailsProduit',
+    component: DetailsProduit,
+  },
+  {
+    path: '/user/cart',
+    name: 'CartList',
+    component: CartPage,
   },
   {
     path: '/user/commandes', 
     meta: {requireAuth: true, type:'user'},
-    name: "AdminCommandes",
+    name: "UserCommandes",
     component: CommandePage,
   },
   {

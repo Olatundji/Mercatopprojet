@@ -18,7 +18,7 @@ export default [
       {
         component: 'CNavItem',
         name: 'Liste des articles',
-        to: '/admin/liste/liste-article',
+        to: '/admin/liste-article',
       },
       {
         component: 'CNavItem',
@@ -69,5 +69,11 @@ export default [
     name: 'Profile',
     to: '/admin/profile',
     icon: 'cil-user',
+  },
+  {
+    component: 'CNavItem',
+    name: 'Accueil',
+    to: '/',
+    icon: 'cil-cursor',
   },
 ]

@@ -1,64 +1,37 @@
 <template>
+    <div v-if="isModalOpen" class="modal-custom" @click="closeModalOutside">
+        <div class="modal-content">
+            <span class="close" @click="closeModal">&times;</span>
+            <h2>Ajouter une marque</h2>
+            <form @submit.prevent="addMarque">
+                <div class="form-group">
+                    <input v-model="marque.nom" type="text" class="form-control"
+                        placeholder="Le nom de la marque">
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-success">Ajouter</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-    <CModal :visible="modalUpdate" @close="() => { modalUpdate = false }">
-        <CForm id="form" @submit.prevent="addMarque">
-            <CModalHeader dismiss @close="() => { modalUpdate = false }">
-                <CModalTitle>Ajouter une marque</CModalTitle>
-            </CModalHeader>
-            <CModalBody>
-
-                <CRow>
-                    <CCol :md="12">
-                        <div class="mb-2">
-                            <CFormLabel for="categorie">Libelle</CFormLabel>
-                            <CFormInput v-model="marque.libelle" id="categorie" type="text"
-                                placeholder="Versace" />
-                        </div>
-                    </CCol>
-                </CRow>
-            </CModalBody>
-            <CModalFooter>
-                <CButton color="secondary" @click="() => {modalUpdate = false}
-                    ">
-                    Fermer
-                </CButton>
-                <CButton type="submit" color="primary">Ajouter</CButton>
-            </CModalFooter>
-        </CForm>
-
-    </CModal>
-
-
-    <CModal :visible="visibleModal" @close="() => { visibleModal = false }">
-        <CForm id="form" @submit.prevent="updateMarque">
-            <CModalHeader dismiss @close="() => {visibleModal = false}
-                ">
-                <CModalTitle>Modifier les informations de la marque </CModalTitle>
-            </CModalHeader>
-            <CModalBody>
-
-                <CRow>
-                    <CCol :md="12">
-                        <div class="mb-2">
-                            <CFormLabel for="categorie">Libellé</CFormLabel>
-                            <CFormInput v-model="libelle" id="categorie" type="text" placeholder="Versace" />
-                        </div>
-                    </CCol>
-                </CRow>
-            </CModalBody>
-            <CModalFooter>
-                <CButton color="secondary" @click="() => {visibleModal = false}
-                    ">
-                    Fermer
-                </CButton>
-                <CButton type="submit" color="primary">Modifier</CButton>
-            </CModalFooter>
-        </CForm>
-    </CModal>
+    <div v-if="updateModal" class="modal-custom" @click="closeModalOutside">
+        <div class="modal-content">
+            <span class="close" @click="closeModal">&times;</span>
+            <h2>Modifier une marque</h2>
+            <form @submit.prevent="updateMarque">
+                <div class="form-group">
+                    <input v-model="nom" type="text" class="form-control" placeholder="Le nom de la marque">
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-success">Changer</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <CRow>
-        <CButton class="mr" color="success" @click="() => { modalUpdate = true }
-            ">Ajouter une Marque</CButton>
+        <CButton class="mr" color="success" @click="openModal">Ajouter une Marque</CButton>
     </CRow>
     <CRow>
         <CTable caption="top">
@@ -66,14 +39,14 @@
             <CTableHead>
                 <CTableRow>
                     <CTableHeaderCell scope="col">#</CTableHeaderCell>
-                    <CTableHeaderCell scope="col">Libelle</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Nom</CTableHeaderCell>
                     <CTableHeaderCell class="center">Action</CTableHeaderCell>
                 </CTableRow>
             </CTableHead>
             <CTableBody>
-                <CTableRow v-for="item in marques" :key="item.id">
-                    <CTableDataCell> {{ item.id }} </CTableDataCell>
-                    <CTableDataCell> {{ item.libelle }} </CTableDataCell>
+                <CTableRow v-for="(item, index ) in marques" :key="item.id">
+                    <CTableDataCell> {{ index + 1 }} </CTableDataCell>
+                    <CTableDataCell> {{ item.nom }} </CTableDataCell>
                     <CTableDataCell class="center">
                         <CButton class="mr" color="warning" @click="showModal(item.id)">Modifier</CButton>
                         <CButton @click="deleteMarque(item.id)" color="danger"> Supprimer</CButton>
@@ -87,30 +60,32 @@
 <script>
 
 import Swal from 'sweetalert2';
-import { ref } from 'vue';
+import { marque } from '../../../services';
 export default {
-    // eslint-disable-next-line vue/multi-word-component-names
-    name: "Marque",
-    setup() {
-        const visibleModal = ref(false)
-        const modalUpdate = ref(false)
-        return { visibleModal, modalUpdate }
+    mounted() {
+        marque.allMarque().then((response) => {
+            this.marques = response.data.marques
+        }).catch((error) => {
+            if(error.response.data.status == 500){
+                Swal.fire(
+                    'Error',
+                    "Une erreur s'est produite' ",
+                    'danger'
+                )
+            }
+        } )
     },
+    name: "MarquePage",
     data() {
         return {
+            isModalOpen: false,
+            updateModal: false,
             id: '',
             marque: {
-                libelle: "",
+                nom: "",
             },
-            libelle: '',
-            marques: [
-                { libelle: "Gucci", id: 1 },
-                { libelle: "Dior", id: 2 },
-                { libelle: "Vercase", id: 3 },
-                { libelle: "Nike", id: 4 },
-                { libelle: "Adidas", id: 5 },
-                { libelle: "Inditex ", id: 6 },
-            ]
+            nom: '',
+            marques: []
         }
     },
     methods: {
@@ -127,31 +102,103 @@ export default {
                 cancelButtonText: 'Annuler'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    Swal.fire(
-                        'Supprimé !',
-                        'La marque a bien été supprimé',
-                        'success'
-                    )
+                    marque.deleteMarque(id).then((response) => {
+                        if (response.status == 200) {
+                            Swal.fire(
+                                'Supprimé !',
+                                'La marque a bien été supprimé',
+                                'success'
+                            ).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.reload()
+                                }
+                            })
+                        }
+                    })
                 }
             })
         },
         updateMarque() {
-            console.log("Vous venez de mettre a jour la marque " + this.id + " dont la nouvelle valeur est " + this.libelle);
+            marque.updateMarque(this.id, this.nom).then((response) => {
+                if (response.status == 200) {
+                    Swal.fire(
+                        'Modifié !',
+                        'La marque a bien été modifié',
+                        'success'
+                    ).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.reload()
+                        }
+                    })
+                }
+            })
         },
         showModal(id) {
             const data = this.marques.find((element) => element.id == id)
-            this.libelle = data.libelle
-            this.visibleModal = true
+            this.nom = data.nom
+            this.updateModal = true
             this.id = id
         },
         addMarque() {
-            console.log("Vous venez d'ajouter la marque" + this.marque.libelle);
-        }
+            marque.createMarque(this.marque.nom).then((response) => {
+                if (response.status == 200) {
+                    location.reload();
+                }
+            } )
+        },
+        closeModalOutside(event) {
+            if (event.target.classList.contains('modal-custom')) {
+                this.closeModal();
+            }
+        },
+        openModal() {
+            this.isModalOpen = true;
+        },
+
+        closeModal() {
+            this.isModalOpen = false;
+            this.updateModal = false
+        },
     },
 }
 </script>
 
 <style scoped>
+
+.modal-custom {
+    z-index: 1;
+    display: flex;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: scroll;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 30%;
+    height: 40%;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
 .mr {
     margin-right: 20px;
 }

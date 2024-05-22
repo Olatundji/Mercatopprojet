@@ -7,7 +7,7 @@
                     <div class="content">
                         <h1 class="page-name">Dashboard</h1>
                         <ol class="breadcrumb">
-                            <li><a href="index.html">Home</a></li>
+                            <li><router-link to="/">Home</router-link></li>
                             <li class="active">commandes</li>
                         </ol>
                     </div>
@@ -29,7 +29,6 @@
                                         <th>Nombre de produits</th>
                                         <th>Montant</th>
                                         <th>Status</th>
-                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>

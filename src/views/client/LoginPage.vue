@@ -8,6 +8,7 @@
                             <img src="@/assets/images/logo.png" alt="">
                         </a>
                         <h2 class="text-center">Welcome Back</h2>
+                        <p v-if="errors != null" > {{ errors }} </p>
                         <form @submit.prevent="login" class="text-left clearfix">
                             <div class="form-group">
                                 <input v-model="user.email" type="email" class="form-control" placeholder="Email">
@@ -19,7 +20,7 @@
                                 <button type="submit" class="btn btn-main text-center">Se connecter</button>
                             </div>
                         </form>
-                        <p class="mt-20">Nouveau sur notre site ?<a href="/register"> Crer un compte</a></p>
+                        <p class="mt-20">Nouveau sur notre site ? <router-link to="/register"> S'inscrire </router-link> </p>
                     </div>
                 </div>
             </div>
@@ -39,13 +40,12 @@ export default {
                 email: '',
                 password: ''
             },
-            errors: [],
+            errors: null,
         }
     },
 
     methods: {
         login() {
-            console.log(this.user);
             auth.login(this.user).then((response) => {
                 const token = response.data.token;
                 const type = response.data.user.user_type;
@@ -54,8 +54,15 @@ export default {
                 store.commit('setType', type)
                 store.commit('setUser', user)
                 this.$router.push('/')
-                console.log(response);
+            }).catch((error) => {
+                if(error.response.status == 401){
+                    // console.log(error.response.data.error);
+                    this.errors = error.response.data.error
+                }
             })
+        },
+        logout(){
+            
         }
     },
 }

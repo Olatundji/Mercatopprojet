@@ -2,7 +2,7 @@
 
 import store from '../store';
 import Axios from './caller';
-const user_id = store.getters.getUser.id
+// const user_id = store.getters.getUser.id
 
 // Axios.defaults.withCredentials = true;
 
@@ -24,8 +24,8 @@ let login = (user) => {
 }
 
 
-let updateProfile = (user) =>{
-    return Axios.patch('/updateProfile/'+ user_id,{
+let updateProfile = (user, id) =>{
+    return Axios.patch('/updateProfile/'+ id,{
         nom: user.nom,
         numero: user.numero,
         email: user.email,

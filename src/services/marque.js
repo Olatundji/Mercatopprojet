@@ -10,18 +10,18 @@ let createMarque = (nom) =>{
     })
 }
 
-let updateMarque = (nom, id) => {
-    return Axios.put('/marque/'+id, {
+let updateMarque = (id, nom) => {
+    return Axios.put('/marques/update/'+id, {
         nom: nom,
     })
 }
 
 let allMarque = () => {
-    return Axios.get('/marques')
+    return Axios.get('/marques/index')
 }
 
 let deleteMarque = (id) => {
-    return Axios.delete('/marque/'+id)
+    return Axios.delete('/marques/delete/'+id)
 }
 
 export const marque = { createMarque, allMarque, updateMarque, deleteMarque };

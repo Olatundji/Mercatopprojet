@@ -154,7 +154,7 @@ export default {
     left: 0;
     top: 0;
     width: 100%;
-    height: 100%;
+    height: auto;
     overflow: hidden;
     background-color: rgb(0,0,0);
     background-color: rgba(0,0,0,0.4);
@@ -166,7 +166,7 @@ export default {
     padding: 20px;
     border: 1px solid #888;
     width: 30%;
-    height: 40%;
+    height: auto;
 }
 
 .close {

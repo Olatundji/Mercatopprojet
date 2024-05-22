@@ -14,13 +14,12 @@ vérification d'une transaction en back
 FeexPay docs (explixite)
 
 TODO : {
-    - les modals dans le projets (à reprendre)
-    - ajouter, modifier et supprimer un produit
-    - les statistiques
-    - infos boutique
-    - panier
-    - paiement
-    - infinity sroll
-    - recherche par catégorie, marque, ou prix
-    - blog
+    - marque ---
+    - produit (update, delete, show) --
+    - boutique
+    - liste des produits (avec optimisation d'affichage)
+    - gestion du panier
+    - processus d'achat et de payement
+    - rechercher un produit par nom
+    - filtre
 }

@@ -10,19 +10,31 @@ let createProduit = (produit) =>{
         prix: produit.prix,
         description: produit.description,
         image: produit.image,
-        qte: produit.qte
+        qte: produit.qte,
+        idMarque: produit.idMarque,
+        idCategorie: produit.idCategorie
     })
+}
+
+let updateProduit = (id, produit) => {
+    return Axios.put('/product/update/'+ id, {
+        nom: produit.nom,
+        prix: produit.prix,
+        description: produit.description,
+        image: produit.image,
+        qte: produit.qte,
+        idMarque: produit.marque_id,
+        idCategorie: produit.categorie_id
+
+    })
+}
+
+let deleteProduit = (id, produit) => {
+    return Axios.delete('/product/delete/'+ id,)
 }
 
 let allProduit = () => {
     return Axios.get('/products')
 }
 
-let allMarque = () => {
-    return Axios.get('/listMarque')
-}
-
-let allCategorie = () => {
-    return Axios.get('/listCategorie')
-}
-export const produit = { createProduit, allProduit, allMarque, allCategorie };
+export const produit = { createProduit, allProduit, updateProduit, deleteProduit };

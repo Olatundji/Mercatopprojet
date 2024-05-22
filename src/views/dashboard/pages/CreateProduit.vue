@@ -1,4 +1,6 @@
 <template>
+    <!-- Ligne des erreurs -->
+    <div>Hello</div>
     <CRow>
         <CCol :xs="12">
             <CCard class="mb-4">
@@ -30,9 +32,7 @@
                                 <div class="mb-2">
                                     <CFormLabel for="marque">Marque</CFormLabel>
                                     <CFormSelect id="marque" v-model="produit.idMarque" aria-label="Default select example">
-                                        <option>Open this select menu</option>
-                                        <option value="1">Gucuci</option>
-                                        <option value="2">Nike</option>
+                                        <option v-for="(item, index) in marques" :key="index" :value="item.id"> {{ item.nom }} </option>
                                     </CFormSelect>
                                 </div>
                             </CCol>
@@ -40,10 +40,7 @@
                                 <div class="mb-2">
                                     <CFormLabel for="categorie">Categorie</CFormLabel>
                                     <CFormSelect v-model="produit.idCategorie" aria-label="Default select example" id="categorie">
-                                        <option>Open this select menu</option>
-                                        <option value="1">One</option>
-                                        <option value="2">Two</option>
-                                        <option value="3">Three</option>
+                                        <option v-for="(item, index) in categories" :key="index"  :value="item.id"> {{ item.libelle }} </option>
                                     </CFormSelect>
                                 </div>
                             </CCol>
@@ -58,7 +55,7 @@
                             <CCol :md="6">
                                 <div class="mb-2">
                                     <CFormLabel for="image">Image</CFormLabel>
-                                    <CFormInput id="image" accept=".png, .jpg, .jpeg"  @change="handleFileChange" type="file" placeholder="Barcelet Guici" />
+                                    <CFormInput id="image" accept=".png, .jpg, .jpeg"  @change="handleFileChange" type="file" />
                                 </div>
                             </CCol>
                         </CRow>
@@ -74,10 +71,21 @@
 
 <script>
 
-import { produit } from '../../../services';
+import router from '../../../router';
+import axios from 'axios';
+import { categorie, marque  } from '../../../services';
 
 export default {
     name: "CreateProduit",
+    mounted() {
+        categorie.allCategorie().then((response) => {
+            this.categories = response.data.categories
+        })
+
+        marque.allMarque().then((response) => {
+            this.marques = response.data.marques
+        })
+    },
     data() {
         return {
             produit: {
@@ -89,7 +97,9 @@ export default {
                 idCategorie: '',
                 idMarque: ''
             },
-            errors: []
+            errors: [],
+            categories:[],
+            marques: []
         }
     },
     methods: {
@@ -99,11 +109,25 @@ export default {
         },
         addProduit(){
             console.log(this.produit);
-            produit.createProduit(this.produit).then((response) => {
+            let formData = new FormData()
+
+            formData.append('nom', this.produit.nom)
+            formData.append('qte', this.produit.qte)
+            formData.append('description', this.produit.description)
+            formData.append('image', this.produit.image)
+            formData.append('prix', this.produit.prix)
+            formData.append('idCategorie', this.produit.idCategorie)
+            formData.append('idMarque', this.produit.idMarque)
+            console.log(formData);
+
+            axios.post('http://localhost:8080/api/product/create',formData, {headers: {"Content-Type": "multipart/form-data"}}).then((response) => {
                 console.log(response);
+                if(response.status == 200 || response.status == 201 ){
+                    router.push({name: `Liste des Produits`})
+                }
             }).catch(error => {
-                console.log(error.response);
-                // if(error.response.data.status == 500){
+                console.log(error);
+                // if(error.response.status == 500){
                 //     const obj = {message: "Une erreur s'est produite lors de la création "}
                 //     this.errors.push(obj)
                 // }

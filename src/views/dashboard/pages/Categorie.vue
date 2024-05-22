@@ -6,7 +6,8 @@
             <h2>Ajouter une catégorie</h2>
             <form @submit.prevent="addCategorie">
                 <div class="form-group">
-                    <input v-model="categorie.libelle" type="text" class="form-control" placeholder="Le nom de la cétégorie">
+                    <input v-model="categorie.libelle" type="text" class="form-control"
+                        placeholder="Le nom de la cétégorie">
                 </div>
                 <div class="text-center">
                     <button type="submit" class="btn btn-success">Ajouter</button>
@@ -19,7 +20,7 @@
         <div class="modal-content">
             <span class="close" @click="closeModal">&times;</span>
             <h2>Modifier une catégorie</h2>
-            <form @submit.prevent="changePassword">
+            <form @submit.prevent="updateCategorie">
                 <div class="form-group">
                     <input v-model="libelle" type="text" class="form-control" placeholder="Le nom de la cétégorie">
                 </div>
@@ -44,8 +45,8 @@
                 </CTableRow>
             </CTableHead>
             <CTableBody>
-                <CTableRow v-for="item in categories" :key="item.id">
-                    <CTableDataCell> {{ item.id }} </CTableDataCell>
+                <CTableRow v-for="(item, index) in categories" :key="item.id">
+                    <CTableDataCell> {{ index + 1 }} </CTableDataCell>
                     <CTableDataCell> {{ item.libelle }} </CTableDataCell>
                     <CTableDataCell class="center">
                         <CButton class="mr" color="warning" @click="showModal(item.id)">Modifier</CButton>
@@ -66,8 +67,7 @@ export default {
     mounted() {
         categorie.allCategorie().then((response) => {
             this.categories = response.data.categories
-            console.log(response);
-        } )
+        })
     },
     name: "ListeCategorie",
     data() {
@@ -84,7 +84,6 @@ export default {
     },
     methods: {
         deleteCategorie(id) {
-            console.log(id);
             Swal.fire({
                 title: 'Êtes vous sûr ?',
                 text: "Cette catégorie sera définitivement supprimé",
@@ -96,19 +95,37 @@ export default {
                 cancelButtonText: 'Annuler'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // categorie.deleteCategorie(id).then((response) => {
-                    //     console.log(response);
-                    // })
-                    Swal.fire(
-                        'Supprimé !',
-                        'La catégorie a bien été supprimé',
-                        'success'
-                    )
+                    categorie.deleteCategorie(id).then((response) => {
+                        if (response.status == 200) {
+                            Swal.fire(
+                                'Supprimé !',
+                                'La catégorie a bien été supprimé',
+                                'success'
+                            ).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.reload()
+                                }
+                            })
+                        }
+                    })
                 }
             })
         },
         updateCategorie() {
-            console.log("Vous venez de mettre a jour la catégorie " + this.id + " dont la nouvelle valeur est " + this.libelle);
+            this.closeModal()
+            categorie.updateCategorie(this.id, this.libelle).then((response) => {
+                if (response.status == 200) {
+                    Swal.fire(
+                        'Modifié !',
+                        'La catégorie a bien été mis à jour',
+                        'success'
+                    ).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.reload()
+                        }
+                    })
+                }
+            })
         },
         showModal(id) {
             const data = this.categories.find((element) => element.id == id)
@@ -118,11 +135,10 @@ export default {
         },
         addCategorie() {
             categorie.createCategorie(this.categorie.libelle).then((response) => {
-                if(response.status == 200){
-                    console.log("hello");
+                if (response.status == 200) {
                     location.reload();
                 }
-                
+
             })
             this.closeModal();
         },
@@ -144,7 +160,6 @@ export default {
 </script>
 
 <style scoped>
-
 .modal-custom {
     z-index: 1;
     display: flex;
@@ -152,7 +167,7 @@ export default {
     left: 0;
     top: 0;
     width: 100%;
-    height: 100%;
+    height: auto;
     overflow: scroll;
 }
 
@@ -162,7 +177,7 @@ export default {
     padding: 20px;
     border: 1px solid #888;
     width: 30%;
-    height: 40%;
+    height: auto;
 }
 
 .close {

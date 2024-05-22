@@ -34,8 +34,7 @@
                                 <button type="submit" class="btn btn-main text-center">S'inscrire</button>
                             </div>
                         </form>
-                        <p class="mt-20">Already hava an account ?<a href="login.html"> Login</a></p>
-                        <p><a href="forget-password.html"> Forgot your password?</a></p>
+                        <p class="mt-20">Vous avez déjà un compte ? <router-link to="/login"> Connecter-vous </router-link> </p>
                     </div>
                 </div>
             </div>
@@ -71,7 +70,6 @@ export default {
             
             if(this.user.password == this.passwordConfirm){
                 auth.register(this.user).then((response) => {
-                    console.log(response);
                     if(response.status == 200){
                         router.push({name: `Login`})
                     }
@@ -79,7 +77,6 @@ export default {
             }else {
                 const error = {message: "Les mots de passes ne sont pas identique"}
                 this.errors.push(error)
-                console.log(this.errors.length);
             }
             
         }

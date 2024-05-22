@@ -55,7 +55,7 @@
                             </CCol>
                         </CRow>
                         <div class="col-auto">
-                            <CButton color="success" type="submit"> Publier </CButton>
+                            <CButton class="mt-3" color="success" type="submit"> Publier </CButton>
                         </div>
                     </CForm>
                 </CCardBody>

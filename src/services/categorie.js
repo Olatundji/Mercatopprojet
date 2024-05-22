@@ -10,7 +10,7 @@ let createCategorie = (libelle) =>{
     })
 }
 
-let updateCategorie = (libelle, id) => {
+let updateCategorie = (id, libelle) => {
     return Axios.put('/categories/update/'+id, {
         libelle: libelle,
     })

@@ -1,14 +1,11 @@
 <template>
-    <CModal :visible="visibleModal" @close="() => { visibleModal = false }">
-        <CForm @submit.prevent="updateProduit">
-            <CModalHeader dismiss @close="() => {
-                visibleModal = false
-            }
-                ">
+    <div v-if="updateModal" class="modal-custom" @click="closeModalOutside">
+        <div class="modal-content">
+            <span class="close" @click="closeModal">&times;</span>
+            <h2>Modifier une catégorie</h2>
+            <CForm enctype=“multipart/form-data” @submit.prevent="updateProduit">
                 <CModalTitle>Modifier les informations d'un produit</CModalTitle>
-            </CModalHeader>
             <CModalBody>
-
                 <CRow>
                     <CCol :md="6">
                         <div class="mb-2">
@@ -33,22 +30,30 @@
                         <div class="mb-2">
                             <CFormLabel for="marque">Marque</CFormLabel>
                             <CFormSelect id="marque" v-model="produitUpdate.marque_id" aria-label="Default select example">
-                                <option>Open this select menu</option>
-                                <option value="1">Gucuci</option>
-                                <option value="1">Nike</option>
+                                <option v-for="(item, index) in marques" :key="index" :value="item.id"> {{ item.nom }} </option>
                             </CFormSelect>
                         </div>
                     </CCol>
                     <CCol :md="6">
                         <div class="mb-2">
                             <CFormLabel for="categorie">Categorie</CFormLabel>
-                            <CFormSelect v-model="produitUpdate.categorie_id" aria-label="Default select example"
-                                id="categorie">
-                                <option disabled>Open this select menu</option>
-                                <option value="1">One</option>
-                                <option value="2">Two</option>
-                                <option value="3">Three</option>
+                            <CFormSelect v-model="produitUpdate.categorie_id" aria-label="Default select example" id="categorie">
+                                <option v-for="(item, index) in categories" :key="index"  :value="item.id"> {{ item.libelle }} </option>
                             </CFormSelect>
+                        </div>
+                    </CCol>
+                </CRow>
+                <CRow>
+                    <CCol :md="6">
+                        <div class="mb-2">
+                            <CFormLabel for="qte">Quantité</CFormLabel>
+                            <CFormInput v-model="produitUpdate.qte"  id="qte" type="number" placeholder="5" />
+                        </div>
+                    </CCol>
+                    <CCol :md="6">
+                        <div class="mb-2">
+                            <CFormLabel for="image">Image</CFormLabel>
+                            <CFormInput id="image" accept=".png, .jpg, .jpeg"  @change="handleFileChange" type="file" />
                         </div>
                     </CCol>
                 </CRow>
@@ -69,16 +74,14 @@
                 </CRow>
             </CModalBody>
             <CModalFooter>
-                <CButton color="secondary" @click="() => {
-                    visibleModal = false
-                }
-                    ">
-                    Close
+                <CButton color="secondary" @click="closeModal">
+                    Fermer
                 </CButton>
-                <CButton type="submit" color="primary">Save changes</CButton>
+                <CButton type="submit" color="primary">Modifier </CButton>
             </CModalFooter>
         </CForm>
-    </CModal>
+        </div>
+    </div>
     <CRow>
         <CTable caption="top">
             <CTableCaption>Liste des produits</CTableCaption>
@@ -101,8 +104,8 @@
                     <CTableDataCell> {{ item.description }} </CTableDataCell>
                     <CTableDataCell> {{ item.prix }} </CTableDataCell>
                     <CTableDataCell> {{ item.qte }} </CTableDataCell>
-                    <CTableDataCell> {{ item.marque_id }} </CTableDataCell>
-                    <CTableDataCell>{{ item.categorie_id }}</CTableDataCell>
+                    <CTableDataCell> {{ item.marque.nom }} </CTableDataCell>
+                    <CTableDataCell>{{ item.categorie.nom }}</CTableDataCell>
                     <CTableDataCell class="center">
                         <CButton class="mr" color="warning" @click="showUpdateModal(item.id)">Modifier</CButton>
                         <CButton @click="deleteProduit(item.id)" color="danger"> Supprimer</CButton>
@@ -115,25 +118,37 @@
 
 <script>
 
-import { ref } from 'vue';
+
 import Swal from 'sweetalert2';
+import { produit, categorie, marque } from '../../../services';
 
 export default {
-    name: "ListeProduit",
-    setup() {
-        const visibleModal = ref(false)
-        return { visibleModal }
+    mounted() {
+        produit.allProduit().then((response) => {
+            // console.log(response);
+            this.produits = response.data.produits
+        })
+
+        categorie.allCategorie().then((response) => {
+            this.categories = response.data.categories
+        })
+
+        marque.allMarque().then((response) => {
+            this.marques = response.data.marques
+        })
     },
+    name: "ListeProduit",
     data() {
         return {
+            updateModal: false,
             produitUpdate: {
                 nom: "",
                 description: "",
                 qte: "",
                 prix: "",
                 image: "",
-                categorie_id: "",
-                marque_id: ""
+                categorie_id: '',
+                marque_id: ''
             },
             produit: {
                 nom: "",
@@ -144,65 +159,9 @@ export default {
                 categorie_id: "",
                 marque_id: ""
             },
-            produits: [
-                {
-                    id: 1, 
-                    nom: "Montre",
-                    description: "Montre de luxe",
-                    prix: 1500000,
-                    qte: 500,
-                    marque_id: 3,
-                    categorie_id: 4 
-                },
-                {
-                    id: 2, 
-                    nom: "Collier",
-                    description: "Collier de luxe",
-                    prix: 190000,
-                    qte: 20,
-                    marque_id: 2,
-                    categorie_id: 3 
-                },
-                {
-                    id: 3, 
-                    nom: "Chaine",
-                    description: "Chaine de luxe",
-                    prix: 1578000,
-                    qte: 5,
-                    marque_id: 1,
-                    categorie_id: 2 
-                },
-                {
-                    id: 4, 
-                    nom: "Chaine ",
-                    description: "Chaine de luxe",
-                    prix: 90068,
-                    qte: 320,
-                    marque_id: 4,
-                    categorie_id: 1 
-                },
-                {
-                    id: 5, 
-                    nom: "Bracelet",
-                    description: "Bracelet de luxe",
-                    prix: 5541300,
-                    qte: 415,
-                    marque_id: 4,
-                    categorie_id: 4 
-                },
-            ],
-            categories: [
-                {id: 1, libelle: "Montre"},
-                {id: 2, libelle: "Bracelet"},
-                {id: 3, libelle: "Chaine"},
-                {id: 4, libelle: "Collier"},
-            ],
-            marques: [
-                {id: 1, libelle: "Nike"},
-                {id: 2, libelle: "Adidas"},
-                {id: 3, libelle: "Gucci"},
-                {id: 4, libelle: "Versace"},
-            ]
+            produits: [],
+            categories: [],
+            marques: []
         }
     },
     methods: {
@@ -218,26 +177,38 @@ export default {
                 cancelButtonText: 'Annuler'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    Swal.fire(
-                        'Supprimé !',
-                        'Le produit a bien été supprimé',
-                        'success'
-                    )
+                    produit.deleteProduit(id).then((response) => {
+                        if (response.status == 200) {
+                            Swal.fire(
+                                'Supprimé !',
+                                'Le produit a bien été supprimé',
+                                'success'
+                            ).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.reload()
+                                }
+                            })
+                        }
+                    })
                 }
             })
         },
         updateProduit() {
-            var form = document.getElementById('form');
-            var formData = new FormData(form);
-
-            formData.append("nom", this.produit.nom);
-            formData.append("description", this.produit.description);
-            formData.append("qte", this.produit.qte);
-            formData.append("image", this.produit.image);
-            formData.append("prix", this.produit.prix);
-            formData.append("categorie_id", this.produit.categorie_id);
-            formData.append("marque_id", this.produit.marque_id);
-            console.log(this.produit);
+            produit.updateProduit(this.id, this.produitUpdate).then((response) => {
+                if (response.status == 200) {
+                    Swal.fire(
+                        'Modifié !',
+                        'Le produit a bien été mis à jour',
+                        'success'
+                    ).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.reload()
+                        }
+                    })
+                }
+            })
+            console.log(this.produitUpdate);
+            this.closeModal()
         },
         showUpdateModal(id) {
             const data = this.produits.find((element) => element.id == id)
@@ -245,18 +216,61 @@ export default {
             this.produitUpdate.description = data.description
             this.produitUpdate.qte = data.qte
             this.produitUpdate.prix = data.prix
-            this.produitUpdate.categorie_id = data.categorie_id
-            this.produitUpdate.marque_id = data.marque_id
+            this.produitUpdate.categorie_id = data.categorie.id
+            this.produitUpdate.marque_id = data.marque.id
             this.produitUpdate.nom = data.nom
-            console.log(this.produitUpdate);
-            this.visibleModal = true
+            this.updateModal = true
             this.id = id
+        },
+        closeModalOutside(event) {
+            if (event.target.classList.contains('modal-custom')) {
+                this.closeModal();
+            }
+        },
+        closeModal() {
+            this.isModalOpen = false;
+            this.updateModal = false
         },
     },
 }
 </script>
 
 <style scoped>
+
+.modal-custom {
+    z-index: 1;
+    display: flex;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: auto;
+    overflow: scroll;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 40%;
+    height: auto;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
 .mr {
     margin-right: 20px;
 }
