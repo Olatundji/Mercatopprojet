@@ -21,6 +21,7 @@ import ShopPage from '@/views/client/ShopPage.vue'
 import CommandePage from '@/views/client/CommandePage.vue'
 import DetailsProduit from '../views/client/DetailsProduit.vue'
 import CartPage from '@/views/client/CartPage.vue'
+import CheckoutPage from '@/views/client/CheckoutPage.vue'
 
 const routes = [
   {
@@ -137,6 +138,11 @@ const routes = [
     meta: {requireAuth: true, type:'user'},
     name: "UserCommandes",
     component: CommandePage,
+  },
+  {
+    path: '/user/checkout', 
+    name: "UserCommandes",
+    component: CheckoutPage,
   },
   {
     path: '/:pathMatch(.*)*',redirect: '/'

@@ -27,6 +27,8 @@ export default createStore({
     addToCart(state, element){
       const produitExistant = state.cart.some(p => p.id === element.id);
       if (!produitExistant) {
+        element.quatite = 1
+        element.total = parseInt(element.prix)
         state.cart.push(element)
       }
     },
@@ -63,6 +65,9 @@ export default createStore({
     },
   },
   getters: {
+    getTotalCart(state) {
+      return state.cart.reduce((total, item) => total + item.total, 0);
+    },
     getCartNumber(state){
       return state.cart.length
     },

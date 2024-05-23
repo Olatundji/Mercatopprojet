@@ -1,7 +1,7 @@
 # Mercatopprojet
 e-commerce
 
-paiement avec strippe
+paiement avec stripe
 npm install @vue-stripe/vue-stripe
 
 Paypal

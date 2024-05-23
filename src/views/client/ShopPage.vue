@@ -353,7 +353,6 @@ export default {
     methods: {
         async allProduit(){
             await produit.allProduit().then((response) => {
-                console.log(response.data.produits);
                 this.produits  = response.data.produits 
                 // console.log(this.produits.length);
             } )
