@@ -22,26 +22,26 @@ class AuthController extends BaseController
     {
         try {
             $userModel = new UserModel();
-  
+
             $email = $this->request->getVar('email');
             $password = $this->request->getVar('password');
-              
+
             $user = $userModel->where('email', $email)->first();
-      
-            if(is_null($user)) {
+
+            if (is_null($user)) {
                 return $this->respond(['error' => 'Invalid username or password.'], 401);
             }
-      
+
             $pwd_verify = password_verify($password, $user['password']);
-      
-            if(!$pwd_verify) {
+
+            if (!$pwd_verify) {
                 return $this->respond(['error' => 'Invalid username or password.'], 401);
             }
-     
+
             $key = getenv('JWT_SECRET');
             $iat = time(); // current timestamp value
             $exp = $iat + 3600;
-     
+
             $payload = array(
                 "iss" => "Issuer of the JWT",
                 "aud" => "Audience that the JWT",
@@ -50,18 +50,17 @@ class AuthController extends BaseController
                 "exp" => $exp, // Expiration time of token
                 "email" => $user['email'],
             );
-             
+
             $token = JWT::encode($payload, $key, 'HS256');
-     
+
             $response = [
                 'message' => 'Login Succesful',
                 'token' => $token,
                 'user' => $user // Ajouter les détails de l'utilisateur ici
             ];
-             
+
             return $this->respond($response, 200);
-        }
-     catch (\Exception $e) {
+        } catch (\Exception $e) {
             log_message('error', $e->getMessage());
             return $this->fail('An error occurred: ' . $e->getMessage(), 500);
         }
@@ -87,32 +86,6 @@ class AuthController extends BaseController
         }
     }
 
-    // public function profile()
-    // {
-    //     try {
-    //         $token = $this->request->getServer('HTTP_AUTHORIZATION');
-    //         if (!$token) {
-    //             return $this->failUnauthorized('Token is missing');
-    //         }
-
-    //         $key = "mon_code_keys";
-    //         $decoded = JWT::decode($token, $key, ['HS256']);
-    //         $userId = $decoded->user_id;
-
-    //         $user = $this->userModel->find($userId);
-
-    //         if (!$user) {
-    //             return $this->failNotFound('User not found');
-    //         }
-
-    //         unset($user['password']);
-
-    //         return $this->respond($user);
-    //     } catch (\Exception $e) {
-    //         log_message('error', $e->getMessage());
-    //         return $this->fail('An error occurred: ' . $e->getMessage(), 500);
-    //     }
-    // }
 
     public function show($id)
     {
@@ -129,10 +102,10 @@ class AuthController extends BaseController
     {
         $data = [
             'nom' => $this->request->getVar('nom'),
-                'numero' => $this->request->getVar('numero'),
-                'adresse' => $this->request->getVar('adresse'),
-                'email' => $this->request->getVar('email'),
-                'password' => password_hash($this->request->getVar('password'), PASSWORD_DEFAULT),
+            'numero' => $this->request->getVar('numero'),
+            'adresse' => $this->request->getVar('adresse'),
+            'email' => $this->request->getVar('email'),
+            'password' => password_hash($this->request->getVar('password'), PASSWORD_DEFAULT),
         ];
 
         $user = $this->userModel->find($id);
@@ -143,5 +116,55 @@ class AuthController extends BaseController
         $this->userModel->update($id, $data);
 
         return $this->respond(['message' => 'User information updated successfully']);
+    }
+
+    public function forgotPassword()
+    {
+        try {
+            $email = $this->request->getVar('email');
+            $user = $this->userModel->where('email', $email)->first();
+
+            if (!$user) {
+                return $this->respond(['error' => 'Email not found'], 404);
+            }
+
+            $resetToken = bin2hex(random_bytes(16));
+            $this->userModel->update($user['id'], ['reset_token' => $resetToken]);
+
+            $emailService = \Config\Services::email();
+            $emailService->setTo($email);
+            $emailService->setSubject('Password Reset');
+            $emailService->setMessage("Please use the following token to reset your password: $resetToken");
+            $emailService->send();
+
+            return $this->respond(['message' => 'Password reset token sent']);
+        } catch (\Exception $e) {
+            log_message('error', $e->getMessage());
+            return $this->fail('An error occurred: ' . $e->getMessage(), 500);
+        }
+    }
+
+    public function resetPassword()
+    {
+        try {
+            $resetToken = $this->request->getVar('reset_token');
+            $newPassword = $this->request->getVar('password');
+
+            $user = $this->userModel->where('reset_token', $resetToken)->first();
+
+            if (!$user) {
+                return $this->respond(['error' => 'Invalid token'], 400);
+            }
+
+            $this->userModel->update($user['id'], [
+                'password' => password_hash($newPassword, PASSWORD_DEFAULT),
+                'reset_token' => null
+            ]);
+
+            return $this->respond(['message' => 'Password reset successfully']);
+        } catch (\Exception $e) {
+            log_message('error', $e->getMessage());
+            return $this->fail('An error occurred: ' . $e->getMessage(), 500);
+        }
     }
 }

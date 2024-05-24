@@ -15,7 +15,7 @@ class User extends Migration
                 'unsigned' => true,
                 'auto_increment' => true,
             ],
-            
+
             'nom' => [
                 'type' => 'VARCHAR',
                 'constraint' => 100,
@@ -47,6 +47,10 @@ class User extends Migration
                 'null' => true,
                 'default' => 'user'
             ],
+            'reset_token' => [
+                'type' => 'VARCHAR',
+                'constraint' => 100,
+            ],
             'created_at' => [
                 'type' => 'DATETIME',
                 'null' => true,
@@ -55,7 +59,7 @@ class User extends Migration
                 'type' => 'DATETIME',
                 'null' => true,
             ],
-            
+
         ]);
         $this->forge->addPrimaryKey('id');
         $this->forge->createTable('users');
@@ -66,4 +70,3 @@ class User extends Migration
         $this->forge->dropTable('users');
     }
 }
-

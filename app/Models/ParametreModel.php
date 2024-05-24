@@ -32,7 +32,7 @@ class ParametreModel extends Model
         'nom' => 'required|min_length[3]|max_length[255]',
         'slogan' => 'required|min_length[3]|max_length[255]',
         'adresse' => 'required|min_length[3]|max_length[255]',
-        'logo' => 'uploaded[logo]|max_size[logo,2048]|is_image[logo]|mime_in[logo,image/jpg,image/jpeg,image/gif,image/png]'
+        //'logo' => 'uploaded[logo]|max_size[logo,2048]|is_image[logo]|mime_in[logo,image/jpg,image/jpeg,image/gif,image/png]'
     ];
     protected $validationMessages   = [
         'nom' => [
@@ -50,12 +50,12 @@ class ParametreModel extends Model
             'min_length' => 'Le champ adresse doit avoir au moins 3 caractères.',
             'max_length' => 'Le champ adresse ne peut pas dépasser 255 caractères.',
         ],
-        'logo' => [
-            'uploaded' => 'You must upload a valid logo file.',
-            'max_size' => 'The logo file size must be less than 2MB.',
-            'is_image' => 'The logo file must be an image.',
-            'mime_in' => 'The logo file must be a type of jpg, jpeg, gif, or png.'
-        ]
+        // 'logo' => [
+        //     'uploaded' => 'You must upload a valid logo file.',
+        //     'max_size' => 'The logo file size must be less than 2MB.',
+        //     'is_image' => 'The logo file must be an image.',
+        //     'mime_in' => 'The logo file must be a type of jpg, jpeg, gif, or png.'
+        // ]
     ];
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;

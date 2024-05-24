@@ -54,12 +54,10 @@ class CategorieController extends BaseController
 
     public function update($id)
     {
-        // Récupérer les données envoyées dans la requête
         $data = [
             'libelle' => $this->request->getVar('libelle'),
         ];
 
-        // Mettre à jour le produit dans la base de données
         $this->categorieModel->update($id, $data);
 
         return $this->respond(['message' => 'categorie updated successfully']);
@@ -67,7 +65,6 @@ class CategorieController extends BaseController
 
     public function delete($id)
     {
-        // Supprimer le produit de la base de données
         $this->categorieModel->delete($id);
 
         return $this->respondDeleted(['message' => 'categorie deleted successfully']);

@@ -1,9 +1,9 @@
 <?php
-  
+
 namespace App\Models;
-  
+
 use CodeIgniter\Model;
-  
+
 class UserModel extends Model
 {
     protected $DBGroup              = 'default';
@@ -14,15 +14,15 @@ class UserModel extends Model
     protected $returnType           = 'array';
     protected $useSoftDeletes       = false;
     protected $protectFields        = true;
-    protected $allowedFields        = ['nom', 'numero' ,'adresse' , 'email' ,'password'];
-  
+    protected $allowedFields        = ['nom', 'numero', 'adresse', 'email', 'password', 'reset_token'];
+
     // Dates
     protected $useTimestamps        = true;
     protected $dateFormat           = 'datetime';
     protected $createdField         = 'created_at';
     protected $updatedField         = 'updated_at';
     protected $deletedField         = 'deleted_at';
-  
+
     // Validation
     protected $validationRules = [
         'nom' => 'required',
@@ -34,7 +34,7 @@ class UserModel extends Model
     protected $validationMessages   = [];
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
-  
+
     // Callbacks
     protected $allowCallbacks       = true;
     protected $beforeInsert         = [];
@@ -46,16 +46,16 @@ class UserModel extends Model
     protected $beforeDelete         = [];
     protected $afterDelete          = [];
 
-     public function favoris()
-     {
-         return $this->belongsTo(FavorisModel::class);
-     }
-     public function commande()
+    public function favoris()
     {
-    return $this->belongsTo(CommandeModel::class);
+        return $this->belongsTo(FavorisModel::class);
+    }
+    public function commande()
+    {
+        return $this->belongsTo(CommandeModel::class);
     }
     public function commentaire()
-{
-    return $this->belongsTo(CommentaireModel::class);
-}
+    {
+        return $this->belongsTo(CommentaireModel::class);
+    }
 }

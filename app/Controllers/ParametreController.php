@@ -2,57 +2,77 @@
 
 namespace App\Controllers;
 
-use CodeIgniter\API\ResponseTrait;
 use App\Models\ParametreModel;
+use CodeIgniter\RESTful\ResourceController;
+use CodeIgniter\HTTP\ResponseInterface;
 
-class ParametreController extends BaseController
+class ParametreController extends ResourceController
 {
-    use ResponseTrait;
 
-    private $parametreModel;
+    protected $parametreModel;
 
     public function __construct()
     {
+        // Charger le modèle et les helpers nécessaires
         $this->parametreModel = new ParametreModel();
+        helper(['form', 'url']);
     }
 
-    public function update($id)
+    public function update($id = null)
     {
-        log_message('debug', 'Updating parameters with ID: ' . $id);
+        log_message('info', 'Starting update method');
 
-        $validation = \Config\Services::validation();
-        $validation->setRules($this->parametreModel->validationRules);
+        // Vérifier s'il y a un fichier téléchargé
+        $file = $this->request->getFile('logo');
 
-        if (!$validation->withRequest($this->request)->run()) {
-            return $this->failValidationErrors($validation->getErrors());
+        if ($file && $file->isValid() && !$file->hasMoved()) {
+            log_message('info', 'File is valid and ready to be uploaded');
+
+            // Définir le chemin de téléchargement
+            $newName = $file->getRandomName();
+            $file->move(WRITEPATH . 'uploads', $newName);
+
+            // Récupérer le chemin complet de l'image téléchargée
+            $logo_path = base_url('uploads/' . $newName);
+        } else {
+            log_message('error', 'File upload error: ' . ($file ? $file->getErrorString() : 'File not found'));
+
+            // Gérer les erreurs de téléchargement
+            $response = [
+                'status' => 'error',
+                'message' => $file ? $file->getErrorString() : 'File not found'
+            ];
+            return $this->respond($response, ResponseInterface::HTTP_BAD_REQUEST);
         }
 
+        // Récupérer les données du formulaire
         $data = [
-            'nom' => $this->request->getVar('nom'),
-            'slogan' => $this->request->getVar('slogan'),
-            'adresse' => $this->request->getVar('adresse')
+            'nom' => $this->request->getPost('nom'),
+            'slogan' => $this->request->getPost('slogan'),
+            'adresse' => $this->request->getPost('adresse'),
+            'logo' => $logo_path
         ];
 
-        $file = $this->request->getFile('logo');
-        if ($file && $file->isValid() && !$file->hasMoved()) {
-            $fileName = $file->getRandomName();
-            $filePath = WRITEPATH . 'uploads/' . $fileName;
-            if ($file->move(WRITEPATH . 'uploads', $fileName)) {
-                log_message('debug', 'Logo file moved successfully to: ' . $filePath);
-                $data['logo'] = $filePath;
-            } else {
-                log_message('error', 'Failed to move logo file');
-                return $this->failServerError('Failed to move logo file');
-            }
+        log_message('info', 'Form data received: ' . json_encode($data));
+
+        // Mettre à jour le paramètre dans la base de données
+        if ($this->parametreModel->update($id, $data)) {
+            log_message('info', 'Parameter updated successfully');
+
+            $response = [
+                'status' => 'success',
+                'message' => 'Parameter updated successfully'
+            ];
+        } else {
+            log_message('error', 'Database update failed: ' . json_encode($this->parametreModel->errors()));
+
+            $response = [
+                'status' => 'error',
+                'message' => 'Failed to update parameter',
+                'errors' => $this->parametreModel->errors()
+            ];
         }
 
-        if (!$this->parametreModel->update($id, $data)) {
-            log_message('error', 'Failed to update parameters: ' . json_encode($this->parametreModel->errors()));
-            return $this->failValidationErrors($this->parametreModel->errors());
-        }
-
-        log_message('debug', 'Parameters updated successfully');
-
-        return $this->respond(['message' => 'Parameters updated successfully']);
+        return $this->respond($response);
     }
 }

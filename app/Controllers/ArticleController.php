@@ -17,7 +17,8 @@ class ArticleController extends BaseController
         $this->articleModel = new ArticleModel();
     }
 
-    public function search() {
+    public function search()
+    {
         $keyword = $this->request->getGet('keyword');
         $results = $this->articleModel->searchArticles($keyword);
         return $this->respond($results);
@@ -28,9 +29,9 @@ class ArticleController extends BaseController
         $page = $this->request->getVar('page') ?? 1;
         $perPage = 10;
         $articles = $this->articleModel
-                        ->select('articles.*, categorie_articles.libelle as categorie_nom')
-                        ->join('categorie_articles', 'categorie_articles.id = articles.idCategorie_article')
-                        ->paginate($perPage, 'default', $page);
+            ->select('articles.*, categorie_articles.libelle as categorie_nom')
+            ->join('categorie_articles', 'categorie_articles.id = articles.idCategorie_article')
+            ->paginate($perPage, 'default', $page);
 
         if (empty($articles)) {
             return $this->respond(['message' => 'No articles found'], 404);
@@ -146,7 +147,8 @@ class ArticleController extends BaseController
         return $this->respondDeleted(['message' => 'Article deleted successfully']);
     }
 
-    public function rechercheParCategorie($idCategorie_article) {
+    public function rechercheParCategorie($idCategorie_article)
+    {
         $articles = $this->articleModel->where('idCategorie_article', $idCategorie_article)->findAll();
         if (empty($articles)) {
             return $this->failNotFound('No article found in this category');

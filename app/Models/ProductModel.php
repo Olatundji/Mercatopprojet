@@ -1,7 +1,7 @@
 <?php
-  
+
 namespace App\Models;
-  
+
 use CodeIgniter\Model;
 use COM;
 
@@ -15,15 +15,15 @@ class ProductModel extends Model
     protected $returnType           = 'array';
     protected $useSoftDeletes       = false;
     protected $protectFields        = true;
-    protected $allowedFields        = ['nom', 'prix', 'description',  'qte' , 'image' , 'idMarque' , 'idCategorie']; // Champs autorisés pour la création de produit
-  
+    protected $allowedFields        = ['nom', 'prix', 'description',  'qte', 'image', 'idMarque', 'idCategorie']; // Champs autorisés pour la création de produit
+
     // Dates
     protected $useTimestamps        = true;
     protected $dateFormat           = 'datetime';
     protected $createdField         = 'created_at';
     protected $updatedField         = 'updated_at';
     protected $deletedField         = 'deleted_at';
-  
+
     // Validation
     protected $validationRules      = [
         'nom' => 'required',
@@ -38,7 +38,7 @@ class ProductModel extends Model
     protected $validationMessages   = [];
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
-  
+
     // Callbacks
     protected $allowCallbacks       = true;
     protected $beforeInsert         = [];
@@ -74,5 +74,10 @@ class ProductModel extends Model
     public function commentaire()
     {
         return $this->belongsTo(CommentaireModel::class);
+    }
+
+    public function getRandomProduit($limit = 4)
+    {
+        return $this->orderBy('RAND()')->findAll($limit);
     }
 }

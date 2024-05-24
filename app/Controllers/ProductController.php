@@ -25,13 +25,14 @@ class ProductController extends BaseController
 
     public function index()
     {
-        $page = $this->request->getVar('page') ?? 1;
+         $page = $this->request->getVar('page') ?? 1;
+         $limit = $this->request->getVar('limit') ?? 10;
         $perPage = 10;
         $produit = $this->productModel
-                        ->select('produit.*, marques.nom as marque_nom, categories.libelle as categorie_nom')
-                        ->join('marques', 'marques.id = produit.idMarque')
-                        ->join('categories', 'categories.id = produit.idCategorie')
-                        ->paginate($perPage, 'default', $page);
+            ->select('produit.*, marques.nom as marque_nom, categories.libelle as categorie_nom')
+            ->join('marques', 'marques.id = produit.idMarque')
+            ->join('categories', 'categories.id = produit.idCategorie')
+            ->paginate($perPage, 'default', $page);
 
         if (empty($produit)) {
             return $this->respond(['message' => 'No products found'], 404);
@@ -63,10 +64,10 @@ class ProductController extends BaseController
     {
         // Récupérer le produit par son ID
         $product = $this->productModel
-                        ->select('produit.*, marques.nom as marque_nom, categories.libelle as categorie_nom')
-                        ->join('marques', 'marques.id = produit.idMarque')
-                        ->join('categories', 'categories.id = produit.idCategorie')
-                        ->find($id);
+            ->select('produit.*, marques.nom as marque_nom, categories.libelle as categorie_nom')
+            ->join('marques', 'marques.id = produit.idMarque')
+            ->join('categories', 'categories.id = produit.idCategorie')
+            ->find($id);
 
         if (!$product) {
             return $this->failNotFound('Product not found');
@@ -116,7 +117,7 @@ class ProductController extends BaseController
             $fileName = $file->getRandomName();
             $filePath = 'uploads/' . $fileName;
             $file->move(WRITEPATH . 'uploads', $fileName);
-            
+
             $data['image'] = base_url('uploads/' . $fileName);
         }
 
@@ -153,7 +154,7 @@ class ProductController extends BaseController
             $fileName = $file->getRandomName();
             $filePath = 'uploads/' . $fileName;
             $file->move(WRITEPATH . 'uploads', $fileName);
-            
+
             $data['image'] = base_url('uploads/' . $fileName);
         }
 
@@ -182,5 +183,25 @@ class ProductController extends BaseController
         }
 
         return $this->respond($produit);
+    }
+
+    public function getRandomProduit()
+    {
+        try {
+            log_message('info', 'Entering getRandomProducts method');
+
+            $produit = $this->productModel->getRandomProduit(4);
+
+            if (empty($produit)) {
+                log_message('info', 'No products found');
+            } else {
+                log_message('info', 'Products found: ' . json_encode($produit));
+            }
+
+            return $this->respond($produit, 200);
+        } catch (\Exception $e) {
+            log_message('error', $e->getMessage());
+            return $this->fail('An error occurred: ' . $e->getMessage(), 500);
+        }
     }
 }
