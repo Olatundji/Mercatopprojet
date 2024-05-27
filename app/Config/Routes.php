@@ -182,12 +182,12 @@ $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection
 
 //favoris
 $routes->post('api/favoris/create', 'FavorisController::create');
-$routes->post('api/favoris/index', 'FavorisController::index');
-$routes->post('api/favoris/delete(:num)', 'FavorisController::delete/$1');
+$routes->get('api/favoris/user/(:num)', 'FavorisController::index/$1');
+$routes->delete('api/favoris/delete/(:num)', 'FavorisController::delete/$1');
 //commentaire
 $routes->post('api/commentaires/create', 'CommentaireController::create');
 $routes->get('api/commentaires/index', 'CommentaireController::index');
-$routes->delete('api/commentaires/delete(:num)', 'CommentaireController::delete/$1');
+$routes->delete('api/commentaires/delete/(:num)', 'CommentaireController::delete/$1');
 
 
 $routes->post('api/upload', 'FileController::uploadFile');

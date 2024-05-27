@@ -25,8 +25,8 @@ class ProductController extends BaseController
 
     public function index()
     {
-         $page = $this->request->getVar('page') ?? 1;
-         $limit = $this->request->getVar('limit') ?? 10;
+        $page = $this->request->getVar('page') ?? 1;
+        $limit = $this->request->getVar('limit') ?? 10;
         $perPage = 10;
         $produit = $this->productModel
             ->select('produit.*, marques.nom as marque_nom, categories.libelle as categorie_nom')

@@ -23,13 +23,13 @@ class ProduitSeeder extends Seeder
             $destinationImagePath = $uploadPath . $imageName;
 
             if (copy($sourceImagePath, $destinationImagePath)) {
-                $data=[ 
+                $data = [
                     'nom' => 'produit',
                     'prix' => '20',
                     'description' => 'mon produit',
                     'qte' => '10',
-                    'image'=> $imageName,
-                    'idMarque' => '1',
+                    'image' => $imageName,
+                    'idMarque' => '2',
                     'idCategorie' => '1',
                     'created_at' => date('Y-m-d H:i:s'),
                     'updated_at' => date('Y-m-d H:i:s'),
@@ -40,6 +40,5 @@ class ProduitSeeder extends Seeder
                 echo "Erreur lors du téléchargement de l'image.";
             }
         }
-        
     }
 }

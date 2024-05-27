@@ -15,81 +15,69 @@ class FavorisController extends BaseController
     {
         $this->favorisModel = new FavorisModel();
     }
-    public function index()
-{
-    // Récupérer la page actuelle à partir de la requête GET
-    $page = $this->request->getVar('page') ?? 1;
 
-    // Définir le nombre d'éléments par page
-    $perPage = 10;
+    public function index($idUser)
+    {
+        $page = $this->request->getVar('page') ?? 1;
 
-    // Récupérer tous les produits depuis la base de données avec les détails de la marque et de la catégorie
-    $favoris = $this->favorisModel
-                    ->select('favoris.*, produit.nom as produit_nom, users.nom as user_nom')
-                    ->join('produit', 'produit.id = favoris.idProduit')
-                    ->join('users', 'users.id = favoris.idUser')
-                    ->paginate($perPage, 'default', $page);
+        $perPage = 10;
 
-    // Vérifier s'il y a des produits
-    if (empty($favoris)) {
-        // Aucun produit trouvé
-        return $this->respond(['message' => 'No favoris found'], 404);
+        $favoris = $this->favorisModel
+            ->select('favoris.*, produit.nom as produit_nom')
+            ->join('produit', 'produit.id = favoris.idProduit')
+            ->where('favoris.idUser', $idUser)
+            ->paginate($perPage, 'default', $page);
+
+        if (empty($favoris)) {
+            return $this->respond(['message' => 'No favoris found for this user'], 404);
+        }
+
+        $formattedFavoris = [];
+        foreach ($favoris as $favori) {
+            $formattedFavoris[] = [
+                'id' => $favori['id'],
+                'produit' => [
+                    'id' => $favori['idProduit'],
+                    'nom' => $favori['produit_nom']
+                ]
+            ];
+        }
+
+        return $this->respond($formattedFavoris);
     }
 
-    // Formatter la réponse avec les détails de la marque et de la catégorie
-    $formattedFavoris = [];
-    foreach ($favoris as $favori) {
-        $formattedFavoris[] = [
-            'id' => $favori['id'],
-            'nom' => $favori['libelle'],
-            'produit' => [
-                'id' => $favori['idProduit'],
-                'nom' => $favori['produit_nom']
-            ],
-            'user' => [
-                'id' => $favori['idUser'],
-                'nom' => $favori['user_nom']
-            ]
+    public function create()
+    {
+        if (!$this->validate($this->favorisModel->validationRules)) {
+            return $this->failValidationErrors($this->validator->getErrors());
+        }
+
+        $data = [
+            'idProduit' => $this->request->getVar('idProduit'),
+            'idUser' => $this->request->getVar('idUser'),
         ];
+
+        $this->favorisModel->insert($data);
+
+        return $this->respond(['message' => 'Favoris created successfully']);
     }
-
-    // Retourner la liste des produits formatés avec les détails de la marque et de la catégorie
-    return $this->respond($formattedFavoris);
-}
-
-
-
-public function create()
-{
-    // Valider les données soumises
-    if (!$this->validate($this->favorisModel->validationRules)) {
-        // Si la validation échoue, renvoyer les erreurs de validation
-        return $this->failValidationErrors($this->validator->getErrors());
-    }
-
-    // Les données sont valides, continuez le traitement
-    // Récupérer les données envoyées dans la requête
-    $data = [
-        'idProduit' => $this->request->getVar('idProduit'),
-        'idUser' => $this->request->getVar('idUser'),
-    ];
-
-    // Afficher les données soumises pour déboguer
-    //var_dump($data);
-
-    // Insérer le nouveau produit dans la base de données
-    $this->favorisModel->insert($data);
-
-    return $this->respond(['message' => 'favoris created successfully']);
-}
-
 
     public function delete($id)
     {
-        // Supprimer le produit de la base de données
-        $this->favorisModel->delete($id);
+        log_message('info', 'Trying to delete favoris with id: ' . $id);
 
-        return $this->respondDeleted(['message' => 'favoris deleted successfully']);
+        $favori = $this->favorisModel->find($id);
+        if (!$favori) {
+            log_message('error', 'Favoris not found with id: ' . $id);
+            return $this->failNotFound('Favoris not found');
+        }
+
+        if ($this->favorisModel->delete($id)) {
+            log_message('info', 'Favoris deleted successfully with id: ' . $id);
+            return $this->respondDeleted(['message' => 'Favoris deleted successfully']);
+        } else {
+            log_message('error', 'Failed to delete favoris with id: ' . $id);
+            return $this->fail('Failed to delete favoris');
+        }
     }
-   
 }
