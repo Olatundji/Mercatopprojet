@@ -100,17 +100,30 @@ class AuthController extends BaseController
 
     public function update($id)
     {
-        $data = [
-            'nom' => $this->request->getVar('nom'),
-            'numero' => $this->request->getVar('numero'),
-            'adresse' => $this->request->getVar('adresse'),
-            'email' => $this->request->getVar('email'),
-            'password' => password_hash($this->request->getVar('password'), PASSWORD_DEFAULT),
-        ];
-
         $user = $this->userModel->find($id);
         if (!$user) {
             return $this->failNotFound('User not found');
+        }
+
+        $nom = $this->request->getVar('nom');
+        $numero = $this->request->getVar('numero');
+        $adresse = $this->request->getVar('adresse');
+        $email = $this->request->getVar('email');
+        $password = $this->request->getVar('password');
+
+        $data = [];
+
+        if ($nom !== null) {
+            $data['nom'] = $nom;
+        }
+        if ($numero !== null) {
+            $data['numero'] = $numero;
+        }
+        if ($adresse !== null) {
+            $data['adresse'] = $adresse;
+        }
+        if ($password !== null) {
+            $data['password'] = password_hash($password, PASSWORD_DEFAULT);
         }
 
         $this->userModel->update($id, $data);
@@ -119,6 +132,7 @@ class AuthController extends BaseController
 
         return $this->respond(['message' => 'User information updated successfully', 'user' => $updatedUser]);
     }
+
 
 
     public function forgotPassword()

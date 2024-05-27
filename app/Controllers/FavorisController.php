@@ -23,8 +23,10 @@ class FavorisController extends BaseController
         $perPage = 10;
 
         $favoris = $this->favorisModel
-            ->select('favoris.*, produit.nom as produit_nom')
+            ->select('favoris.*, produit.*, categories.libelle as categorie_nom, marques.nom as marque_nom')
             ->join('produit', 'produit.id = favoris.idProduit')
+            ->join('categories', 'categories.id = produit.idCategorie')
+            ->join('marques', 'marques.id = produit.idMarque')
             ->where('favoris.idUser', $idUser)
             ->paginate($perPage, 'default', $page);
 
@@ -38,7 +40,14 @@ class FavorisController extends BaseController
                 'id' => $favori['id'],
                 'produit' => [
                     'id' => $favori['idProduit'],
-                    'nom' => $favori['produit_nom']
+                    'nom' => $favori['nom'],
+                    'description' => $favori['description'],
+                    'image' => $favori['image'],
+                    'qte' => $favori['qte'],
+                    'idCategorie' => $favori['idCategorie'],
+                    'categorie_nom' => $favori['categorie_nom'],
+                    'idMarque' => $favori['idMarque'],
+                    'marque_nom' => $favori['marque_nom']
                 ]
             ];
         }
