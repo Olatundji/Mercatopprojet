@@ -32,18 +32,32 @@ class CommandeController extends BaseController
             return $this->failNotFound('No commandes found');
         }
 
+        foreach ($commandes as &$commande) {
+            $commande['produit'] = json_decode($commande['produit'], true);
+        }
+
         return $this->respond($commandes);
     }
 
     public function create()
     {
+        $panier = $this->request->getVar('panier');
+
+        if (is_string($panier)) {
+            $panier = json_decode($panier, true);
+        }
+
+        if (!is_array($panier)) {
+            return $this->fail('Panier doit être un tableau de produits', 400);
+        }
+
         $data = [
             'etat' => 'pending',
             'date' => date('Y-m-d H:i:s'),
             'transaction' => $this->request->getVar('transaction'),
             'methode_pay' => $this->request->getVar('methode_pay'),
             'montant' => $this->request->getVar('montant'),
-            'produits' => $this->request->getVar('panier'),
+            'produit' => json_encode($panier),
             'idUser' => $this->request->getVar('idUser'),
         ];
 
@@ -77,7 +91,7 @@ class CommandeController extends BaseController
         $client = new Client();
         $url = 'https://api.sandbox.paypal.com/v1/payments/payment/' . $transactionId;
 
-        $clientId = 'your_paypal_client_id';
+        $clientId = 'AeFGhGeO4unjO0Zgk4YfWVc_Q43kIgRmgYoI2UHLbd1C7FOzbhlcGe08nswsHcvrsFgEhzIAJuu_cu3L';
         $clientSecret = 'your_paypal_client_secret';
 
         try {
@@ -193,6 +207,10 @@ class CommandeController extends BaseController
             return $this->failNotFound('No commandes found for this user');
         }
 
+        foreach ($commandesUtilisateur as &$commande) {
+            $commande['produit'] = json_decode($commande['produit'], true);
+        }
+
         return $this->respond($commandesUtilisateur);
     }
 
@@ -202,5 +220,39 @@ class CommandeController extends BaseController
         $this->commandeModel->update($id, $data);
 
         return $this->respond(['message' => 'Commande validée avec succès']);
+    }
+
+    public function update($id)
+    {
+        $commande = $this->commandeModel->find($id);
+        if (!$commande) {
+            return $this->failNotFound('Commande not found');
+        }
+
+        $data = $this->request->getRawInput();
+        $data = array_filter($data, function ($value) {
+            return $value !== null && $value !== '';
+        });
+
+        $data['updated_at'] = date('Y-m-d H:i:s');
+
+        if (isset($data['panier'])) {
+            if (is_string($data['panier'])) {
+                $data['produit'] = $data['panier'];
+            } else {
+                if (!is_array($data['panier'])) {
+                    return $this->fail('Panier doit être un tableau de produit', 400);
+                }
+                $data['produit'] = json_encode($data['panier']);
+            }
+            unset($data['panier']); // Retirer l'entrée panier du tableau
+        }
+
+        $this->commandeModel->update($id, $data);
+
+        $updatedCommande = $this->commandeModel->find($id);
+        $updatedCommande['produit'] = json_decode($updatedCommande['produit'], true);
+
+        return $this->respond(['message' => 'Commande information updated successfully', 'commande' => $updatedCommande]);
     }
 }
