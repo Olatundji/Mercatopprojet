@@ -115,8 +115,11 @@ class AuthController extends BaseController
 
         $this->userModel->update($id, $data);
 
-        return $this->respond(['message' => 'User information updated successfully']);
+        $updatedUser = $this->userModel->find($id);
+
+        return $this->respond(['message' => 'User information updated successfully', 'user' => $updatedUser]);
     }
+
 
     public function forgotPassword()
     {

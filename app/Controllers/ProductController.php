@@ -190,18 +190,41 @@ class ProductController extends BaseController
         try {
             log_message('info', 'Entering getRandomProducts method');
 
-            $produit = $this->productModel->getRandomProduit(4);
+            $produits = $this->productModel
+                ->select('produit.*, marques.nom as marque_nom, categories.libelle as categorie_nom')
+                ->join('marques', 'marques.id = produit.idMarque')
+                ->join('categories', 'categories.id = produit.idCategorie')
+                ->findAll(4);
 
-            if (empty($produit)) {
-                log_message('info', 'No products found');
-            } else {
-                log_message('info', 'Products found: ' . json_encode($produit));
+            if (empty($produits)) {
+                return $this->failNotFound('No products found');
             }
 
-            return $this->respond($produit, 200);
+            $formattedProduits = [];
+            foreach ($produits as $produit) {
+                $formattedProduits[] = [
+                    'id' => $produit['id'],
+                    'nom' => $produit['nom'],
+                    'prix' => $produit['prix'],
+                    'description' => $produit['description'],
+                    'qte' => $produit['qte'],
+                    'marque' => [
+                        'id' => $produit['idMarque'],
+                        'nom' => $produit['marque_nom']
+                    ],
+                    'categorie' => [
+                        'id' => $produit['idCategorie'],
+                        'nom' => $produit['categorie_nom']
+                    ],
+                    'image' => $produit['image']
+                ];
+            }
+
+            log_message('info', 'Found products: ' . json_encode($formattedProduits));
+            return $this->respond($formattedProduits, 200);
         } catch (\Exception $e) {
-            log_message('error', $e->getMessage());
-            return $this->fail('An error occurred: ' . $e->getMessage(), 500);
+            log_message('error', 'An error occurred: ' . $e->getMessage());
+            return $this->failServerError('An error occurred: ' . $e->getMessage());
         }
     }
 }
