@@ -12,7 +12,7 @@ class CommandeModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = [];
+    protected $allowedFields    = ['etat', 'date', 'transaction', 'methode_pay', 'montant', 'produit', 'idUser'];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
@@ -53,12 +53,23 @@ class CommandeModel extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
+    public function getSalesReport()
+    {
+        $totalSales = $this->db->query('SELECT SUM(montant) AS total_sales FROM commandes')->getRow()->total_sales;
+        $totalOrders = $this->countAll();
+
+        return [
+            'total_sales' => $totalSales,
+            'total_orders' => $totalOrders
+        ];
+    }
+
     public function produit()
-{
-    return $this->hasMany(ProductModel::class , 'idProduit');
-}
-public function users()
-{
-    return $this->hasMany(UserModel::class , 'idUser');
-}
+    {
+        return $this->hasMany(ProductModel::class, 'idProduit');
+    }
+    public function users()
+    {
+        return $this->hasMany(UserModel::class, 'idUser');
+    }
 }
