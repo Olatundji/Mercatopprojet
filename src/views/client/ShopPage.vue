@@ -52,23 +52,26 @@
                             <div class="product-item">
                                 <div class="product-thumb">
                                     <img class="img-responsive" src="@/assets/images/shop/products/product-9.jpg"
-                                        alt="product-img"/>
+                                        alt="product-img" />
                                     <div class="preview-meta">
                                         <ul>
-                                            <li>
-                                                <span  data-toggle="modal" data-target="#product-modal">
-                                                    <i @click="addToCart(item)" class="tf-ion-android-add"></i>
+                                            <li @click="addToCart(item)">
+                                                <span data-toggle="modal" data-target="#product-modal">
+                                                    <i class="tf-ion-android-add"></i>
                                                 </span>
                                             </li>
-                                            <li>
+                                            <li @click="addToFavoris(item.id)" v-if="isConnected" >
                                                 <a href="#!"><i class="tf-ion-ios-heart"></i></a>
+                                            </li>
+                                            <li @click="deleteFromFavoris(item.id)" v-if="isConnected" >
+                                                <a href="#!"><i class="tf-ion-ios-heart-outline"></i></a>
                                             </li>
                                         </ul>
                                     </div>
                                 </div>
                                 <div class="product-content">
                                     <h4>
-                                        <router-link to='#'>
+                                        <router-link @click="goDetails(item.id)" to='/produit/single'>
                                             {{ item.nom }}
                                         </router-link>
                                     </h4>
@@ -76,8 +79,8 @@
                                 </div>
                             </div>
                         </div>
+                        <div ref="sentinel" class="sentinel"></div>
                     </div>
-                    <div ref="endArticleSection"></div>
                 </div>
 
             </div>
@@ -92,7 +95,7 @@
 import TheHeader from '@/components/client/TheHeader.vue'
 import TheFooter from '@/components/client/TheFooter.vue'
 import store from '../../store';
-import { produit } from '../../services';
+import { produit, favoris } from '../../services';
 
 export default {
     components: {
@@ -100,293 +103,98 @@ export default {
     },
     data() {
         return {
+            isConnected: store.getters.isConnect,
+            user_id: store.getters.getUser.id,
             produits: [],
-            // produits: [
-            //     {
-            //         qte: 15,
-            //         id: 1,
-            //         nom: 'Rainbow Shoes',
-            //         prix: 200,
-            //         image: '@/assets/images/shop/products/product-9.jpg'
-            //     },
-            //     {
-            //         qte: 15,
-            //         id: 2,
-            //         nom: 'Rainbow Shoes',
-            //         prix: 200,
-            //         image: '@/assets/images/shop/products/product-2.jpg'
-            //     },
-            //     {
-            //         qte: 15,
-            //         id: 3,
-            //         nom: 'Rainbow Shoes',
-            //         prix: 200,
-            //         image: '@/assets/images/shop/products/product-9.jpg'
-            //     },
-            //     {
-            //         qte: 15,
-            //         id: 4,
-            //         nom: 'Rainbow Shoes',
-            //         prix: 150,
-            //         image: '@/assets/images/shop/products/product-2.jpg'
-            //     },
-            //     {
-            //         qte: 15,
-            //         id: 5,
-            //         nom: 'Rainbow Shoes',
-            //         prix: 150,
-            //         image: '@/assets/images/shop/products/product-9.jpg'
-            //     },
-            //     {
-            //         qte: 15,
-            //         id: 6,
-            //         nom: 'Rainbow Shoes',
-            //         prix: 200,
-            //         image: '@/assets/images/shop/products/product-2.jpg'
-            //     },
-            //     {
-            //         qte: 15,
-            //         id: 7,
-            //         nom: 'Rainbow Shoes',
-            //         prix: 150,
-            //         image: '@/assets/images/shop/products/product-9.jpg'
-            //     },
-            //     {
-            //         qte: 15,
-            //         id: 8,
-            //         nom: 'Rainbow Shoes',
-            //         prix: 200,
-            //         image: '@/assets/images/shop/products/product-3.jpg'
-            //     },
-            //     {
-            //         qte: 15,
-            //         id: 9,
-            //         nom: 'Rainbow Shoes',
-            //         prix: 150,
-            //         image: '@/assets/images/shop/products/product-9.jpg'
-            //     },
-            //     {
-            //         qte: 15,
-            //         id: 10,
-            //         nom: 'Rainbow Shoes',
-            //         prix: 200,
-            //         image: '@/assets/images/shop/products/product-3.jpg'
-            //     },
-            //     {
-            //         qte: 15,
-            //         id: 11,
-            //         nom: 'Rainbow Shoes',
-            //         prix: 200,
-            //         image: '@/assets/images/shop/products/product-9.jpg'
-            //     },
-            //     {
-            //         qte: 15,
-            //         id: 12,
-            //         nom: 'Rainbow Shoes',
-            //         prix: 150,
-            //         image: '@/assets/images/shop/products/product-9.jpg'
-            //     },
-            //     {
-            //         qte: 15,
-            //         id: 13,
-            //         nom: 'Rainbow Shoes',
-            //         prix: 200,
-            //         image: '@/assets/images/shop/products/product-3.jpg'
-            //     },
-            //     {
-            //         qte: 15,
-            //         id: 14,
-            //         nom: 'Rainbow Shoes',
-            //         prix: 200,
-            //         image: '@/assets/images/shop/products/product-9.jpg'
-            //     },
-            //     {
-            //         qte: 15,
-            //         id: 15,
-            //         nom: 'Rainbow Shoes',
-            //         prix: 150,
-            //         image: '@/assets/images/shop/products/product-3.jpg'
-            //     },
-            //     {
-            //         qte: 15,
-            //         id: 16,
-            //         nom: 'Rainbow Shoes',
-            //         prix: 200,
-            //         image: '@/assets/images/shop/products/product-9.jpg'
-            //     },
-            //     {
-            //         qte: 15,
-            //         id: 17,
-            //         nom: 'Rainbow Shoes',
-            //         prix: 200,
-            //         image: '@/assets/images/shop/products/product-9.jpg'
-            //     },
-            //     {
-            //         qte: 15,
-            //         id: 18,
-            //         nom: 'Rainbow Shoes',
-            //         prix: 200,
-            //         image: '@/assets/images/shop/products/product-9.jpg'
-            //     },
-            //     {
-            //         qte: 15,
-            //         id: 19,
-            //         nom: 'Rainbow Shoes',
-            //         prix: 200,
-            //         image: '@/assets/images/shop/products/product-9.jpg'
-            //     },
-            //     {
-            //         qte: 15,
-            //         id: 20,
-            //         nom: 'Rainbow Shoes',
-            //         prix: 200,
-            //         image: '@/assets/images/shop/products/product-9.jpg'
-            //     },
-            //     {
-            //         qte: 15,
-            //         id: 21,
-            //         nom: 'Rainbow Shoes',
-            //         prix: 200,
-            //         image: '@/assets/images/shop/products/product-9.jpg'
-            //     },
-            //     {
-            //         qte: 15,
-            //         id: 22,
-            //         nom: 'Rainbow Shoes',
-            //         prix: 200,
-            //         image: '@/assets/images/shop/products/product-9.jpg'
-            //     },
-            //     {
-            //         qte: 15,
-            //         id: 23,
-            //         nom: 'Rainbow Shoes',
-            //         prix: 200,
-            //         image: '@/assets/images/shop/products/product-9.jpg'
-            //     },
-            //     {
-            //         qte: 15,
-            //         id: 24,
-            //         nom: 'Rainbow Shoes',
-            //         prix: 200,
-            //         image: '@/assets/images/shop/products/product-9.jpg'
-            //     },
-            //     {
-            //         qte: 15,
-            //         id: 25,
-            //         nom: 'Rainbow Shoes',
-            //         prix: 200,
-            //         image: '@/assets/images/shop/products/product-9.jpg'
-            //     },
-            //     {
-            //         qte: 15,
-            //         id: 26,
-            //         nom: 'Rainbow Shoes',
-            //         prix: 200,
-            //         image: '@/assets/images/shop/products/product-9.jpg'
-            //     },
-            //     {
-            //         qte: 15,
-            //         id: 27,
-            //         nom: 'Rainbow Shoes',
-            //         prix: 200,
-            //         image: '@/assets/images/shop/products/product-9.jpg'
-            //     },
-            //     {
-            //         qte: 15,
-            //         id: 28,
-            //         nom: 'Rainbow Shoes',
-            //         prix: 200,
-            //         image: '@/assets/images/shop/products/product-9.jpg'
-            //     },
-            //     {
-            //         qte: 15,
-            //         id: 29,
-            //         nom: 'Rainbow Shoes',
-            //         prix: 200,
-            //         image: '@/assets/images/shop/products/product-9.jpg'
-            //     },
-            //     {
-            //         qte: 15,
-            //         id: 30,
-            //         nom: 'Rainbow Shoes',
-            //         prix: 200,
-            //         image: '@/assets/images/shop/products/product-9.jpg'
-            //     },
-            //     {
-            //         qte: 15,
-            //         id: 31,
-            //         nom: 'Rainbow Shoes',
-            //         prix: 200,
-            //         image: '@/assets/images/shop/products/product-9.jpg'
-            //     },
-            //     {
-            //         qte: 15,
-            //         id: 32,
-            //         nom: 'Rainbow Shoes',
-            //         prix: 200,
-            //         image: '@/assets/images/shop/products/product-9.jpg'
-            //     },
-            // ],
             showedProducts: [],
             productIndex: 0,
-            productPerLoad:5,
+            productPerLoad: 5,
             filtre: {
                 categorie_id: '',
                 marque_id: '',
                 prix: ''
             },
-            actionCart: true
+            actionCart: true,
+            page: 1,
+            isLoading: false
         }
     },
 
     mounted() {
-        // this.setupScrollListener();
-        // this.showMuch()
+        console.log();
+        this.page = 1
         this.allProduit()
+        this.createObserver();
 
     },
-    beforeUnmount(){
+    beforeUnmount() {
         if (this.observer) {
-        this.observer.disconnect();
-    }
+            this.observer.disconnect();
+        }
     },
     methods: {
-        async allProduit(){
-            await produit.allProduit().then((response) => {
-                this.produits  = response.data.produits 
-                // console.log(this.produits.length);
+        userFavaoris(){
+            favoris.userFavoris(this.user_id).then((response) => {
+                console.log(response);
             } )
         },
-        addToCart(element){
+        addToFavoris(id){
+            favoris.createFavoris(id, this.user_id).then((response) => {
+                console.log(response);
+            })
+        },
+        deleteToFavoris(id){
+            console.log(id);
+        },
+        createObserver() {
+            const options = {
+                root: this.$refs.scrollContainer,
+                rootMargin: '0px',
+                threshold: 1.0
+            };
+
+            this.observer = new IntersectionObserver(this.handleIntersect, options);
+            this.observer.observe(this.$refs.sentinel);
+        },
+        handleIntersect(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    this.onScrollEnd();
+                }
+            });
+        },
+        onScrollEnd() {
+            this.page++
+            produit.allProduit(this.page, 10).then((response) => {
+                this.produits.push(...response.data.produits)
+            })
+
+            this.produits = this.produits.reduce((acc, current) => {
+                    const x = acc.find(item => item.id === current.id);
+                    if (!x) {
+                        return acc.concat([current]);
+                    }
+                    return acc;
+                }, []);
+        },
+        goDetails(id) {
+            localStorage.setItem('id_produit', id)
+        },
+        async allProduit() {
+            await produit.allProduit().then((response) => {
+                this.produits = response.data.produits
+                // console.log(this.produits.length);
+            })
+        },
+        addToCart(element) {
             store.commit('addToCart', element)
         },
-        // async showMuch() {
-        //     const start = this.productIndex;
-        //     const end = start + this.productPerLoad;
-        //     const moreProducts = this.produits.slice(start, end);
-
-        //     this.showedProducts.push(...moreProducts);
-        //     this.productIndex = end;
-        // },
-        // setupScrollListener() {
-        //     const options = {
-        //         root: null,
-        //         rootMargin: '0px',
-        //         threshold: 0.1
-        //     };
-
-        //     this.observer = new IntersectionObserver(this.handleIntersect, options);
-        //     this.observer.observe(this.$refs.endArticleSection);
-        // },
-
-        // // eslint-disable-next-line no-unused-vars
-        // handleIntersect(entries, observer) {
-        //     entries.forEach(entry => {
-        //         if (entry.isIntersecting) {
-        //             this.showMuch(); // Appeler la méthode souhaitée
-        //         }
-        //     });
-        // }
     },
 }
 </script>
+
+<style scoped>
+.sentinel {
+    height: 1px;
+}
+</style>

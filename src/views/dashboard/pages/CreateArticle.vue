@@ -28,7 +28,7 @@
                                     <CFormLabel for="marque">Catégorie d'article</CFormLabel>
                                     <CFormSelect  id="marque" v-model="article.categorie_article_id">
                                         <option disabled >Open this select menu</option>
-                                        <option  v-for="item in categories" :key="item.id" :value="item.id">  {{ item.libelle }} </option>
+                                        <option  v-for="item in categorie_article" :key="item.id" :value="item.id">  {{ item.libelle }} </option>
                                     </CFormSelect>
                                 </div>
                             </CCol>
@@ -66,8 +66,15 @@
 
 <script>
 
+import { article, categorie_article } from '../../../services'
+
 export default {
     name: "CreateProduit",
+    mounted() {
+        categorie_article.allCategorieArticle().then((response) => {
+            this.categorie_article = response.data
+        })
+    },
     data() {
         return {
             article: {
@@ -78,14 +85,7 @@ export default {
                 categorie_article_id: ''
             },
             imgSrc: '',
-            categories: [
-                { libelle: "Nouveau", id: 1 },
-                { libelle: "Ici et ailleur", id: 2 },
-                { libelle: "La nouvelle mode", id: 3 },
-                { libelle: "Astuce pour homme", id: 4 },
-                { libelle: "Astuce pour femme", id: 5 },
-                { libelle: "Faits divers", id: 6 },
-            ]
+            categorie_article: []
         }
     },
     methods: {
@@ -99,10 +99,13 @@ export default {
             formData.append("contenu", this.article.contenu)
             formData.append("description", this.article.description)
             formData.append("titre", this.article.titre)
-            formData.append("categorie_article_id", this.article.categorie_article_id)
+            formData.append("idCategorie_article", this.article.categorie_article_id)
             formData.append("image", this.article.image)
-            console.log(this.article)
-            // console.log(formData)
+            console.log(this.article.categorie_article_id)
+            article.createArticle(formData).then((response) => {
+                console.log(response);
+            })
+            
         }
     },
 }

@@ -1,69 +1,42 @@
-
 <template>
 
-    <CModal :visible="modalUpdate" @close="() => { modalUpdate = false }">
-        <CForm id="form" @submit.prevent="addCategorie">
-            <CModalHeader dismiss @close="() => { modalUpdate = false }">
-                <CModalTitle>Ajouter une marque</CModalTitle>
-            </CModalHeader>
-            <CModalBody>
+    <div v-if="isModalOpen" class="modal-custom" @click="closeModalOutside">
+        <div class="modal-content">
+            <span class="close" @click="closeModal">&times;</span>
+            <h2>Ajouter une catégorie</h2>
+            <form @submit.prevent="addCategorie">
+                <div class="form-group">
+                    <input v-model="categorie.libelle" type="text" class="form-control"
+                        placeholder="Le nom de la cétégorie">
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-success">Ajouter</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-                <CRow>
-                    <CCol :md="12">
-                        <div class="mb-2">
-                            <CFormLabel for="categorie">Libelle</CFormLabel>
-                            <CFormInput v-model="marque.libelle" id="categorie" type="text"
-                                placeholder="Versace" />
-                        </div>
-                    </CCol>
-                </CRow>
-            </CModalBody>
-            <CModalFooter>
-                <CButton color="secondary" @click="() => {modalUpdate = false}
-                    ">
-                    Fermer
-                </CButton>
-                <CButton type="submit" color="primary">Ajouter</CButton>
-            </CModalFooter>
-        </CForm>
-
-    </CModal>
-
-
-    <CModal :visible="visibleModal" @close="() => { visibleModal = false }">
-        <CForm id="form" @submit.prevent="updateCategorie">
-            <CModalHeader dismiss @close="() => {visibleModal = false}
-                ">
-                <CModalTitle>Modifier les informations de la marque </CModalTitle>
-            </CModalHeader>
-            <CModalBody>
-
-                <CRow>
-                    <CCol :md="12">
-                        <div class="mb-2">
-                            <CFormLabel for="categorie">Libellé</CFormLabel>
-                            <CFormInput v-model="libelle" id="categorie" type="text" placeholder="Versace" />
-                        </div>
-                    </CCol>
-                </CRow>
-            </CModalBody>
-            <CModalFooter>
-                <CButton color="secondary" @click="() => {visibleModal = false}
-                    ">
-                    Fermer
-                </CButton>
-                <CButton type="submit" color="primary">Modifier</CButton>
-            </CModalFooter>
-        </CForm>
-    </CModal>
+    <div v-if="updateModal" class="modal-custom" @click="closeModalOutside">
+        <div class="modal-content">
+            <span class="close" @click="closeModal">&times;</span>
+            <h2>Modifier une catégorie</h2>
+            <form @submit.prevent="updateCategorie">
+                <div class="form-group">
+                    <input v-model="libelle" type="text" class="form-control" placeholder="Le nom de la cétégorie">
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-success">Changer</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <CRow>
-        <CButton class="mr" color="success" @click="() => { modalUpdate = true }
-            ">Ajouter une Marque</CButton>
+        <CButton class="mr" color="success" @click="openModal">Ajouter une Catégorie</CButton>
     </CRow>
     <CRow>
         <CTable caption="top">
-            <CTableCaption>Liste des marques</CTableCaption>
+            <CTableCaption>Liste des catégories d'article </CTableCaption>
             <CTableHead>
                 <CTableRow>
                     <CTableHeaderCell scope="col">#</CTableHeaderCell>
@@ -72,8 +45,8 @@
                 </CTableRow>
             </CTableHead>
             <CTableBody>
-                <CTableRow v-for="item in marques" :key="item.id">
-                    <CTableDataCell> {{ item.id }} </CTableDataCell>
+                <CTableRow v-for="(item, index) in categories" :key="item.id">
+                    <CTableDataCell> {{ index + 1 }} </CTableDataCell>
                     <CTableDataCell> {{ item.libelle }} </CTableDataCell>
                     <CTableDataCell class="center">
                         <CButton class="mr" color="warning" @click="showModal(item.id)">Modifier</CButton>
@@ -88,38 +61,33 @@
 <script>
 
 import Swal from 'sweetalert2';
-import { ref } from 'vue';
+import { categorie_article } from '../../../services';
+
 export default {
-    // eslint-disable-next-line vue/multi-word-component-names
-    name: "Marque",
-    setup() {
-        const visibleModal = ref(false)
-        const modalUpdate = ref(false)
-        return { visibleModal, modalUpdate }
+    mounted() {
+        categorie_article.allCategorieArticle().then((response) => {
+            console.log(response);
+            this.categories = response.data
+        })
     },
+    name: "ListeCategorie",
     data() {
         return {
+            isModalOpen: false,
+            updateModal: false,
             id: '',
             categorie: {
                 libelle: "",
             },
             libelle: '',
-            categories: [
-                { libelle: "Nouveau", id: 1 },
-                { libelle: "Ici et ailleur", id: 2 },
-                { libelle: "La nouvelle mode", id: 3 },
-                { libelle: "Astuce pour homme", id: 4 },
-                { libelle: "Astuce pour femme", id: 5 },
-                { libelle: "Faits divers", id: 6 },
-            ]
+            categories: []
         }
     },
     methods: {
-        // eslint-disable-next-line no-unused-vars
         deleteCategorie(id) {
             Swal.fire({
-                title: 'Êtes vous sûr?',
-                text: "Cette catégorie d'article sera définitivement supprimé",
+                title: 'Êtes vous sûr ?',
+                text: "Cette catégorie sera définitivement supprimé",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -128,31 +96,104 @@ export default {
                 cancelButtonText: 'Annuler'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    Swal.fire(
-                        'Supprimé !',
-                        "La catégorie d'article a bien été supprimé",
-                        'success'
-                    )
+                    categorie_article.deleteCategorieArticle(id).then((response) => {
+                        if (response.status == 200) {
+                            Swal.fire(
+                                'Supprimé !',
+                                'La catégorie a bien été supprimé',
+                                'success'
+                            ).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.reload()
+                                }
+                            })
+                        }
+                    })
                 }
             })
         },
         updateCategorie() {
-            console.log("Vous venez de mettre a jour la marque " + this.id + " dont la nouvelle valeur est " + this.libelle);
+            this.closeModal()
+            categorie_article.updateCategorieArticle(this.id, this.libelle).then((response) => {
+                if (response.status == 200) {
+                    Swal.fire(
+                        'Modifié !',
+                        'La catégorie a bien été mis à jour',
+                        'success'
+                    ).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.reload()
+                        }
+                    })
+                }
+            })
         },
         showModal(id) {
             const data = this.categories.find((element) => element.id == id)
             this.libelle = data.libelle
-            this.visibleModal = true
+            this.updateModal = true
             this.id = id
         },
         addCategorie() {
-            console.log("Vous venez d'ajouter la marque" + this.categorie.libelle);
-        }
+            categorie_article.createCategorieArticle(this.categorie.libelle).then((response) => {
+                if (response.status == 200) {
+                    location.reload();
+                }
+            })
+            this.closeModal();
+        },
+        closeModalOutside(event) {
+            if (event.target.classList.contains('modal-custom')) {
+                this.closeModal();
+            }
+        },
+        openModal() {
+            this.isModalOpen = true;
+        },
+
+        closeModal() {
+            this.isModalOpen = false;
+            this.updateModal = false
+        },
     },
 }
 </script>
 
 <style scoped>
+.modal-custom {
+    z-index: 1;
+    display: flex;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: auto;
+    overflow: scroll;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 30%;
+    height: auto;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
 .mr {
     margin-right: 20px;
 }

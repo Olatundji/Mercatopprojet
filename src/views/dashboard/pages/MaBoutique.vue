@@ -55,6 +55,8 @@
 </template>
 
 <script>
+import Axios from '../../../services/caller';
+
 
 export default {
     name: "CreateProduit",
@@ -82,10 +84,12 @@ export default {
             formData.append("adresse", this.boutique.adresse)
             formData.append("logo", this.boutique.logo)
 
-            // Display the key/value pairs
-            // for (var pair of formData.entries()) {
-            //     console.log(pair[0] + ':  ' + pair[1]);
-            // }
+            Axios.post('parametres/update/'+1, formData).then((response) => {
+                // console.log(response);
+                if(response.status == 200){
+                    console.log('Infos de la boutique mis a jour avec succes');
+                }
+            } )
         }
     },
 }

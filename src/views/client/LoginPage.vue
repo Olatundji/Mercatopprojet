@@ -53,7 +53,11 @@ export default {
                 store.commit('setToken', token)
                 store.commit('setType', type)
                 store.commit('setUser', user)
-                this.$router.push('/')
+                if(type == 'user'){
+                    this.$router.push('/')
+                } else if( type == 'admin'){
+                    this.$router.push('/admin/dashboard')
+                }
             }).catch((error) => {
                 if(error.response.status == 401){
                     // console.log(error.response.data.error);

@@ -20,7 +20,25 @@
                                     </div>
                                 </div>
 
-                                <button @click="pay" :disabled="!selectedPayment">Payer</button>
+                                <button @click.prevent="pay" :disabled="!selectedPayment">Payer</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div v-if="showPaypalButton" class="modal-custom" @click="closeModalOutside">
+        <div class="modal-content">
+            <span class="close" @click="closeModal">&times;</span>
+            <h2>Paimement avec paypal</h2>
+            <div class="checkout shopping">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="block billing-details">
+                                <div id="paypal-button-container"></div>
                             </div>
                         </div>
                     </div>
@@ -83,17 +101,6 @@
         </div>
     </div>
     <div>
-        <stripe-checkout ref="paymentRef" 
-            :pk="pk" 
-            mode="payment"
-            :line-items="lineItems"
-            :successUrl="successUrl"
-            :cancelUrl="cancelUrl"
-            @loading="v => loading = v "
-            >
-
-        </stripe-checkout>
-        <button @click="pay">Pay Now</button>
     </div>
     <TheFooter></TheFooter>
 </template>
@@ -103,15 +110,14 @@ import TheHeader from '@/components/client/TheHeader.vue'
 import TheFooter from '@/components/client/TheFooter.vue'
 import store from '@/store'
 import { openKkiapayWidget, addKkiapayListener, removeKkiapayListener, } from "kkiapay";
-
-import { StripeCheckout } from '@vue-stripe/vue-stripe';
+import { loadScript } from '@paypal/paypal-js';
+import { commande } from '../../services';
 
 export default {
     name: 'CartPage',
     components: {
         TheFooter,
         TheHeader,
-        StripeCheckout
     },
     beforeUnmount() {
         removeKkiapayListener('success', this.successHandler)
@@ -125,10 +131,16 @@ export default {
     data() {
         return {
             stripe_pk: "pk_test_51PJJQERwkxDsbBGjZeWcxaCCJhXhZwHyylfcKr0KRCHZA5s1l7BiHB0TwzHo2z1DLGFZoEZt75It1twhTF613ba800pC2dKa92",
+            stripe_pvk: 'sk_test_51PJJQERwkxDsbBGj0bIgOD936wAJKwlGLSIlnRqU0EEZHGmBYy0z20uyhIkkuS8C9KMebJ6MbgSu7ButwcrwYTGv00Ien6NuCR',
             kkiaypay_pk: '8276f590733111eea6c35d3a0ec50887',
-            paypal_pk:'',
+            paypal_client_id: 'AeFGhGeO4unjO0Zgk4YfWVc_Q43kIgRmgYoI2UHLbd1C7FOzbhlcGe08nswsHcvrsFgEhzIAJuu_cu3L',
             feexpay: '',
+            successUrl: 'http://localhost:3000/user/commandes',
+            cancelUrl: 'http://localhost:3000/user/cart',
             loading: false,
+            stripe: null,
+            showPaypalButton: false,
+            user_id: store.getters.getUser.id,
             selectedPayment: null,
             paymentCategories: [
                 {
@@ -154,6 +166,7 @@ export default {
             ],
             montant_total: 0,
             isModalOpen: false,
+            dollard_prix: 604.65
         }
     },
     mounted() {
@@ -162,13 +175,67 @@ export default {
     },
 
     methods: {
+        async stripePay() {
+            const { error } = await this.stripe.redirectToCheckout({
+                mode: 'payment',
+                lineIitems: this.lineItems,
+                successUrl: 'https://votre-site.com/success',
+                cancelUrl: 'https://votre-site.com/cancel',
+            });
+            if (error) {
+                console.error(error);
+            }
+        },
         successHandler(response) {
             console.log(response);
+            if (response.transactionId) {
+                commande.createCommande(response.transactionId, this.selectedPayment, 
+                this.montant_total, this.cart, store.getters.getUser.id).then((response) => {
+                    console.log(response);
+                } )
+            }
         },
-        pay() {
+        async pay() {
+            let paypal;
             switch (this.selectedPayment) {
                 case 'Paypal':
-                    console.log(`Paiement avec ${this.selectedPayment}`);
+                    try {
+                        this.showPaypalButton = !this.showPaypalButton
+                        paypal = await loadScript({ clientId: this.paypal_client_id });
+                    } catch (error) {
+                        console.log("Error de chargement du sdk de paypal");
+                    }
+                    if (paypal) {
+                        try {
+                            this.isModalOpen = !this.isModalOpen
+                            await paypal.Buttons({
+                                createOrder: (data, actions) => {
+                                    return actions.order.create({
+                                        purchase_units: [{
+                                            amount: {
+                                                value: (this.montant_total / this.dollard_prix).toFixed(2)
+                                            }
+                                        }]
+                                    })
+                                },
+                                onApprove: (data, actions) => {
+                                    return actions.order.capture().then(details => {
+                                        console.log(this.cart);
+                                        commande.createCommande(details.id, this.selectedPayment, 
+                                        this.montant_total, this.cart, this.user_id).then((response) => {
+                                            console.log(response);
+                                        })
+                                        
+                                    });
+                                },
+                                onError: (err) => {
+                                    console.error('Erreur lors du traitement du paiement PayPal', err);
+                                }
+                            }).render("#paypal-button-container")
+                        } catch (error) {
+                            console.log("failed to rendnder button paypal", error);
+                        }
+                    }
                     break;
                 case 'Kkiapay':
                     openKkiapayWidget({
@@ -182,11 +249,12 @@ export default {
                     console.log(`Paiement avec ${this.selectedPayment}`)
                     break;
                 case 'Stripe':
-                    console.log(`Paiement avec ${this.selectedPayment}`)
+                    await this.stripePay()
             }
         },
         closeModal() {
             this.isModalOpen = false;
+            this.showPaypalButton = false
         },
         valider() {
             this.isModalOpen = true
@@ -205,7 +273,10 @@ export default {
             this.updateMontantTotal();
         },
         updateMontantTotal() {
-            this.montant_total = this.cart.reduce((total, item) => parseInt(total) + parseInt(item.total), 0);
+            if(this.cart !== 0){
+                this.montant_total = this.cart.reduce((total, item) => parseInt(total) + parseInt(item.total), 0);
+                
+            }
         }
     }
 }

@@ -22,6 +22,7 @@ import CommandePage from '@/views/client/CommandePage.vue'
 import DetailsProduit from '../views/client/DetailsProduit.vue'
 import CartPage from '@/views/client/CartPage.vue'
 import CheckoutPage from '@/views/client/CheckoutPage.vue'
+import CategorieArticle from '../views/dashboard/pages/CategorieArticle.vue'
 
 const routes = [
   {
@@ -90,6 +91,12 @@ const routes = [
         meta: {requireAuth: true, type:'admin'},
         component: CreateArticle
       },
+      {
+        path: "/admin/liste/categorie-article",
+        name: "Publier un article ",
+        meta: {requireAuth: true, type:'admin'},
+        component: CategorieArticle
+      },
     ]
   },
   {
@@ -129,9 +136,16 @@ const routes = [
     component: DetailsProduit,
   },
   {
+    path: '/user/favoris',
+    name: 'CartList',
+    component: CartPage,
+    meta: {requireAuth: true, type:'user'},
+  },
+  {
     path: '/user/cart',
     name: 'CartList',
     component: CartPage,
+    meta: {requireAuth: true, type:'user'},
   },
   {
     path: '/user/commandes', 

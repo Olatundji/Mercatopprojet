@@ -8,7 +8,7 @@
             (-12.4% <CIcon icon="cil-arrow-bottom" />)
           </span>
         </template>
-        <template #title>Users</template>
+        <template #title>Nombre d'utilisateur</template>
         <template #action>
           <CDropdown placement="bottom-end">
             <CDropdownToggle

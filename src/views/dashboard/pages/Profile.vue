@@ -78,6 +78,7 @@ export default {
                 numero: store.getters.getUser.numero,
                 adresse: store.getters.getUser.adresse
             },
+            user_id: store.getters.getUser.id,
             isModalOpen: false,
             password: {
                 newPassword: '',
@@ -106,8 +107,12 @@ export default {
         },
         updateProfile(){
             console.log(this.user);
-            auth.updateProfile(this.user).then((response) => {
+            auth.updateProfile(this.user, this.user_id).then((response) => {
                 console.log(response);
+                // if(response.status == 200){
+                //     console.log(response.data.user);
+                //     store.commit('setUser', response.data.user)
+                // }
             } )
         }
     },

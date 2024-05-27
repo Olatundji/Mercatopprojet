@@ -20,10 +20,17 @@ export default createStore({
     token: null,
     type: null,
     user: null,
-    favori: [],
+    favoris: [],
     cart: [],
+    siteInfos: []
   },
   mutations: {
+    setFavoris(state, favoris){
+      state.favoris = favoris
+    },
+    setSiteInfos(state, infos){
+      state.siteInfos = infos
+    },
     addToCart(state, element){
       const produitExistant = state.cart.some(p => p.id === element.id);
       if (!produitExistant) {
@@ -65,8 +72,8 @@ export default createStore({
     },
   },
   getters: {
-    getTotalCart(state) {
-      return state.cart.reduce((total, item) => total + item.total, 0);
+    getFavoris(state){
+      return state.favoris
     },
     getCartNumber(state){
       return state.cart.length
@@ -84,6 +91,9 @@ export default createStore({
       }else{
           return null
       }
+    },
+    getSiteInfos(state){
+      return state.siteInfos
     },
     getUser(state){
       return state.user

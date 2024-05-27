@@ -25,16 +25,16 @@ let login = (user) => {
 
 
 let updateProfile = (user, id) =>{
-    return Axios.patch('/updateProfile/'+ id,{
+    return Axios.put('/users/update/'+ id,{
         nom: user.nom,
         numero: user.numero,
         email: user.email,
-        adresse: user.adresse
+        adresse: user.adresse,
     })
 };
 
 let resetPassword = (password) =>{
-    return Axios.patch('/changePassword', {
+    return Axios.patch('/forgot-password', {
         password: password
     })
 }

@@ -98,8 +98,8 @@
                 </CTableRow>
             </CTableHead>
             <CTableBody>
-                <CTableRow v-for="item in produits" :key="item.id" >
-                    <CTableDataCell> {{ item.id }} </CTableDataCell>
+                <CTableRow v-for="(item,index) in produits" :key="item.id" >
+                    <CTableDataCell> {{ index + 1 }} </CTableDataCell>
                     <CTableDataCell> {{ item.nom }} </CTableDataCell>
                     <CTableDataCell> {{ item.description }} </CTableDataCell>
                     <CTableDataCell> {{ item.prix }} </CTableDataCell>
@@ -124,7 +124,7 @@ import { produit, categorie, marque } from '../../../services';
 
 export default {
     mounted() {
-        produit.allProduit().then((response) => {
+        produit.allProduit(1, 100).then((response) => {
             // console.log(response);
             this.produits = response.data.produits
         })

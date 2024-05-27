@@ -48,32 +48,36 @@
                         </div>
                         <div class="media-body ">
                             <div class="media-body">
-                                <ul>
-                                    <li>
-                                        <div class="form-group">
-                                            <label for="nom">Nom:</label>
-                                            <input class="form-control" type="text" v-model="user.nom" >
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="form-group">
-                                            <label for="email">Email:</label>
-                                            <input class="form-control" type="text" v-model="user.email" >
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="form-group">
-                                            <label for="numero">Numéro:</label>
-                                            <input class="form-control" type="text" v-model="user.numero">
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="form-group">
-                                            <label for="email">Adresse :</label>
-                                            <input class="form-control" type="text" v-model="user.adresse" >
-                                        </div>
-                                    </li>
-                                </ul>
+                                <form @submit.prevent="updateProfile" >
+                                    <ul>
+                                        <li>
+                                            <div class="form-group">
+                                                <label for="nom">Nom:</label>
+                                                <input class="form-control" type="text" v-model="user.nom" >
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="form-group">
+                                                <label for="email">Email:</label>
+                                                <input class="form-control" type="text" v-model="user.email" >
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="form-group">
+                                                <label for="numero">Numéro:</label>
+                                                <input class="form-control" type="text" v-model="user.numero">
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="form-group">
+                                                <label for="email">Adresse :</label>
+                                                <input class="form-control" type="text" v-model="user.adresse" >
+                                            </div>
+                                        </li>
+                                    </ul>
+
+                                    <button type="submit" class="btn btn-block btn-success" >Modifier</button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -92,6 +96,7 @@
 import TheHeader from '@/components/client/TheHeader'
 import TheFooter from '@/components/client/TheFooter'
 import store from '../../store'
+import { auth } from '../../services';
 
 export default {
     name: 'UserProfile',
@@ -105,8 +110,9 @@ export default {
                 nom: store.getters.getUser.nom,
                 email: store.getters.getUser.email,
                 numero: store.getters.getUser.numero,
-                adresse: store.getters.getUser.adresse
+                adresse: store.getters.getUser.adresse,
             },
+            user_id: store.getters.getUser.id,
             password: {
                 newPassword: '',
                 passwordConfirm: ''
@@ -114,6 +120,11 @@ export default {
         }
     },
     methods: {
+        updateProfile(){
+            auth.updateProfile(this.user, this.user_id).then((response) => {
+                store.commit('setUser', response.data.user)
+            } )
+        },
         closeModalOutside(event) {
             if (event.target.classList.contains('modal-custom')) {
                 this.closeModal();
