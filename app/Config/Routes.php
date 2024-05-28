@@ -94,8 +94,8 @@ $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection
     // $routes->resource('parametre');
 
     $routes->get('parametres/create', 'ParametreController::create');
-    $routes->get('parametres/index', 'ParametreController::index');
-    $routes->post('parametres/update/(:num)', 'ParametreController::update/$1');
+    $routes->get('parametres/info', 'ParametreController::getSiteInfo');
+    $routes->put('parametres/update/(:num)', 'ParametreController::update/$1');
 });
 //$routes->get('parametres/index', 'ParametreController::index');
 //$routes->put('parametres/update/(:num)', 'ParametreController::update/$1');

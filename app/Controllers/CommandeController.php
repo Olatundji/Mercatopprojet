@@ -73,11 +73,11 @@ class CommandeController extends BaseController
     private function isTransactionValid($transactionId, $methodePay)
     {
         switch ($methodePay) {
-            case 'paypal':
+            case 'Paypal':
                 return $this->validatePaypalTransaction($transactionId);
-            case 'stripe':
+            case 'Stripe':
                 return $this->validateStripeTransaction($transactionId);
-            case 'kiapay':
+            case 'Kkiapay':
                 return $this->validateKiapayTransaction($transactionId);
             case 'fedapay':
                 return $this->validateFedapayTransaction($transactionId);
