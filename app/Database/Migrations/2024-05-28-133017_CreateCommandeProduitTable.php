@@ -8,7 +8,6 @@ class CreateCommandeProduitTable extends Migration
 {
     public function up()
     {
-        // Création de la table commandeproduit
         $this->forge->addField([
             'id' => [
                 'type' => 'INT',
@@ -17,10 +16,12 @@ class CreateCommandeProduitTable extends Migration
             ],
             'commande_id' => [
                 'type' => 'INT',
+                'constraint' => 11,
                 'unsigned' => true,
             ],
             'produit_id' => [
                 'type' => 'INT',
+                'constraint' => 11,
                 'unsigned' => true,
             ],
             'quantite' => [
@@ -38,7 +39,7 @@ class CreateCommandeProduitTable extends Migration
 
         $this->forge->addPrimaryKey('id');
         $this->forge->addForeignKey('commande_id', 'commandes', 'id', 'CASCADE', 'CASCADE');
-        $this->forge->addForeignKey('produit_id', 'produits', 'id', 'CASCADE', 'CASCADE');
+        $this->forge->addForeignKey('produit_id', 'produit', 'id', 'CASCADE', 'CASCADE');
         $this->forge->createTable('commandeproduit');
     }
 

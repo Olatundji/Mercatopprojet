@@ -67,3 +67,14 @@
 #--------------------------------------------------------------------
 
 # logger.threshold = 4
+
+STRIPE_SECRET_KEY=sk_test_4eC39HqLyjWDarjtT1zdp7dc
+
+# PayPal Access Token
+PAYPAL_ACCESS_TOKEN=YOUR_PAYPAL_ACCESS_TOKENAeFGhGeO4unjO0Zgk4YfWVc_Q43kIgRmgYoI2UHLbd1C7FOzbhlcGe08nswsHcvrsFgEhzIAJuu_cu3L
+
+# Kiapay API Key
+KIAPAY_API_KEY=YOUR_KIAPAY_API_KEY
+
+# Fexpay API Key
+FEXPAY_API_KEY=YOUR_FEXPAY_API_KEY

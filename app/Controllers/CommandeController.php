@@ -8,6 +8,7 @@ use App\Models\CommandeProduitModel;
 
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 
 class CommandeController extends BaseController
 {
@@ -30,7 +31,7 @@ class CommandeController extends BaseController
         $panier = $this->request->getVar('panier');
 
         $transactionId = $this->request->getVar('transaction');
-        $methodePay = $this->request->getVar('methode_pay');
+        $methodePay = $this->request->getVar('method_pay');
 
         if (!$this->isTransactionValid($transactionId, $methodePay)) {
             return $this->fail('La validation du paiement a échoué', 400);
@@ -40,7 +41,7 @@ class CommandeController extends BaseController
             'etat' => 'pending',
             'date' => date('Y-m-d H:i:s'),
             'transaction' => $transactionId,
-            'methode_pay' => $methodePay,
+            'method_pay' => $methodePay,
             'montant' => $this->request->getVar('montant'),
             'idUser' => $idUser,
         ];
@@ -86,15 +87,18 @@ class CommandeController extends BaseController
 
     private function validatePaypalTransaction($transactionId)
     {
-        $client = new Client();
+        $client = new \GuzzleHttp\Client();
         $url = 'https://api.sandbox.paypal.com/v1/payments/payment/' . $transactionId;
 
         try {
             $response = $client->request('GET', $url, [
                 'headers' => [
                     'Content-Type' => 'application/json',
+                    'Authorization' => 'Bearer ' . getenv('PAYPAL_ACCESS_TOKEN'),
                 ],
             ]);
+
+            log_message('info', 'PayPal API response: ' . $response->getBody());
 
             if ($response->getStatusCode() == 200) {
                 $transactionData = json_decode($response->getBody(), true);
@@ -102,12 +106,18 @@ class CommandeController extends BaseController
                     return true;
                 }
             }
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            log_message('error', 'Erreur de validation de transaction PayPal: ' . $e->getMessage());
+            if ($e->hasResponse()) {
+                log_message('error', 'Response body: ' . $e->getResponse()->getBody()->getContents());
+            }
         } catch (\Exception $e) {
             log_message('error', 'Erreur de validation de transaction PayPal: ' . $e->getMessage());
         }
 
         return false;
     }
+
 
 
     private function validateStripeTransaction($transactionId)
