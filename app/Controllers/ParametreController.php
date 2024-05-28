@@ -13,9 +13,22 @@ class ParametreController extends ResourceController
 
     public function __construct()
     {
-        // Charger le modèle et les helpers nécessaires
         $this->parametreModel = new ParametreModel();
         helper(['form', 'url']);
+    }
+    public function show($id = null)
+    {
+        if ($id === null) {
+            return $this->fail('ID is required for show operation', ResponseInterface::HTTP_BAD_REQUEST);
+        }
+
+        $parametre = $this->parametreModel->find($id);
+
+        if ($parametre === null) {
+            return $this->fail('Parameter not found', ResponseInterface::HTTP_NOT_FOUND);
+        }
+
+        return $this->respond($parametre);
     }
 
     public function update($id = null)

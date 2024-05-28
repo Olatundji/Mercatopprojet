@@ -16,6 +16,38 @@ class ProductController extends BaseController
         $this->productModel = new ProductModel();
     }
 
+    public function show($id)
+    {
+        $product = $this->productModel
+            ->select('produit.*, marques.nom as marque_nom, categories.libelle as categorie_nom')
+            ->join('marques', 'marques.id = produit.idMarque')
+            ->join('categories', 'categories.id = produit.idCategorie')
+            ->find($id);
+
+        if (!$product) {
+            return $this->failNotFound('Product not found');
+        }
+
+        $formattedProduct = [
+            'id' => $product['id'],
+            'nom' => $product['nom'],
+            'prix' => $product['prix'],
+            'description' => $product['description'],
+            'qte' => $product['qte'],
+            'marque' => [
+                'id' => $product['idMarque'],
+                'nom' => $product['marque_nom']
+            ],
+            'categorie' => [
+                'id' => $product['idCategorie'],
+                'nom' => $product['categorie_nom']
+            ],
+            'image' => $product['image']
+        ];
+
+        return $this->respond($formattedProduct);
+    }
+
     public function search()
     {
         $keyword = $this->request->getGet('keyword');
