@@ -38,6 +38,8 @@ $routes->get('api/products', 'ProductController::index');
 $routes->get('api/product/search', 'ProductController::search');
 $routes->get('api/product/detail/(:num)', 'ProductController::detail/$1');
 $routes->get('api/limit-products', 'ProductController::getRandomProduit');
+$routes->get('api/products/searchFilters', 'ProductController::searchFilters');
+
 
 
 
@@ -191,3 +193,7 @@ $routes->delete('api/commentaires/delete/(:num)', 'CommentaireController::delete
 
 
 $routes->post('api/upload', 'FileController::uploadFile');
+
+$routes->get('api/reports/sales', 'RepportController::salesReport');
+$routes->get('api/report/best-selling-products/(:any)/(:any)', 'RepportController::getBestSellingProducts/$1/$2');
+$routes->get('api/report/user-report', 'RepportController::getUserReport');
