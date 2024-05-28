@@ -17,6 +17,33 @@ class ArticleController extends BaseController
         $this->articleModel = new ArticleModel();
     }
 
+    public function show($id)
+    {
+        $article = $this->articleModel
+            ->select('articles.*, categorie_articles.libelle as categorie_nom')
+            ->join('categorie_articles', 'categorie_articles.id = articles.idCategorie_article')
+            ->find($id);
+
+        if (!$article) {
+            return $this->failNotFound('Article not found');
+        }
+
+        $formattedArticle = [
+            'id' => $article['id'],
+            'contenu' => $article['contenu'],
+            'image' => $article['image'],
+            'description' => $article['description'],
+            'titre' => $article['titre'],
+            'categorie' => [
+                'id' => $article['idCategorie_article'],
+                'nom' => $article['categorie_nom']
+            ]
+        ];
+
+        return $this->respond($formattedArticle);
+    }
+
+
     public function search()
     {
         $keyword = $this->request->getGet('keyword');

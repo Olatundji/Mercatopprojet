@@ -4,6 +4,9 @@ namespace App\Controllers;
 
 use CodeIgniter\API\ResponseTrait;
 use App\Models\CommandeModel;
+use App\Models\CommandeProduitModel;
+
+
 use GuzzleHttp\Client;
 
 class CommandeController extends BaseController
@@ -11,64 +14,59 @@ class CommandeController extends BaseController
     use ResponseTrait;
 
     private $commandeModel;
+    private $commandeProduitModel;
+
 
     public function __construct()
     {
         $this->commandeModel = new CommandeModel();
+        $this->commandeProduitModel = new CommandeProduitModel();
     }
 
-    public function search()
-    {
-        $keyword = $this->request->getGet('keyword');
-        $results = $this->commandeModel->searchCommandes($keyword);
-        return $this->respond($results);
-    }
-
-    public function index()
-    {
-        $commandes = $this->commandeModel->findAll();
-
-        if (empty($commandes)) {
-            return $this->failNotFound('No commandes found');
-        }
-
-        foreach ($commandes as &$commande) {
-            $commande['produit'] = json_decode($commande['produit'], true);
-        }
-
-        return $this->respond($commandes);
-    }
 
     public function create()
     {
+        $idUser = $this->request->getVar('idUser');
         $panier = $this->request->getVar('panier');
 
-        if (is_string($panier)) {
-            $panier = json_decode($panier, true);
+        $transactionId = $this->request->getVar('transaction');
+        $methodePay = $this->request->getVar('methode_pay');
+
+        if (!$this->isTransactionValid($transactionId, $methodePay)) {
+            return $this->fail('La validation du paiement a échoué', 400);
         }
 
-        if (!is_array($panier)) {
-            return $this->fail('Panier doit être un tableau de produits', 400);
-        }
-
-        $data = [
+        $commandeData = [
             'etat' => 'pending',
             'date' => date('Y-m-d H:i:s'),
-            'transaction' => $this->request->getVar('transaction'),
-            'methode_pay' => $this->request->getVar('methode_pay'),
+            'transaction' => $transactionId,
+            'methode_pay' => $methodePay,
             'montant' => $this->request->getVar('montant'),
-            'produit' => json_encode($panier),
-            'idUser' => $this->request->getVar('idUser'),
+            'idUser' => $idUser,
         ];
 
-        if (!$this->isTransactionValid($data['transaction'], $data['methode_pay'])) {
-            return $this->fail('Transaction ID is not valid', 400);
+        $commandeId = $this->commandeModel->insert($commandeData);
+
+        if (!$commandeId) {
+            return $this->fail('Erreur lors de la création de la commande', 500);
         }
 
-        $this->commandeModel->insert($data);
+        foreach ($panier as $produit) {
+            $produitId = $produit['produit_id'];
+            $quantite = $produit['quantite'];
 
-        return $this->respond(['message' => 'Commande created successfully']);
+            $commandeProduitData = [
+                'commande_id' => $commandeId,
+                'produit_id' => $produitId,
+                'quantite' => $quantite,
+            ];
+
+            $this->commandeProduitModel->insert($commandeProduitData);
+        }
+
+        return $this->respond(['message' => 'Commande créée avec succès']);
     }
+
 
     private function isTransactionValid($transactionId, $methodePay)
     {
@@ -80,7 +78,7 @@ class CommandeController extends BaseController
             case 'kiapay':
                 return $this->validateKiapayTransaction($transactionId);
             case 'fedapay':
-                return $this->validateFedapayTransaction($transactionId);
+                return $this->validateFexpayTransaction($transactionId);
             default:
                 return false;
         }
@@ -91,12 +89,8 @@ class CommandeController extends BaseController
         $client = new Client();
         $url = 'https://api.sandbox.paypal.com/v1/payments/payment/' . $transactionId;
 
-        $clientId = 'AeFGhGeO4unjO0Zgk4YfWVc_Q43kIgRmgYoI2UHLbd1C7FOzbhlcGe08nswsHcvrsFgEhzIAJuu_cu3L';
-        $clientSecret = 'your_paypal_client_secret';
-
         try {
             $response = $client->request('GET', $url, [
-                'auth' => [$clientId, $clientSecret],
                 'headers' => [
                     'Content-Type' => 'application/json',
                 ],
@@ -115,17 +109,15 @@ class CommandeController extends BaseController
         return false;
     }
 
+
     private function validateStripeTransaction($transactionId)
     {
         $client = new Client();
         $url = 'https://api.stripe.com/v1/charges/' . $transactionId;
 
-        $apiKey = 'your_stripe_api_key';
-
         try {
             $response = $client->request('GET', $url, [
                 'headers' => [
-                    'Authorization' => 'Bearer ' . $apiKey,
                     'Content-Type' => 'application/json',
                 ],
             ]);
@@ -148,12 +140,9 @@ class CommandeController extends BaseController
         $client = new Client();
         $url = 'https://api.kiapay.com/v1/transactions/' . $transactionId;
 
-        $apiKey = '8276f590733111eea6c35d3a0ec50887';
-
         try {
             $response = $client->request('GET', $url, [
                 'headers' => [
-                    'Authorization' => 'Bearer ' . $apiKey,
                     'Content-Type' => 'application/json',
                 ],
             ]);
@@ -171,33 +160,31 @@ class CommandeController extends BaseController
         return false;
     }
 
-    private function validateFedapayTransaction($transactionId)
+    private function validateFexpayTransaction($transactionId)
     {
         $client = new Client();
-        $url = 'https://api.fedapay.com/v1/transactions/' . $transactionId;
-
-        $apiKey = 'your_fedapay_api_key';
+        $url = 'https://api.fexpay.com/v1/transactions/' . $transactionId;
 
         try {
             $response = $client->request('GET', $url, [
                 'headers' => [
-                    'Authorization' => 'Bearer ' . $apiKey,
-                    'Accept' => 'application/json',
+                    'Content-Type' => 'application/json',
                 ],
             ]);
 
             if ($response->getStatusCode() == 200) {
                 $transactionData = json_decode($response->getBody(), true);
-                if (isset($transactionData['status']) && $transactionData['status'] == 'approved') {
+                if (isset($transactionData['status']) && $transactionData['status'] == 'success') {
                     return true;
                 }
             }
         } catch (\Exception $e) {
-            log_message('error', 'Erreur de validation de transaction FedaPay: ' . $e->getMessage());
+            log_message('error', 'Erreur de validation de transaction Fexpay: ' . $e->getMessage());
         }
 
         return false;
     }
+
 
     public function commandesUtilisateur($idUser)
     {
@@ -236,22 +223,9 @@ class CommandeController extends BaseController
 
         $data['updated_at'] = date('Y-m-d H:i:s');
 
-        if (isset($data['panier'])) {
-            if (is_string($data['panier'])) {
-                $data['produit'] = $data['panier'];
-            } else {
-                if (!is_array($data['panier'])) {
-                    return $this->fail('Panier doit être un tableau de produit', 400);
-                }
-                $data['produit'] = json_encode($data['panier']);
-            }
-            unset($data['panier']); // Retirer l'entrée panier du tableau
-        }
-
         $this->commandeModel->update($id, $data);
 
         $updatedCommande = $this->commandeModel->find($id);
-        $updatedCommande['produit'] = json_decode($updatedCommande['produit'], true);
 
         return $this->respond(['message' => 'Commande information updated successfully', 'commande' => $updatedCommande]);
     }

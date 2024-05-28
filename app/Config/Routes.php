@@ -39,6 +39,8 @@ $routes->get('api/product/search', 'ProductController::search');
 $routes->get('api/product/detail/(:num)', 'ProductController::detail/$1');
 $routes->get('api/limit-products', 'ProductController::getRandomProduit');
 $routes->get('api/products/searchFilters', 'ProductController::searchFilters');
+$routes->get('api/products/show/(:num)', 'ProductController::show/$1');
+
 
 
 
@@ -82,6 +84,7 @@ $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection
     $routes->post('articles/create', 'ArticleController::create');
     $routes->post('articles/update/(:num)', 'ArticleController::update/$1');
     $routes->delete('articles/delete/(:num)', 'ArticleController::delete/$1');
+    $routes->get('articles/show/(:num)', 'ArticleController::show/$1');
 });
 // $routes->get('articles/index', 'ArticleController::index');
 // $routes->get('articles/show/(:num)', 'ArticleController::show/$1');
@@ -96,6 +99,7 @@ $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection
     $routes->get('parametres/create', 'ParametreController::create');
     $routes->get('parametres/index', 'ParametreController::index');
     $routes->post('parametres/update/(:num)', 'ParametreController::update/$1');
+    $routes->get('parametres/show/(:num)', 'ParametreController::show/$1');
 });
 //$routes->get('parametres/index', 'ParametreController::index');
 //$routes->put('parametres/update/(:num)', 'ParametreController::update/$1');
