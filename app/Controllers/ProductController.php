@@ -19,6 +19,11 @@ class ProductController extends BaseController
     public function search()
     {
         $keyword = $this->request->getGet('keyword');
+
+        if (is_null($keyword) || trim($keyword) === '') {
+            return $this->fail('Keyword cannot be null or empty', 400);
+        }
+
         $results = $this->productModel->searchProduit($keyword);
         return $this->respond($results);
     }
