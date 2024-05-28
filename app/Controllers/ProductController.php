@@ -32,7 +32,7 @@ class ProductController extends BaseController
             ->select('produit.*, marques.nom as marque_nom, categories.libelle as categorie_nom')
             ->join('marques', 'marques.id = produit.idMarque')
             ->join('categories', 'categories.id = produit.idCategorie')
-            ->paginate($perPage, 'default', $page);
+            ->paginate($limit, 'default', $page);
 
         if (empty($produit)) {
             return $this->respond(['message' => 'No products found'], 404);
@@ -187,6 +187,7 @@ class ProductController extends BaseController
 
     public function getRandomProduit()
     {
+        $limit = $this->request->getVar('limit') ?? 10;
         try {
             log_message('info', 'Entering getRandomProducts method');
 
@@ -194,7 +195,7 @@ class ProductController extends BaseController
                 ->select('produit.*, marques.nom as marque_nom, categories.libelle as categorie_nom')
                 ->join('marques', 'marques.id = produit.idMarque')
                 ->join('categories', 'categories.id = produit.idCategorie')
-                ->findAll(4);
+                ->findAll($limit);
 
             if (empty($produits)) {
                 return $this->failNotFound('No products found');

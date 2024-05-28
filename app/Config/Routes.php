@@ -32,7 +32,7 @@ $routes->post('api/reset-password', 'AuthController::resetPassword');
 //     $routes->get('search', 'ProductController::search');
 // });
 $routes->post('api/product/create', 'ProductController::create');
-$routes->post('api/product/update/(:num)', 'ProductController::update/$1');
+$routes->put('api/product/update/(:num)', 'ProductController::update/$1');
 $routes->delete('api/product/delete/(:num)', 'ProductController::delete/$1');
 $routes->get('api/products', 'ProductController::index');
 $routes->get('api/product/search', 'ProductController::search');
