@@ -80,4 +80,17 @@ class ProductModel extends Model
     {
         return $this->orderBy('RAND()')->findAll($limit);
     }
+
+    public function searchProduit($keyword)
+    {
+        if (empty($keyword)) {
+            return [];
+        }
+
+        return $this->like('nom', $keyword)
+            ->orLike('description', $keyword)
+            ->orLike('idMarque', $keyword)
+            ->orLike('idCategorie', $keyword)
+            ->findAll();
+    }
 }
