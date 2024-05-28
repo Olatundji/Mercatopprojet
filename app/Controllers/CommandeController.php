@@ -31,7 +31,7 @@ class CommandeController extends BaseController
         $panier = $this->request->getVar('panier');
 
         $transactionId = $this->request->getVar('transaction');
-        $methodePay = $this->request->getVar('methode_pay');
+        $methodePay = $this->request->getVar('method_pay');
 
         if (!$this->isTransactionValid($transactionId, $methodePay)) {
             return $this->fail('La validation du paiement a échoué', 400);
@@ -41,7 +41,7 @@ class CommandeController extends BaseController
             'etat' => 'pending',
             'date' => date('Y-m-d H:i:s'),
             'transaction' => $transactionId,
-            'methode_pay' => $methodePay,
+            'method_pay' => $methodePay,
             'montant' => $this->request->getVar('montant'),
             'idUser' => $idUser,
         ];
