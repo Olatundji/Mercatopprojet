@@ -232,4 +232,57 @@ class ProductController extends BaseController
             return $this->failServerError('An error occurred: ' . $e->getMessage());
         }
     }
+
+    public function searchFilters()
+    {
+        $categorieId = $this->request->getVar('categorie_id');
+        $marqueId = $this->request->getVar('marque_id');
+        $prixMin = $this->request->getVar('prix_min');
+        $prixMax = $this->request->getVar('prix_max');
+
+        $query = $this->productModel
+            ->select('produit.*, marques.nom as marque_nom, categories.libelle as categorie_nom')
+            ->join('marques', 'marques.id = produit.idMarque')
+            ->join('categories', 'categories.id = produit.idCategorie');
+
+        if ($categorieId !== null) {
+            $query->where('produit.idCategorie', $categorieId);
+        }
+
+        if ($marqueId !== null) {
+            $query->where('produit.idMarque', $marqueId);
+        }
+
+        if ($prixMin !== null) {
+            $query->where('produit.prix >=', $prixMin);
+        }
+
+        if ($prixMax !== null) {
+            $query->where('produit.prix <=', $prixMax);
+        }
+
+        $produits = $query->findAll();
+
+        $formattedProduits = [];
+        foreach ($produits as $produit) {
+            $formattedProduits[] = [
+                'id' => $produit['id'],
+                'nom' => $produit['nom'],
+                'prix' => $produit['prix'],
+                'description' => $produit['description'],
+                'qte' => $produit['qte'],
+                'marque' => [
+                    'id' => $produit['idMarque'],
+                    'nom' => $produit['marque_nom']
+                ],
+                'categorie' => [
+                    'id' => $produit['idCategorie'],
+                    'nom' => $produit['categorie_nom']
+                ],
+                'image' => $produit['image']
+            ];
+        }
+
+        return $this->respond($formattedProduits);
+    }
 }
