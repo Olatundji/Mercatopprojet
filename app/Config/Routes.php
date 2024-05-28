@@ -60,7 +60,7 @@ $routes->delete('api/marques/delete/(:num)', 'MarqueController::delete/$1');
 //promotion
 
 $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection $routes): void {
-    $routes->resource('promotions');
+    // $routes->resource('promotions');
 
     $routes->post('promotions/create', 'PromotionController::create');
     $routes->post('promotions/use', 'PromotionController::usePromoCode');
@@ -73,7 +73,7 @@ $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection
 //blog , article
 
 $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection $routes): void {
-    $routes->resource('article');
+    // $routes->resource('article');
 
     $routes->get('articles/index', 'ArticleController::index');
     $routes->get('articles/search', 'ArticleController::search');
@@ -89,7 +89,7 @@ $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection
 //paramettre
 
 $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection $routes): void {
-    $routes->resource('parametre');
+    // $routes->resource('parametre');
 
     $routes->get('parametres/create', 'ParametreController::create');
     $routes->get('parametres/index', 'ParametreController::index');
@@ -100,7 +100,7 @@ $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection
 //categoriearticle
 
 $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection $routes): void {
-    $routes->resource('categoriearticle');
+    // $routes->resource('categoriearticle');
 
     $routes->get('categoriearticles/index', 'CategorieArticleController::index');
     $routes->post('categoriearticles/create', 'CategorieArticleController::create');
@@ -137,7 +137,7 @@ $routes->get('api/produits/categorie/(:num)', 'ControllerProduit::rechercheParCa
 
 
 $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection $routes): void {
-    $routes->resource('panier');
+    // $routes->resource('panier');
 
     $routes->post('panier/ajouter', 'PanierController::ajouterProduit');
     $routes->get('panier/consulter', 'PanierController::consulterPanier');
@@ -153,7 +153,7 @@ $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection
 //commande
 
 $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection $routes): void {
-    $routes->resource('commande');
+    // $routes->resource('commande');
 
     $routes->post('commande/create', 'CommandeController::create');
     $routes->post('commande/index', 'CommandeController::index');
@@ -167,7 +167,7 @@ $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection
 // $routes->post('commande/:numCommande/methode-paiement/:numMethode', 'CommandeController::choisirMethodePaiement/$1/$2');
 //reduction
 $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection $routes): void {
-    $routes->resource('reduction');
+    // $routes->resource('reduction');
 
     $routes->get('reductions', 'ReductionController::listerReductions');
     $routes->post('reductions/utiliser', 'ReductionController::utiliserReduction');
