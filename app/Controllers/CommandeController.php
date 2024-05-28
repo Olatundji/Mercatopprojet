@@ -8,6 +8,7 @@ use App\Models\CommandeProduitModel;
 
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 
 class CommandeController extends BaseController
 {
@@ -86,15 +87,18 @@ class CommandeController extends BaseController
 
     private function validatePaypalTransaction($transactionId)
     {
-        $client = new Client();
+        $client = new \GuzzleHttp\Client();
         $url = 'https://api.sandbox.paypal.com/v1/payments/payment/' . $transactionId;
 
         try {
             $response = $client->request('GET', $url, [
                 'headers' => [
                     'Content-Type' => 'application/json',
+                    'Authorization' => 'Bearer ' . getenv('PAYPAL_ACCESS_TOKEN'),
                 ],
             ]);
+
+            log_message('info', 'PayPal API response: ' . $response->getBody());
 
             if ($response->getStatusCode() == 200) {
                 $transactionData = json_decode($response->getBody(), true);
@@ -102,12 +106,18 @@ class CommandeController extends BaseController
                     return true;
                 }
             }
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            log_message('error', 'Erreur de validation de transaction PayPal: ' . $e->getMessage());
+            if ($e->hasResponse()) {
+                log_message('error', 'Response body: ' . $e->getResponse()->getBody()->getContents());
+            }
         } catch (\Exception $e) {
             log_message('error', 'Erreur de validation de transaction PayPal: ' . $e->getMessage());
         }
 
         return false;
     }
+
 
 
     private function validateStripeTransaction($transactionId)
