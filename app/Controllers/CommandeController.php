@@ -33,36 +33,48 @@ class CommandeController extends BaseController
         $transactionId = $this->request->getVar('transaction');
         $methodePay = $this->request->getVar('method_pay');
 
-        if (!$this->isTransactionValid($transactionId, $methodePay)) {
-            return $this->fail('La validation du paiement a échoué', 400);
-        }
+        // if (!$this->isTransactionValid($transactionId, $methodePay)) {
+        //     return $this->fail('La validation du paiement a échoué', 400);
+        // }
+
+        $data = [
+            'etat' => 'pending' ,
+            'date' => date('Y-m-d H:i:s') ,
+            'transaction' => $this->request->getVar('transaction') , 
+            'method_pay' => $this->request->getVar('method_pay') , 
+            'montant' => $this->request->getVar('montant') , 
+            'idUser' => $this->request->getVar('idUser')
+        ];
 
         $commandeData = [
             'etat' => 'pending',
             'date' => date('Y-m-d H:i:s'),
             'transaction' => $transactionId,
-            'method_pay' => $methodePay,
+            'methode_pay' => $methodePay,
             'montant' => $this->request->getVar('montant'),
             'idUser' => $idUser,
         ];
 
-        $commandeId = $this->commandeModel->insert($commandeData);
+        
+        try {
+            
+            $this->commandeModel->insert($data);
+            $commande_id = $this->commandeModel->insertID;
 
-        if (!$commandeId) {
+        } catch (Exception $e) {
             return $this->fail('Erreur lors de la création de la commande', 500);
         }
+        
+
 
         foreach ($panier as $produit) {
-            $produitId = $produit['produit_id'];
-            $quantite = $produit['quantite'];
-
-            $commandeProduitData = [
-                'commande_id' => $commandeId,
-                'produit_id' => $produitId,
-                'quantite' => $quantite,
+            $data = [
+                'produit_id' => $produit->id,
+                'quantite' => $produit->quatite,
+                'commande_id' =>  $commande_id,
             ];
 
-            $this->commandeProduitModel->insert($commandeProduitData);
+            $this->commandeProduitModel->insert($data);
         }
 
         return $this->respond(['message' => 'Commande créée avec succès']);

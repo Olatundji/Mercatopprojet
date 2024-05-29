@@ -12,7 +12,7 @@ class CommandeModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['etat', 'date', 'transaction', 'methode_pay', 'montant', 'idProduit', 'idUser'];
+    protected $allowedFields    = ['etat', 'date', 'transaction', 'method_pay', 'montant', 'idUser'];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
@@ -32,10 +32,9 @@ class CommandeModel extends Model
         'etat' => 'required',
         'date' => 'required',
         'transaction' => 'required',
-        'methode_pay' => 'required',
+        'method_pay' => 'required',
         'montant' => 'required',
-        // 'idProduit' => 'required',
-        // 'idUser' => 'required',
+        'idUser' => 'required',
 
     ];
     protected $validationMessages   = [];
