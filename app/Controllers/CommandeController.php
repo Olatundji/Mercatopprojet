@@ -174,16 +174,14 @@ class CommandeController extends BaseController
         $private_key = "tpk_8276f592733111eea6c35d3a0ec50887";
         $secret = "tsk_82771ca0733111eea6c35d3a0ec50887";
 
-        
+
         $kkiapay = new \Kkiapay\Kkiapay($public_key, $private_key, $secret, $sandbox = true);
         $kkiapay->verifyTransaction($transactionId);
 
         // il faut voir ce que retourne la fonction (il doit y avoir 
-            // un status ou queslque chose qui y ressemble)
-            
-            return true;
+        // un status ou queslque chose qui y ressemble)
 
-        
+        return true;
     }
 
     // public function validateTransaction($transactionId)
@@ -269,12 +267,22 @@ class CommandeController extends BaseController
 
     public function listeCommandesUtilisateur($idUser)
     {
-        $commandes = $this->commandeModel->where('idUser', $idUser)->findAll();
+        $commandesUtilisateur = $this->commandeModel->where('idUser', $idUser)->findAll();
 
-        if (empty($commandes)) {
-            return $this->failNotFound('Aucune commande trouvée pour cet utilisateur');
+        if (empty($commandesUtilisateur)) {
+            return $this->failNotFound('No commandes found for this user');
         }
 
-        return $this->respond($commandes);
+        foreach ($commandesUtilisateur as &$commande) {
+            $produitsCommande = $this->commandeProduitModel
+                ->select('produit.nom AS nom_produit, commande_produit.quantite AS quantite_produit')
+                ->where('commande_id', $commande['id'])
+                ->join('produit', 'produit.id = commande_produit.produit_id')
+                ->findAll();
+
+            $commande['produits'] = $produitsCommande;
+        }
+
+        return $this->respond($commandesUtilisateur);
     }
 }
