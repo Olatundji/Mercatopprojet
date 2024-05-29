@@ -159,27 +159,42 @@ class CommandeController extends BaseController
 
     private function validateKiapayTransaction($transactionId)
     {
-        $client = new Client();
-        $url = 'https://api.kiapay.com/v1/transactions/' . $transactionId;
+        // $client = new Client();
+        // $url = 'https://api.kiapay.com/v1/transactions/' . $transactionId;
 
-        try {
-            $response = $client->request('GET', $url, [
-                'headers' => [
-                    'Content-Type' => 'application/json',
-                ],
-            ]);
+        // try {
+        //     $response = $client->request('GET', $url, [
+        //         'headers' => [
+        //             'Content-Type' => 'application/json',
+        //         ],
+        //     ]);
 
-            if ($response->getStatusCode() == 200) {
-                $transactionData = json_decode($response->getBody(), true);
-                if (isset($transactionData['status']) && $transactionData['status'] == 'successful') {
-                    return true;
-                }
-            }
-        } catch (\Exception $e) {
-            log_message('error', 'Erreur de validation de transaction kiapay: ' . $e->getMessage());
-        }
+        //     if ($response->getStatusCode() == 200) {
+        //         $transactionData = json_decode($response->getBody(), true);
+        //         if (isset($transactionData['status']) && $transactionData['status'] == 'successful') {
+        //             return true;
+        //         }
+        //     }
+        // } catch (\Exception $e) {
+        //     log_message('error', 'Erreur de validation de transaction kiapay: ' . $e->getMessage());
+        // }
 
-        return false;
+        // return false;
+
+        $public_key = "8276f590733111eea6c35d3a0ec50887";
+        $private_key = "tpk_8276f592733111eea6c35d3a0ec50887";
+        $secret = "tsk_82771ca0733111eea6c35d3a0ec50887";
+
+        
+        $kkiapay = new \Kkiapay\Kkiapay($public_key, $private_key, $secret, $sandbox = true);
+        $kkiapay->verifyTransaction($transactionId);
+
+        // il faut voir ce que retourne la fonction (il doit y avoir 
+            // un status ou queslque chose qui y ressemble)
+            
+            return true;
+
+        
     }
 
     private function validateFexpayTransaction($transactionId)
