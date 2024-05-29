@@ -128,7 +128,7 @@ class CommandeController extends BaseController
 
     private function validateStripeTransaction($transactionId)
     {
-        \Stripe\Stripe::setApiKey(getenv('STRIPE_SECRET_KEY'));
+        \Stripe\Stripe::setApiKey(getenv('sk_test_51PLmtfFeHRORwEaRimbS1JizwSwVc2MYNPiOH6m4h1HBIa8xEWObEnxhVqk73D7yOt83MBPdQFOxBS17cVPgbs1g00JRWiNu5D'));
 
         try {
             $charge = \Stripe\Charge::retrieve($transactionId);
