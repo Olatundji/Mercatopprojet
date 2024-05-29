@@ -275,9 +275,9 @@ class CommandeController extends BaseController
 
         foreach ($commandesUtilisateur as &$commande) {
             $produitsCommande = $this->commandeProduitModel
-                ->select('produit.nom AS nom_produit, commande_produit.quantite AS quantite_produit')
-                ->where('commande_id', $commande['id'])
-                ->join('produit', 'produit.id = commande_produit.produit_id')
+                ->select('produit.nom AS nom_produit, commandeproduit.quantite AS quantite_produit')
+                ->where('commandeproduit.commande_id', $commande['id'])
+                ->join('produit', 'produit.id = commandeproduit.produit_id')
                 ->findAll();
 
             $commande['produits'] = $produitsCommande;
