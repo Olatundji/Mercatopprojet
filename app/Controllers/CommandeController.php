@@ -102,8 +102,8 @@ class CommandeController extends BaseController
     {
         $apiContext = new \PayPal\Rest\ApiContext(
             new \PayPal\Auth\OAuthTokenCredential(
-                getenv('PAYPAL_CLIENT_ID'),     // ClientID
-                getenv('PAYPAL_SECRET')      // ClientSecret
+                getenv('AeFGhGeO4unjO0Zgk4YfWVc_Q43kIgRmgYoI2UHLbd1C7FOzbhlcGe08nswsHcvrsFgEhzIAJuu_cu3L'),     // ClientID
+                getenv('EChsBhmeJtASoBqcCa2kVyPHjId9e5r1Tr07VVuLtai5FXu3w98rtbZEQeD8qhI4yWMM4Ibq3D3LacD5')      // ClientSecret
             )
         );
 
