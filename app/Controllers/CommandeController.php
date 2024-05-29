@@ -5,6 +5,8 @@ namespace App\Controllers;
 use CodeIgniter\API\ResponseTrait;
 use App\Models\CommandeModel;
 use App\Models\CommandeProduitModel;
+use Exception;
+
 
 
 use GuzzleHttp\Client;
@@ -38,11 +40,11 @@ class CommandeController extends BaseController
         // }
 
         $data = [
-            'etat' => 'pending' ,
-            'date' => date('Y-m-d H:i:s') ,
-            'transaction' => $this->request->getVar('transaction') , 
-            'method_pay' => $this->request->getVar('method_pay') , 
-            'montant' => $this->request->getVar('montant') , 
+            'etat' => 'pending',
+            'date' => date('Y-m-d H:i:s'),
+            'transaction' => $this->request->getVar('transaction'),
+            'method_pay' => $this->request->getVar('method_pay'),
+            'montant' => $this->request->getVar('montant'),
             'idUser' => $this->request->getVar('idUser')
         ];
 
@@ -55,16 +57,15 @@ class CommandeController extends BaseController
             'idUser' => $idUser,
         ];
 
-        
+
         try {
-            
+
             $this->commandeModel->insert($data);
             $commande_id = $this->commandeModel->insertID;
-
         } catch (Exception $e) {
             return $this->fail('Erreur lors de la création de la commande', 500);
         }
-        
+
 
 
         foreach ($panier as $produit) {
@@ -88,10 +89,10 @@ class CommandeController extends BaseController
                 return $this->validatePaypalTransaction($transactionId);
             case 'Stripe':
                 return $this->validateStripeTransaction($transactionId);
-            case 'Kkiapay':
-                return $this->validateKiapayTransaction($transactionId);
-            case 'fedapay':
-                return $this->validateFexpayTransaction($transactionId);
+                // case 'Kkiapay':
+                //     return $this->validateKkiapayTransaction($transactionId);
+                // case 'feexpay':
+                //     return $this->validateFeexpayTransaction($transactionId);
             default:
                 return false;
         }
@@ -99,30 +100,22 @@ class CommandeController extends BaseController
 
     private function validatePaypalTransaction($transactionId)
     {
-        $client = new \GuzzleHttp\Client();
-        $url = 'https://api.sandbox.paypal.com/v1/payments/payment/' . $transactionId;
+        $apiContext = new \PayPal\Rest\ApiContext(
+            new \PayPal\Auth\OAuthTokenCredential(
+                getenv('AeFGhGeO4unjO0Zgk4YfWVc_Q43kIgRmgYoI2UHLbd1C7FOzbhlcGe08nswsHcvrsFgEhzIAJuu_cu3L'),     // ClientID
+                getenv('EChsBhmeJtASoBqcCa2kVyPHjId9e5r1Tr07VVuLtai5FXu3w98rtbZEQeD8qhI4yWMM4Ibq3D3LacD5')      // ClientSecret
+            )
+        );
 
         try {
-            $response = $client->request('GET', $url, [
-                'headers' => [
-                    'Content-Type' => 'application/json',
-                    'Authorization' => 'Bearer ' . getenv('PAYPAL_ACCESS_TOKEN'),
-                ],
-            ]);
+            $payment = \PayPal\Api\Payment::get($transactionId, $apiContext);
+            log_message('info', 'PayPal API response: ' . json_encode($payment));
 
-            log_message('info', 'PayPal API response: ' . $response->getBody());
-
-            if ($response->getStatusCode() == 200) {
-                $transactionData = json_decode($response->getBody(), true);
-                if (isset($transactionData['state']) && $transactionData['state'] == 'approved') {
-                    return true;
-                }
+            if ($payment->getState() == 'approved') {
+                return true;
             }
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
-            log_message('error', 'Erreur de validation de transaction PayPal: ' . $e->getMessage());
-            if ($e->hasResponse()) {
-                log_message('error', 'Response body: ' . $e->getResponse()->getBody()->getContents());
-            }
+        } catch (\PayPal\Exception\PayPalConnectionException $e) {
+            log_message('error', 'Erreur de validation de transaction PayPal: ' . $e->getData());
         } catch (\Exception $e) {
             log_message('error', 'Erreur de validation de transaction PayPal: ' . $e->getMessage());
         }
@@ -132,24 +125,20 @@ class CommandeController extends BaseController
 
 
 
+
     private function validateStripeTransaction($transactionId)
     {
-        $client = new Client();
-        $url = 'https://api.stripe.com/v1/charges/' . $transactionId;
+        \Stripe\Stripe::setApiKey(getenv('sk_test_51PLmtfFeHRORwEaRimbS1JizwSwVc2MYNPiOH6m4h1HBIa8xEWObEnxhVqk73D7yOt83MBPdQFOxBS17cVPgbs1g00JRWiNu5D'));
 
         try {
-            $response = $client->request('GET', $url, [
-                'headers' => [
-                    'Content-Type' => 'application/json',
-                ],
-            ]);
+            $charge = \Stripe\Charge::retrieve($transactionId);
+            log_message('info', 'Stripe API response: ' . json_encode($charge));
 
-            if ($response->getStatusCode() == 200) {
-                $transactionData = json_decode($response->getBody(), true);
-                if (isset($transactionData['status']) && $transactionData['status'] == 'succeeded') {
-                    return true;
-                }
+            if ($charge->status == 'succeeded') {
+                return true;
             }
+        } catch (\Stripe\Exception\ApiErrorException $e) {
+            log_message('error', 'Erreur de validation de transaction Stripe: ' . $e->getMessage());
         } catch (\Exception $e) {
             log_message('error', 'Erreur de validation de transaction Stripe: ' . $e->getMessage());
         }
@@ -197,31 +186,32 @@ class CommandeController extends BaseController
         
     }
 
-    private function validateFexpayTransaction($transactionId)
-    {
-        $client = new Client();
-        $url = 'https://api.fexpay.com/v1/transactions/' . $transactionId;
+    // public function validateTransaction($transactionId)
+    // {
+    //     // Initialisez le client Feexpay avec vos informations d'authentification
+    //     $feexpayClient = new Client([
+    //         'clientId' => 'VOTRE_CLIENT_ID',
+    //         'clientSecret' => 'VOTRE_CLIENT_SECRET',
+    //         'baseUrl' => 'https://api.feexpay.com/v1', // L'URL de base de l'API Feexpay
+    //     ]);
 
-        try {
-            $response = $client->request('GET', $url, [
-                'headers' => [
-                    'Content-Type' => 'application/json',
-                ],
-            ]);
+    //     try {
+    //         $transaction = $feexpayClient->transactions->retrieve($transactionId);
 
-            if ($response->getStatusCode() == 200) {
-                $transactionData = json_decode($response->getBody(), true);
-                if (isset($transactionData['status']) && $transactionData['status'] == 'success') {
-                    return true;
-                }
-            }
-        } catch (\Exception $e) {
-            log_message('error', 'Erreur de validation de transaction Fexpay: ' . $e->getMessage());
-        }
-
-        return false;
-    }
-
+    //         // Vérifiez si la transaction est réussie
+    //         if ($transaction['status'] === 'success') {
+    //             return true; // La transaction est valide
+    //         } else {
+    //             return false; // La transaction a échoué
+    //         }
+    //     } catch (ApiErrorException $e) {
+    //         log_message('error', 'Erreur de validation de transaction Feexpay: ' . $e->getMessage());
+    //         return false; 
+    //     } catch (\Exception $e) {
+    //         log_message('error', 'Erreur de validation de transaction Feexpay: ' . $e->getMessage());
+    //         return false; 
+    //     }
+    // }
 
     public function commandesUtilisateur($idUser)
     {
@@ -265,5 +255,26 @@ class CommandeController extends BaseController
         $updatedCommande = $this->commandeModel->find($id);
 
         return $this->respond(['message' => 'Commande information updated successfully', 'commande' => $updatedCommande]);
+    }
+    public function listeToutesCommandes()
+    {
+        $commandes = $this->commandeModel->findAll();
+
+        if (empty($commandes)) {
+            return $this->failNotFound('Aucune commande trouvée');
+        }
+
+        return $this->respond($commandes);
+    }
+
+    public function listeCommandesUtilisateur($idUser)
+    {
+        $commandes = $this->commandeModel->where('idUser', $idUser)->findAll();
+
+        if (empty($commandes)) {
+            return $this->failNotFound('Aucune commande trouvée pour cet utilisateur');
+        }
+
+        return $this->respond($commandes);
     }
 }
