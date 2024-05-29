@@ -32,7 +32,7 @@ $routes->post('api/reset-password', 'AuthController::resetPassword');
 //     $routes->get('search', 'ProductController::search');
 // });
 $routes->post('api/product/create', 'ProductController::create');
-$routes->post('api/product/update/(:num)', 'ProductController::update/$1');
+$routes->put('api/product/update/(:num)', 'ProductController::update/$1');
 $routes->delete('api/product/delete/(:num)', 'ProductController::delete/$1');
 $routes->get('api/products', 'ProductController::index');
 $routes->get('api/product/search', 'ProductController::search');
@@ -64,7 +64,7 @@ $routes->delete('api/marques/delete/(:num)', 'MarqueController::delete/$1');
 //promotion
 
 $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection $routes): void {
-    $routes->resource('promotions');
+    // $routes->resource('promotions');
 
     $routes->post('promotions/create', 'PromotionController::create');
     $routes->post('promotions/use', 'PromotionController::usePromoCode');
@@ -77,7 +77,7 @@ $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection
 //blog , article
 
 $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection $routes): void {
-    $routes->resource('article');
+    // $routes->resource('article');
 
     $routes->get('articles/index', 'ArticleController::index');
     $routes->get('articles/search', 'ArticleController::search');
@@ -94,7 +94,7 @@ $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection
 //paramettre
 
 $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection $routes): void {
-    $routes->resource('parametre');
+    // $routes->resource('parametre');
 
     $routes->get('parametres/create', 'ParametreController::create');
     $routes->get('parametres/index', 'ParametreController::index');
@@ -106,7 +106,7 @@ $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection
 //categoriearticle
 
 $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection $routes): void {
-    $routes->resource('categoriearticle');
+    // $routes->resource('categoriearticle');
 
     $routes->get('categoriearticles/index', 'CategorieArticleController::index');
     $routes->post('categoriearticles/create', 'CategorieArticleController::create');
@@ -143,7 +143,7 @@ $routes->get('api/produits/categorie/(:num)', 'ControllerProduit::rechercheParCa
 
 
 $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection $routes): void {
-    $routes->resource('panier');
+    // $routes->resource('panier');
 
     $routes->post('panier/ajouter', 'PanierController::ajouterProduit');
     $routes->get('panier/consulter', 'PanierController::consulterPanier');
@@ -159,12 +159,14 @@ $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection
 //commande
 
 $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection $routes): void {
-    $routes->resource('commande');
+    // $routes->resource('commande');
 
     $routes->post('commande/create', 'CommandeController::create');
     $routes->post('commande/index', 'CommandeController::index');
     $routes->get('commandes-utilisateur/(:num)', 'CommandeController::commandesUtilisateur/$1');
     $routes->post('admin/valider-commande/(:num)', 'CommandeController::validerCommande/$1');
+    $routes->get('commande/index', 'CommandeController::listeToutesCommandes');
+    $routes->get('commande/index-utilisateur/(:num)', 'CommandeController::listeCommandesUtilisateur/$1');
 });
 // $routes->post('commande/nouvelle', 'CommandeController::nouvelleCommande');
 // $routes->get('commande/details/(:num)', 'CommandeController::detailsCommande/$1');
@@ -173,7 +175,7 @@ $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection
 // $routes->post('commande/:numCommande/methode-paiement/:numMethode', 'CommandeController::choisirMethodePaiement/$1/$2');
 //reduction
 $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection $routes): void {
-    $routes->resource('reduction');
+    // $routes->resource('reduction');
 
     $routes->get('reductions', 'ReductionController::listerReductions');
     $routes->post('reductions/utiliser', 'ReductionController::utiliserReduction');

@@ -25,8 +25,8 @@ class CreateCommandeTable extends Migration
                 'null' => false,
             ],
             'transaction' => [
-                'type' => 'INT',
-                'constraint' => 11,
+                'type' => 'VARCHAR',
+                'constraint' => 100,
                 'null' => false,
             ],
             'method_pay' => [
@@ -38,12 +38,7 @@ class CreateCommandeTable extends Migration
                 'type' => 'INT',
                 'null' => false,
             ],
-            'idProduit' => [
-                'type' => 'INT',
-                'constraint' => 11,
-                'unsigned' => true,
-            ],
-             'idUser' => [
+            'idUser' => [
                 'type' => 'INT',
                 'constraint' => 11,
                 'unsigned' => TRUE,
@@ -51,16 +46,15 @@ class CreateCommandeTable extends Migration
             
             // Ajoutez d'autres colonnes si nécessaire
             'created_at' => [
-                'type' => 'DATETIME',
+                'type' => 'TIMESTAMP',
                 'null' => true,
             ],
             'updated_at' => [
-                'type' => 'DATETIME',
+                'type' => 'TIMESTAMP',
                 'null' => true,
             ],
         ]);
         $this->forge->addPrimaryKey('id');
-        $this->forge->addForeignKey('idProduit', 'produit', 'id', 'CASCADE', 'CASCADE');
         $this->forge->addForeignKey('idUser', 'users', 'id', 'CASCADE', 'CASCADE');
         $this->forge->createTable('commandes');
     }

@@ -14,11 +14,14 @@
         "agungsugiarto/codeigniter4-cors": "^3.0",
         "chriskacerguis/codeigniter-restserver": "^3.1",
         "codeigniter4/framework": "^4.5",
+        "feexpay/feexpay-php": "^1.0",
         "firebase/php-jwt": "^6.10",
         "guzzlehttp/guzzle": "^7.8",
         "lcobucci/jwt": "^4.0",
         "paypal/rest-api-sdk-php": "^1.6",
-        "stripe/stripe-php": "^14.8"
+        "stripe/stripe-php": "^14.8",
+        "kkiapay/kkiapay-php": "^1.0 || ^2.0"
+
     },
     "require-dev": {
         "fakerphp/faker": "^1.9",
@@ -46,4 +49,7 @@
     "scripts": {
         "test": "phpunit"
     }
+    
+    
+
 }

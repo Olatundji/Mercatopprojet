@@ -5,6 +5,8 @@ namespace App\Controllers;
 use CodeIgniter\API\ResponseTrait;
 use App\Models\CommandeModel;
 use App\Models\CommandeProduitModel;
+use Exception;
+
 
 
 use GuzzleHttp\Client;
@@ -33,36 +35,47 @@ class CommandeController extends BaseController
         $transactionId = $this->request->getVar('transaction');
         $methodePay = $this->request->getVar('method_pay');
 
-        if (!$this->isTransactionValid($transactionId, $methodePay)) {
-            return $this->fail('La validation du paiement a échoué', 400);
-        }
+        // if (!$this->isTransactionValid($transactionId, $methodePay)) {
+        //     return $this->fail('La validation du paiement a échoué', 400);
+        // }
+
+        $data = [
+            'etat' => 'pending',
+            'date' => date('Y-m-d H:i:s'),
+            'transaction' => $this->request->getVar('transaction'),
+            'method_pay' => $this->request->getVar('method_pay'),
+            'montant' => $this->request->getVar('montant'),
+            'idUser' => $this->request->getVar('idUser')
+        ];
 
         $commandeData = [
             'etat' => 'pending',
             'date' => date('Y-m-d H:i:s'),
             'transaction' => $transactionId,
-            'method_pay' => $methodePay,
+            'methode_pay' => $methodePay,
             'montant' => $this->request->getVar('montant'),
             'idUser' => $idUser,
         ];
 
-        $commandeId = $this->commandeModel->insert($commandeData);
 
-        if (!$commandeId) {
+        try {
+
+            $this->commandeModel->insert($data);
+            $commande_id = $this->commandeModel->insertID;
+        } catch (Exception $e) {
             return $this->fail('Erreur lors de la création de la commande', 500);
         }
 
-        foreach ($panier as $produit) {
-            $produitId = $produit['produit_id'];
-            $quantite = $produit['quantite'];
 
-            $commandeProduitData = [
-                'commande_id' => $commandeId,
-                'produit_id' => $produitId,
-                'quantite' => $quantite,
+
+        foreach ($panier as $produit) {
+            $data = [
+                'produit_id' => $produit->id,
+                'quantite' => $produit->quatite,
+                'commande_id' =>  $commande_id,
             ];
 
-            $this->commandeProduitModel->insert($commandeProduitData);
+            $this->commandeProduitModel->insert($data);
         }
 
         return $this->respond(['message' => 'Commande créée avec succès']);
@@ -72,14 +85,14 @@ class CommandeController extends BaseController
     private function isTransactionValid($transactionId, $methodePay)
     {
         switch ($methodePay) {
-            case 'paypal':
+            case 'Paypal':
                 return $this->validatePaypalTransaction($transactionId);
-            case 'stripe':
+            case 'Stripe':
                 return $this->validateStripeTransaction($transactionId);
-            case 'kiapay':
-                return $this->validateKiapayTransaction($transactionId);
-            case 'fedapay':
-                return $this->validateFexpayTransaction($transactionId);
+                // case 'Kkiapay':
+                //     return $this->validateKkiapayTransaction($transactionId);
+                // case 'feexpay':
+                //     return $this->validateFeexpayTransaction($transactionId);
             default:
                 return false;
         }
@@ -133,56 +146,52 @@ class CommandeController extends BaseController
         return false;
     }
 
-    private function validateKiapayTransaction($transactionId)
-    {
-        $client = new Client();
-        $url = 'https://api.kiapay.com/v1/transactions/' . $transactionId;
+    // private function validateKkiapayTransaction($transactionId)
+    // {
+    //     \KKiaPay\KKiaPay::setApiKey(getenv('KKIAPAY_SECRET_KEY'));
 
-        try {
-            $response = $client->request('GET', $url, [
-                'headers' => [
-                    'Content-Type' => 'application/json',
-                ],
-            ]);
+    //     try {
+    //         $transaction = \KKiaPay\Transaction::retrieve($transactionId);
+    //         log_message('info', 'KKiaPay API response: ' . json_encode($transaction));
 
-            if ($response->getStatusCode() == 200) {
-                $transactionData = json_decode($response->getBody(), true);
-                if (isset($transactionData['status']) && $transactionData['status'] == 'successful') {
-                    return true;
-                }
-            }
-        } catch (\Exception $e) {
-            log_message('error', 'Erreur de validation de transaction kiapay: ' . $e->getMessage());
-        }
+    //         if ($transaction->status == 'success') {
+    //             return true;
+    //         }
+    //     } catch (\KKiaPay\Exception\ApiErrorException $e) {
+    //         log_message('error', 'Erreur de validation de transaction KKiaPay: ' . $e->getMessage());
+    //     } catch (\Exception $e) {
+    //         log_message('error', 'Erreur de validation de transaction KKiaPay: ' . $e->getMessage());
+    //     }
 
-        return false;
-    }
+    //     return false;
+    // }
 
-    private function validateFexpayTransaction($transactionId)
-    {
-        $client = new Client();
-        $url = 'https://api.fexpay.com/v1/transactions/' . $transactionId;
+    // public function validateTransaction($transactionId)
+    // {
+    //     // Initialisez le client Feexpay avec vos informations d'authentification
+    //     $feexpayClient = new Client([
+    //         'clientId' => 'VOTRE_CLIENT_ID',
+    //         'clientSecret' => 'VOTRE_CLIENT_SECRET',
+    //         'baseUrl' => 'https://api.feexpay.com/v1', // L'URL de base de l'API Feexpay
+    //     ]);
 
-        try {
-            $response = $client->request('GET', $url, [
-                'headers' => [
-                    'Content-Type' => 'application/json',
-                ],
-            ]);
+    //     try {
+    //         $transaction = $feexpayClient->transactions->retrieve($transactionId);
 
-            if ($response->getStatusCode() == 200) {
-                $transactionData = json_decode($response->getBody(), true);
-                if (isset($transactionData['status']) && $transactionData['status'] == 'success') {
-                    return true;
-                }
-            }
-        } catch (\Exception $e) {
-            log_message('error', 'Erreur de validation de transaction Fexpay: ' . $e->getMessage());
-        }
-
-        return false;
-    }
-
+    //         // Vérifiez si la transaction est réussie
+    //         if ($transaction['status'] === 'success') {
+    //             return true; // La transaction est valide
+    //         } else {
+    //             return false; // La transaction a échoué
+    //         }
+    //     } catch (ApiErrorException $e) {
+    //         log_message('error', 'Erreur de validation de transaction Feexpay: ' . $e->getMessage());
+    //         return false; 
+    //     } catch (\Exception $e) {
+    //         log_message('error', 'Erreur de validation de transaction Feexpay: ' . $e->getMessage());
+    //         return false; 
+    //     }
+    // }
 
     public function commandesUtilisateur($idUser)
     {
@@ -226,5 +235,26 @@ class CommandeController extends BaseController
         $updatedCommande = $this->commandeModel->find($id);
 
         return $this->respond(['message' => 'Commande information updated successfully', 'commande' => $updatedCommande]);
+    }
+    public function listeToutesCommandes()
+    {
+        $commandes = $this->commandeModel->findAll();
+
+        if (empty($commandes)) {
+            return $this->failNotFound('Aucune commande trouvée');
+        }
+
+        return $this->respond($commandes);
+    }
+
+    public function listeCommandesUtilisateur($idUser)
+    {
+        $commandes = $this->commandeModel->where('idUser', $idUser)->findAll();
+
+        if (empty($commandes)) {
+            return $this->failNotFound('Aucune commande trouvée pour cet utilisateur');
+        }
+
+        return $this->respond($commandes);
     }
 }
