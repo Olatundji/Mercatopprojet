@@ -87,30 +87,22 @@ class CommandeController extends BaseController
 
     private function validatePaypalTransaction($transactionId)
     {
-        $client = new \GuzzleHttp\Client();
-        $url = 'https://api.sandbox.paypal.com/v1/payments/payment/' . $transactionId;
+        $apiContext = new \PayPal\Rest\ApiContext(
+            new \PayPal\Auth\OAuthTokenCredential(
+                getenv('PAYPAL_CLIENT_ID'),     // ClientID
+                getenv('PAYPAL_SECRET')      // ClientSecret
+            )
+        );
 
         try {
-            $response = $client->request('GET', $url, [
-                'headers' => [
-                    'Content-Type' => 'application/json',
-                    'Authorization' => 'Bearer ' . getenv('PAYPAL_ACCESS_TOKEN'),
-                ],
-            ]);
+            $payment = \PayPal\Api\Payment::get($transactionId, $apiContext);
+            log_message('info', 'PayPal API response: ' . json_encode($payment));
 
-            log_message('info', 'PayPal API response: ' . $response->getBody());
-
-            if ($response->getStatusCode() == 200) {
-                $transactionData = json_decode($response->getBody(), true);
-                if (isset($transactionData['state']) && $transactionData['state'] == 'approved') {
-                    return true;
-                }
+            if ($payment->getState() == 'approved') {
+                return true;
             }
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
-            log_message('error', 'Erreur de validation de transaction PayPal: ' . $e->getMessage());
-            if ($e->hasResponse()) {
-                log_message('error', 'Response body: ' . $e->getResponse()->getBody()->getContents());
-            }
+        } catch (\PayPal\Exception\PayPalConnectionException $e) {
+            log_message('error', 'Erreur de validation de transaction PayPal: ' . $e->getData());
         } catch (\Exception $e) {
             log_message('error', 'Erreur de validation de transaction PayPal: ' . $e->getMessage());
         }
@@ -120,24 +112,20 @@ class CommandeController extends BaseController
 
 
 
+
     private function validateStripeTransaction($transactionId)
     {
-        $client = new Client();
-        $url = 'https://api.stripe.com/v1/charges/' . $transactionId;
+        \Stripe\Stripe::setApiKey(getenv('STRIPE_SECRET_KEY'));
 
         try {
-            $response = $client->request('GET', $url, [
-                'headers' => [
-                    'Content-Type' => 'application/json',
-                ],
-            ]);
+            $charge = \Stripe\Charge::retrieve($transactionId);
+            log_message('info', 'Stripe API response: ' . json_encode($charge));
 
-            if ($response->getStatusCode() == 200) {
-                $transactionData = json_decode($response->getBody(), true);
-                if (isset($transactionData['status']) && $transactionData['status'] == 'succeeded') {
-                    return true;
-                }
+            if ($charge->status == 'succeeded') {
+                return true;
             }
+        } catch (\Stripe\Exception\ApiErrorException $e) {
+            log_message('error', 'Erreur de validation de transaction Stripe: ' . $e->getMessage());
         } catch (\Exception $e) {
             log_message('error', 'Erreur de validation de transaction Stripe: ' . $e->getMessage());
         }
