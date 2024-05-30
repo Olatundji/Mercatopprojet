@@ -152,9 +152,9 @@ class ProductController extends BaseController
 
         if ($file && $file->isValid() && !$file->hasMoved()) {
             $fileName = $file->getRandomName();
-            $file->move(WRITEPATH . 'uploads', $fileName);
+            $file->move(FCPATH . 'uploads', $fileName);
 
-            // Construire le chemin d'accès public à l'image
+            // Construire le chemin d'accès complet à l'image
             $data['image'] = base_url('uploads/' . $fileName);
         }
 
@@ -164,6 +164,7 @@ class ProductController extends BaseController
 
         return $this->respondCreated(['message' => 'Product created successfully', 'data' => $data]);
     }
+
 
     public function update($id)
     {
@@ -186,7 +187,7 @@ class ProductController extends BaseController
 
         if ($file && $file->isValid() && !$file->hasMoved()) {
             $fileName = $file->getRandomName();
-            $file->move(WRITEPATH . 'uploads', $fileName);
+            $file->move(FCPATH . 'uploads', $fileName);
 
             // Construire le chemin d'accès public à l'image
             $data['image'] = base_url('uploads/' . $fileName);

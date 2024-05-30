@@ -28,20 +28,19 @@ class CommentaireController extends BaseController
     public function index()
     {
         $page = $this->request->getVar('page') ?? 1;
-
         $perPage = 10;
-
         $type = $this->request->getVar('type');
 
         $commentaireQuery = $this->commentaireModel
-            ->select('commentaires.*, produit.nom as produit_nom, articles.contenu as article_nom , users.nom as user_nom')
-            ->join('users', 'users.id = commentaires.idUser');
+            ->select('commentaires.contenu, users.nom as user_nom');
 
         if ($type === 'produit') {
             $commentaireQuery->join('produit', 'produit.id = commentaires.idProduit')
+                ->join('users', 'users.id = commentaires.idUser')
                 ->where('commentaires.idArticle', null);
         } elseif ($type === 'article') {
             $commentaireQuery->join('articles', 'articles.id = commentaires.idArticle')
+                ->join('users', 'users.id = commentaires.idUser')
                 ->where('commentaires.idProduit', null);
         } else {
             return $this->respond(['message' => 'Invalid type specified. Use "produit" or "article".'], 400);
@@ -55,32 +54,17 @@ class CommentaireController extends BaseController
 
         $formattedCommentaires = [];
         foreach ($commentaires as $commentaire) {
-            $formattedCommentaire = [
-                'id' => $commentaire['id'],
+            $formattedCommentaires[] = [
                 'contenu' => $commentaire['contenu'],
                 'user' => [
-                    'id' => $commentaire['idUser'],
                     'nom' => $commentaire['user_nom']
                 ]
             ];
-
-            if ($type === 'produit') {
-                $formattedCommentaire['produit'] = [
-                    'id' => $commentaire['idProduit'],
-                    'nom' => $commentaire['produit_nom']
-                ];
-            } elseif ($type === 'article') {
-                $formattedCommentaire['article'] = [
-                    'id' => $commentaire['idArticle'],
-                    'nom' => $commentaire['article_nom']
-                ];
-            }
-
-            $formattedCommentaires[] = $formattedCommentaire;
         }
 
         return $this->respond($formattedCommentaires);
     }
+
 
 
 
@@ -91,18 +75,15 @@ class CommentaireController extends BaseController
         $idProduit = $this->request->getVar('idProduit');
         $idArticle = $this->request->getVar('idArticle');
 
-        if ($idProduit && $idArticle) {
-            return $this->fail('A comment cannot be linked to both a product and an article at the same time.');
-        }
-
-        if (!$idProduit && !$idArticle) {
-            return $this->fail('A comment must be linked to either a product or an article.');
+        // Vérifie que seulement l'un des deux est spécifié
+        if (($idProduit && $idArticle) || (!$idProduit && !$idArticle)) {
+            return $this->fail('A comment must be linked to either a product or an article, but not both.');
         }
 
         $data = [
             'contenu' => $this->request->getVar('contenu'),
-            'idProduit' => $idProduit ? $idProduit : null,
-            'idArticle' => $idArticle ? $idArticle : null,
+            'idProduit' => $idProduit,
+            'idArticle' => $idArticle,
             'idUser' => $this->request->getVar('idUser'),
         ];
 

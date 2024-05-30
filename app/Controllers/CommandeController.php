@@ -184,32 +184,38 @@ class CommandeController extends BaseController
         return true;
     }
 
-    // public function validateTransaction($transactionId)
-    // {
-    //     // Initialisez le client Feexpay avec vos informations d'authentification
-    //     $feexpayClient = new Client([
-    //         'clientId' => 'VOTRE_CLIENT_ID',
-    //         'clientSecret' => 'VOTRE_CLIENT_SECRET',
-    //         'baseUrl' => 'https://api.feexpay.com/v1', // L'URL de base de l'API Feexpay
-    //     ]);
+    private function validateFeexpayTransaction($transactionId)
+    {
+        $apiUrl = 'https://api.feexpay.com/validate-transaction';
+        $apiKey = getenv('FEEXPAY_API_KEY');  // Remplacez par votre clé API
 
-    //     try {
-    //         $transaction = $feexpayClient->transactions->retrieve($transactionId);
+        $curl = \Config\Services::curlrequest();
 
-    //         // Vérifiez si la transaction est réussie
-    //         if ($transaction['status'] === 'success') {
-    //             return true; // La transaction est valide
-    //         } else {
-    //             return false; // La transaction a échoué
-    //         }
-    //     } catch (ApiErrorException $e) {
-    //         log_message('error', 'Erreur de validation de transaction Feexpay: ' . $e->getMessage());
-    //         return false; 
-    //     } catch (\Exception $e) {
-    //         log_message('error', 'Erreur de validation de transaction Feexpay: ' . $e->getMessage());
-    //         return false; 
-    //     }
-    // }
+        try {
+            $response = $curl->request('POST', $apiUrl, [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $apiKey,
+                    'Content-Type' => 'application/json'
+                ],
+                'json' => [
+                    'transactionId' => $transactionId
+                ]
+            ]);
+
+            if ($response->getStatusCode() !== 200) {
+                return false;
+            }
+
+            $responseBody = json_decode($response->getBody(), true);
+            if (isset($responseBody['status']) && $responseBody['status'] == 'approved') {
+                return true;
+            }
+        } catch (\Exception $e) {
+            log_message('error', 'Erreur de validation de transaction Feexpay: ' . $e->getMessage());
+        }
+
+        return false;
+    }
 
     public function commandesUtilisateur($idUser)
     {

@@ -28,11 +28,13 @@ class CreateCommentaireTable extends Migration
                 'type' => 'INT',
                 'constraint' => 11,
                 'unsigned' => true,
+                'null' => true, // Permet les valeurs NULL
             ],
             'idProduit' => [
                 'type' => 'INT',
                 'constraint' => 11,
                 'unsigned' => true,
+                'null' => true, // Permet les valeurs NULL
             ],
             'created_at' => [
                 'type' => 'DATETIME',
@@ -42,7 +44,7 @@ class CreateCommentaireTable extends Migration
                 'type' => 'DATETIME',
                 'null' => true,
             ],
-            
+
         ]);
         $this->forge->addPrimaryKey('id');
         $this->forge->addForeignKey('idUser', 'users', 'id', 'CASCADE', 'CASCADE');

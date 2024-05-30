@@ -43,7 +43,7 @@ class ParametreController extends ResourceController
 
             // Définir le chemin de téléchargement
             $newName = $file->getRandomName();
-            $file->move(WRITEPATH . 'uploads', $newName);
+            $file->move(FCPATH . 'uploads', $newName);
 
             // Récupérer le chemin complet de l'image téléchargée
             $logo_path = base_url('uploads/' . $newName);
