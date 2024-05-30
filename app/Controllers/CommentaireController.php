@@ -16,7 +16,8 @@ class CommentaireController extends BaseController
         $this->commentaireModel = new CommentaireModel();
     }
 
-    public function search() {
+    public function search()
+    {
         $keyword = $this->request->getGet('keyword');
 
         $results = $this->commentaireModel->searchCommentaires($keyword);
@@ -26,71 +27,87 @@ class CommentaireController extends BaseController
 
     public function index()
     {
-        // Récupérer la page actuelle à partir de la requête GET
         $page = $this->request->getVar('page') ?? 1;
-    
-        // Définir le nombre d'éléments par page
+
         $perPage = 10;
-    
-        // Récupérer tous les produits depuis la base de données avec les détails de la marque et de la catégorie
-        $commentaires = $this->commentaireModel
-                        ->select('commentaires.*, produit.nom as produit_nom, articles.contenu as article_nom , users.nom as user_nom' )
-                        ->join('produit', 'produit.id = commentaires.idProduit')
-                        ->join('articles', 'articles.id = commentaires.idArticle')
-                        ->join('users', 'users.id = commentaires.idUser')
-                        ->paginate($perPage, 'default', $page);
-    
+
+        $type = $this->request->getVar('type');
+
+        $commentaireQuery = $this->commentaireModel
+            ->select('commentaires.*, produit.nom as produit_nom, articles.contenu as article_nom , users.nom as user_nom')
+            ->join('users', 'users.id = commentaires.idUser');
+
+        if ($type === 'produit') {
+            $commentaireQuery->join('produit', 'produit.id = commentaires.idProduit')
+                ->where('commentaires.idArticle', null);
+        } elseif ($type === 'article') {
+            $commentaireQuery->join('articles', 'articles.id = commentaires.idArticle')
+                ->where('commentaires.idProduit', null);
+        } else {
+            return $this->respond(['message' => 'Invalid type specified. Use "produit" or "article".'], 400);
+        }
+
+        $commentaires = $commentaireQuery->paginate($perPage, 'default', $page);
+
         if (empty($commentaires)) {
             return $this->respond(['message' => 'No commentaire found'], 404);
         }
-    
-        // Formatter la réponse avec les détails de la marque et de la catégorie
+
         $formattedCommentaires = [];
         foreach ($commentaires as $commentaire) {
-            $formattedCommentaires[] = [
+            $formattedCommentaire = [
                 'id' => $commentaire['id'],
                 'contenu' => $commentaire['contenu'],
-                'produit' => [
-                    'id' => $commentaire['idProduit'],
-                    'nom' => $commentaire['produit_nom']
-                ],
-                'article' => [
-                    'id' => $commentaire['idArticle'],
-                    'nom' => $commentaire['article_nom']
-                ],
                 'user' => [
                     'id' => $commentaire['idUser'],
                     'nom' => $commentaire['user_nom']
                 ]
             ];
+
+            if ($type === 'produit') {
+                $formattedCommentaire['produit'] = [
+                    'id' => $commentaire['idProduit'],
+                    'nom' => $commentaire['produit_nom']
+                ];
+            } elseif ($type === 'article') {
+                $formattedCommentaire['article'] = [
+                    'id' => $commentaire['idArticle'],
+                    'nom' => $commentaire['article_nom']
+                ];
+            }
+
+            $formattedCommentaires[] = $formattedCommentaire;
         }
-    
-        // Retourner la liste des produits formatés avec les détails de la marque et de la catégorie
+
         return $this->respond($formattedCommentaires);
     }
-    
 
 
 
-public function create()
-{
-    $data = [
-        'contenu' => $this->request->getVar('contenu'),
-        'idProduit' => $this->request->getVar('idProduit'),
-        'idArticle' => $this->request->getVar('idArticle'),
-        'idUser' => $this->request->getVar('idUser'),
-    ];
-
-    $this->commentaireModel->insert($data);
-
-    return $this->respond(['message' => 'commentaire created successfully']);
-}
 
 
-    public function delete($id)
+    public function create()
     {
-        $this->commentaireModel->delete($id);
+        $idProduit = $this->request->getVar('idProduit');
+        $idArticle = $this->request->getVar('idArticle');
 
-        return $this->respondDeleted(['message' => 'commentaire deleted successfully']);
+        if ($idProduit && $idArticle) {
+            return $this->fail('A comment cannot be linked to both a product and an article at the same time.');
+        }
+
+        if (!$idProduit && !$idArticle) {
+            return $this->fail('A comment must be linked to either a product or an article.');
+        }
+
+        $data = [
+            'contenu' => $this->request->getVar('contenu'),
+            'idProduit' => $idProduit ? $idProduit : null,
+            'idArticle' => $idArticle ? $idArticle : null,
+            'idUser' => $this->request->getVar('idUser'),
+        ];
+
+        $this->commentaireModel->insert($data);
+
+        return $this->respond(['message' => 'Commentaire created successfully']);
     }
 }

@@ -152,16 +152,13 @@ class ProductController extends BaseController
 
         if ($file && $file->isValid() && !$file->hasMoved()) {
             $fileName = $file->getRandomName();
-            $filePath = 'uploads/' . $fileName;
             $file->move(WRITEPATH . 'uploads', $fileName);
 
+            // Construire le chemin d'accès public à l'image
             $data['image'] = base_url('uploads/' . $fileName);
         }
 
-        log_message('info', 'Data to be inserted: ' . json_encode($data));
-
         if (!$this->productModel->insert($data)) {
-            log_message('error', 'Failed to insert product: ' . json_encode($this->productModel->errors()));
             return $this->failServerError('Failed to create product');
         }
 
@@ -189,16 +186,13 @@ class ProductController extends BaseController
 
         if ($file && $file->isValid() && !$file->hasMoved()) {
             $fileName = $file->getRandomName();
-            $filePath = 'uploads/' . $fileName;
             $file->move(WRITEPATH . 'uploads', $fileName);
 
+            // Construire le chemin d'accès public à l'image
             $data['image'] = base_url('uploads/' . $fileName);
         }
 
-        log_message('info', 'Data to be updated for ID ' . $id . ': ' . json_encode($data));
-
         if (!$this->productModel->update($id, $data)) {
-            log_message('error', 'Failed to update product: ' . json_encode($this->productModel->errors()));
             return $this->failServerError('Failed to update product');
         }
 
