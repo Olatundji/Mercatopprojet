@@ -5,8 +5,16 @@
 import { onBeforeMount } from 'vue'
 import { useStore } from 'vuex'
 import { useColorModes } from '@coreui/vue'
+// import store from './store';
+// import { boutique } from './services';
 
 export default {
+  mounted() {
+    // boutique.getBoutiqueInfos().then((response) => {
+    //   store.commit('setSiteInfos', response.data.infos)
+    // } )
+  },
+  
   setup() {
     const { isColorModeSet, setColorMode } = useColorModes(
       'coreui-free-vue-admin-template-theme',

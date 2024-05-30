@@ -25,9 +25,8 @@
                         <CRow>
                             <CCol :md="6" >
                                 <div class="mb-2">
-                                    <CFormLabel for="marque">Catégorie d'article</CFormLabel>
-                                    <CFormSelect  id="marque" v-model="article.categorie_article_id">
-                                        <option disabled >Open this select menu</option>
+                                    <CFormLabel for="categorie">Catégorie d'article</CFormLabel>
+                                    <CFormSelect  id="categorie" v-model="article.categorieArticle_id">
                                         <option  v-for="item in categorie_article" :key="item.id" :value="item.id">  {{ item.libelle }} </option>
                                     </CFormSelect>
                                 </div>
@@ -67,6 +66,7 @@
 <script>
 
 import { article, categorie_article } from '../../../services'
+import router from '../../../router';
 
 export default {
     name: "CreateProduit",
@@ -82,7 +82,7 @@ export default {
                 image: "",
                 titre: "",
                 description: "",
-                categorie_article_id: ''
+                categorieArticle_id: ''
             },
             imgSrc: '',
             categorie_article: []
@@ -99,13 +99,16 @@ export default {
             formData.append("contenu", this.article.contenu)
             formData.append("description", this.article.description)
             formData.append("titre", this.article.titre)
-            formData.append("idCategorie_article", this.article.categorie_article_id)
+            formData.append("idCategorie_article", this.article.categorieArticle_id)
             formData.append("image", this.article.image)
-            console.log(this.article.categorie_article_id)
+            console.log(this.article)
             article.createArticle(formData).then((response) => {
                 console.log(response);
+                if(response.status == 200 || response.status == 201 ){
+                    router.push({name: `Liste des catégorie d'article`})
+                }
             })
-            
+
         }
     },
 }

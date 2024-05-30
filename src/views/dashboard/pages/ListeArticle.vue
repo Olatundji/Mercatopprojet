@@ -151,7 +151,7 @@
                     <CTableDataCell> {{ item.titre }} </CTableDataCell>
                     <CTableDataCell> {{ item.description }} </CTableDataCell>
                     <CTableDataCell> {{ item.contenu }} </CTableDataCell>
-                    <CTableDataCell>{{ item.categorie_id }}</CTableDataCell>
+                    <CTableDataCell>{{ item.categorie.nom }}</CTableDataCell>
                     <CTableDataCell>
                         <CButton class="mr" color="warning" @click="showUpdateModal(item.id)">Modifier</CButton>
                     </CTableDataCell>
@@ -174,6 +174,7 @@ export default {
     name: "ListeProduit",
     mounted() {
         article.allArticle().then((response) => {
+            console.log(response);
             this.articles = response.data
         } )
 
@@ -227,16 +228,31 @@ export default {
             })
         },
         updateArticle() {
+            
             var formData = new FormData()
+            formData.append("contenu", this.articleUpdate.contenu)
+            formData.append("description", this.articleUpdate.description)
+            formData.append("titre", this.articleUpdate.titre)
+            formData.append("idCategorie_article", this.articleUpdate.categorie_article_id)
+            formData.append("image", this.articleUpdate.image)
 
-            formData.append("nom", this.produit.nom);
-            formData.append("description", this.produit.description);
-            formData.append("qte", this.produit.qte);
-            formData.append("image", this.produit.image);
-            formData.append("prix", this.produit.prix);
-            formData.append("categorie_id", this.produit.categorie_id);
-            formData.append("marque_id", this.produit.marque_id);
-            console.log(this.produit);
+            article.updateArticle(this.id, formData).then((response) => {
+                console.log(response);
+                if (response.status == 200) {
+                    Swal.fire(
+                        'Modifié !',
+                        'Le produit a bien été mis à jour',
+                        'success'
+                    ).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.reload()
+                        }
+                    })
+                }
+            })
+            console.log(this.produitUpdate);
+            this.closeModal()
+
         },
         showUpdateModal(id) {
             const data = this.articles.find((element) => element.id == id)

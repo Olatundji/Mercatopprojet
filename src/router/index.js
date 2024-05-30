@@ -23,6 +23,10 @@ import DetailsProduit from '../views/client/DetailsProduit.vue'
 import CartPage from '@/views/client/CartPage.vue'
 import CheckoutPage from '@/views/client/CheckoutPage.vue'
 import CategorieArticle from '../views/dashboard/pages/CategorieArticle.vue'
+import FavorisPage from '../views/client/FavorisPage.vue'
+import BlogPage from '../views/client/Blog/BlogPage.vue'
+import ShowArticle from '../views/client/Blog/ShowArticle.vue'
+import SearchPage from '../views/client/SearchPage.vue'
 
 const routes = [
   {
@@ -93,7 +97,7 @@ const routes = [
       },
       {
         path: "/admin/liste/categorie-article",
-        name: "Publier un article ",
+        name: "Liste des catégorie d'article",
         meta: {requireAuth: true, type:'admin'},
         component: CategorieArticle
       },
@@ -136,16 +140,31 @@ const routes = [
     component: DetailsProduit,
   },
   {
+    path: '/blog',
+    name: 'BlogPage',
+    component: BlogPage,
+  },
+  {
+    path: '/blog/single',
+    name: 'BlogSingle',
+    component: ShowArticle,
+  },
+  {
     path: '/user/favoris',
-    name: 'CartList',
-    component: CartPage,
+    name: 'Favoris',
+    component: FavorisPage,
     meta: {requireAuth: true, type:'user'},
   },
   {
     path: '/user/cart',
     name: 'CartList',
     component: CartPage,
-    meta: {requireAuth: true, type:'user'},
+    meta: {requireAuth: true, type:'user'}
+  },
+  {
+    path: '/user/search',
+    name: 'SearchPage',
+    component: SearchPage,
   },
   {
     path: '/user/commandes', 
@@ -155,7 +174,7 @@ const routes = [
   },
   {
     path: '/user/checkout', 
-    name: "UserCommandes",
+    name: "CheckoutPage",
     component: CheckoutPage,
   },
   {

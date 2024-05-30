@@ -37,7 +37,7 @@ let deleteProduit = (id) => {
     return Axios.delete('/product/delete/'+ id,)
 }
 
-let allProduit = (page = 1, limit = 10) => {
+let allProduit = (page = 1, limit = 10 ?? limit ) => {
     return Axios.get(`/products?page=${page}&limit=${limit}`)
 }
 
@@ -45,4 +45,13 @@ let randomProduit = (limit = 5) => {
     return Axios.get(`/limit-products?limit=${limit}`)
 }
 
-export const produit = { createProduit, allProduit, updateProduit, deleteProduit, showProduit, randomProduit };
+let searchProduit = (filtre) => {
+    return Axios.get('/products/searchFilters', {
+        idCategorie: filtre.categorie_id,
+        idMarque: filtre.marque_id,
+        prix_min: filtre.prix_min,
+        prix_max: filtre.prix_max
+    })
+} 
+
+export const produit = { createProduit, allProduit, searchProduit, updateProduit, deleteProduit, showProduit, randomProduit };

@@ -11,6 +11,10 @@ let updateArticle = (id, article) => {
     return Axios.put('/articles/update/'+ id, article)
 }
 
+let showArticle = (id) => {
+    return Axios.get('/articles/show/'+ id)
+}
+
 let deleteArticle = (id) => {
     return Axios.delete('/articles/delete/'+ id)
 }
@@ -23,4 +27,4 @@ let randomProduit = (limit = 5) => {
     return Axios.get(`/limit-products?limit=${limit}`)
 }
 
-export const article = { createArticle, allArticle, updateArticle, deleteArticle, randomProduit };
+export const article = { createArticle, allArticle, showArticle, updateArticle, deleteArticle, randomProduit };

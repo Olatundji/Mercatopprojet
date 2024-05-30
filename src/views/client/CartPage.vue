@@ -112,6 +112,7 @@ import store from '@/store'
 import { openKkiapayWidget, addKkiapayListener, removeKkiapayListener, } from "kkiapay";
 import { loadScript } from '@paypal/paypal-js';
 import { commande } from '../../services';
+import router from '../../router'
 
 export default {
     name: 'CartPage',
@@ -187,18 +188,26 @@ export default {
             }
         },
         successHandler(response) {
-            console.log(response);
+            console.log(response.transactionId);
             if (response.transactionId) {
                 commande.createCommande(response.transactionId, this.selectedPayment, 
                 this.montant_total, this.cart, store.getters.getUser.id).then((response) => {
-                    console.log(response);
+                    if(response.status == 200){
+                        router.push({name:`UserCommandes`})
+                    }
+                } ).catch((error) => {
+                    console.log(error);
                 } )
+
+
+                this.isModalOpen = false;
             }
         },
         async pay() {
             let paypal;
             switch (this.selectedPayment) {
                 case 'Paypal':
+                    this.isModalOpen = false
                     try {
                         this.showPaypalButton = !this.showPaypalButton
                         paypal = await loadScript({ clientId: this.paypal_client_id });
@@ -207,7 +216,7 @@ export default {
                     }
                     if (paypal) {
                         try {
-                            this.isModalOpen = !this.isModalOpen
+                            this.isModalOpen = false
                             await paypal.Buttons({
                                 createOrder: (data, actions) => {
                                     return actions.order.create({
@@ -220,10 +229,13 @@ export default {
                                 },
                                 onApprove: (data, actions) => {
                                     return actions.order.capture().then(details => {
-                                        console.log(this.cart);
+                                        console.log(details);
+                                        this.showPaypalButton = false 
                                         commande.createCommande(details.id, this.selectedPayment, 
                                         this.montant_total, this.cart, this.user_id).then((response) => {
-                                            console.log(response);
+                                            if(response.status == 200 ){
+                                                router.push({name:`UserCommandes`})
+                                            }
                                         })
                                         
                                     });
@@ -273,10 +285,7 @@ export default {
             this.updateMontantTotal();
         },
         updateMontantTotal() {
-            if(this.cart !== 0){
-                this.montant_total = this.cart.reduce((total, item) => parseInt(total) + parseInt(item.total), 0);
-                
-            }
+            this.montant_total = this.cart.reduce((total, item) => parseInt(total) + parseInt(item.total), 0);
         }
     }
 }

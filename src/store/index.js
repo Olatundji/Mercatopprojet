@@ -75,6 +75,9 @@ export default createStore({
     getFavoris(state){
       return state.favoris
     },
+    getTotalCart(state) {
+      return state.cart.reduce((total, item) => total + item.total, 0);
+    },
     getCartNumber(state){
       return state.cart.length
     },

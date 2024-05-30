@@ -1,145 +1,48 @@
 <template>
-    <CModal :visible="visibleModal" @close="() => { visibleModal = false }">
-        <CForm>
-            <CModalHeader dismiss @close="() => {
-                visibleModal = false
-            }
-                ">
-                <CModalTitle>Modifier les informations d'un produit</CModalTitle>
-            </CModalHeader>
+    <div v-if="detailModal" class="modal-custom" @click="closeModalOutside">
+        <div class="modal-content">
+            <span class="close" @click="closeModal">&times;</span>
+            <h2>Produits de la commande</h2>
+            <CModalTitle>Liste des produits de la commande</CModalTitle>
             <CModalBody>
-
-                <CRow>
-                    <CCol :md="6">
-                        <div class="mb-2">
-                            <CFormLabel for="nom">Nom</CFormLabel>
-                            <CFormInput v-model="produit.nom" id="nom" type="text" placeholder="Barcelet Guici" />
-                        </div>
-                    </CCol>
-                    <CCol :md="6">
-                        <div class="mb-2">
-                            <CFormLabel for="prix">Prix en (FCFA)</CFormLabel>
-                            <CFormInput v-model="produit.prix" id="prix" type="number" placeholder="5000" />
-                        </div>
-                    </CCol>
-                </CRow>
-                <div class="mb-2">
-                    <CFormLabel for="description">Description</CFormLabel>
-                    <CFormTextarea placeholder="C'est un bracelet premium fait en or massif"
-                        v-model="produit.description" id="description" rows="3"></CFormTextarea>
-                </div>
-                <CRow>
-                    <CCol :md="6">
-                        <div class="mb-2">
-                            <CFormLabel for="marque">Marque</CFormLabel>
-                            <CFormSelect id="marque" v-model="produit.marque_id" aria-label="Default select example">
-                                <option>Open this select menu</option>
-                                <option value="1">Gucuci</option>
-                                <option value="1">Nike</option>
-                            </CFormSelect>
-                        </div>
-                    </CCol>
-                    <CCol :md="6">
-                        <div class="mb-2">
-                            <CFormLabel for="categorie">Categorie</CFormLabel>
-                            <CFormSelect v-model="produit.categorie_id" aria-label="Default select example"
-                                id="categorie">
-                                <option>Open this select menu</option>
-                                <option value="1">One</option>
-                                <option value="2">Two</option>
-                                <option value="3">Three</option>
-                            </CFormSelect>
-                        </div>
-                    </CCol>
-                </CRow>
-                <CRow>
-                    <CCol :md="6">
-                        <div class="mb-2">
-                            <CFormLabel for="qte">Quantité</CFormLabel>
-                            <CFormInput v-model="produit.qte" id="qte" type="number" placeholder="5" />
-                        </div>
-                    </CCol>
-                    <CCol :md="6">
-                        <div class="mb-2">
-                            <CFormLabel for="image">Image</CFormLabel>
-                            <CFormInput id="image" accept=".png, .jpg, .jpeg" @change="handleFileChange" type="file"
-                                placeholder="Barcelet Guici" />
-                        </div>
-                    </CCol>
-                </CRow>
+                <ul>
+                    <li v-for="produit in selectedCommande.produits" :key="produit.nom_produit">
+                        Nom du produit : {{ produit.nom_produit }}, Quantité : {{ produit.quantite_produit }}
+                    </li>
+                </ul>
             </CModalBody>
             <CModalFooter>
-                <CButton color="secondary" @click="() => {
-                    visibleModal = false
-                }
-                    ">
-                    Close
-                </CButton>
-                <CButton type="submit" color="primary">Save changes</CButton>
+                <CButton color="secondary" @click="closeModal">Fermer</CButton>
             </CModalFooter>
-        </CForm>
-    </CModal>
+        </div>
+    </div>
+
     <CRow>
         <CTable caption="top">
             <CTableCaption>Liste des produits</CTableCaption>
             <CTableHead>
                 <CTableRow>
-                    <CTableHeaderCell scope="col">Numéro</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">#</CTableHeaderCell>
                     <CTableHeaderCell scope="col">Id Transaction</CTableHeaderCell>
                     <CTableHeaderCell scope="col">Methode de payement</CTableHeaderCell>
                     <CTableHeaderCell scope="col">Montant</CTableHeaderCell>
                     <CTableHeaderCell scope="col">Date</CTableHeaderCell>
                     <CTableHeaderCell scope="col">Etat</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Plus d'information</CTableHeaderCell>
                 </CTableRow>
             </CTableHead>
             <CTableBody>
-                <CTableRow>
-                    <CTableDataCell>185FC64</CTableDataCell>
-                    <CTableDataCell>7893652205</CTableDataCell>
-                    <CTableDataCell>Strype</CTableDataCell>
-                    <CTableDataCell>20500 </CTableDataCell>
-                    <CTableDataCell> 25-10-2024 </CTableDataCell>
+                <CTableRow v-for="(item, index) in commandes" :key="index" >
+                    <CTableDataCell>{{ index + 1 }}</CTableDataCell>
+                    <CTableDataCell>{{ item.transaction }}</CTableDataCell>
+                    <CTableDataCell>{{ item.method_pay }}</CTableDataCell>
+                    <CTableDataCell>{{ item.montant }} </CTableDataCell>
+                    <CTableDataCell> {{ item.date }} </CTableDataCell>
                     <CTableDataCell>
-                        <label class="switch">
-                            <ToggleSwitch :etat="etat1" :id="1" @update:etat="true" />
-                        </label>
+                        <CButton @click="valider(item.id)" class="label label-primary" v-if="item.etat == 'pending'" color="info" >En attente</CButton>
+                        <span v-if="item.etat === 'validated' " class="label label-success" >Complete</span>
                     </CTableDataCell>
-                </CTableRow>
-                <CTableRow>
-                    <CTableDataCell>185FC64</CTableDataCell>
-                    <CTableDataCell>7893652205</CTableDataCell>
-                    <CTableDataCell>Strype</CTableDataCell>
-                    <CTableDataCell>20500 </CTableDataCell>
-                    <CTableDataCell> 25-10-2024 </CTableDataCell>
-                    <CTableDataCell>
-                        <label class="switch">
-                            <ToggleSwitch :etat="etat2" :id="2" @update:etat="!etat2" />
-                        </label>
-                    </CTableDataCell>
-                </CTableRow>
-                <CTableRow>
-                    <CTableDataCell>185FC64</CTableDataCell>
-                    <CTableDataCell>7893652205</CTableDataCell>
-                    <CTableDataCell>Momo Pay</CTableDataCell>
-                    <CTableDataCell>20500 </CTableDataCell>
-                    <CTableDataCell> 25-10-2024 </CTableDataCell>
-                    <CTableDataCell>
-                        <label class="switch">
-                            <ToggleSwitch :etat="etat3" :id="3" @update:etat="!etat3" />
-                        </label>
-                    </CTableDataCell>
-                </CTableRow>
-                <CTableRow>
-                    <CTableDataCell>185FC64</CTableDataCell>
-                    <CTableDataCell>7893652205</CTableDataCell>
-                    <CTableDataCell>Momo Pay</CTableDataCell>
-                    <CTableDataCell>20500 </CTableDataCell>
-                    <CTableDataCell> 25-10-2024 </CTableDataCell>
-                    <CTableDataCell>
-                        <label class="switch">
-                            <ToggleSwitch :etat="etat4" :id="4" @update:etat="!etat4" />
-                        </label>
-                    </CTableDataCell>
+                    <CTableDataCell > <CButton @click.prevent="details(item)" color="warning" > Voir plus </CButton>  </CTableDataCell>
                 </CTableRow>
             </CTableBody>
         </CTable>
@@ -148,11 +51,16 @@
 
 <script>
 
-import ToggleSwitch from '@/components/ToggleSwitch.vue';
 import { ref } from 'vue';
+import { commande } from '../../../services';
+import Swal from 'sweetalert2';
+
 export default {
-    components: {
-        'ToggleSwitch': ToggleSwitch
+    mounted() {
+        commande.allCommandes().then((response) => {
+            this.commandes = response.data
+            console.log(response);
+        } )
     },
     name: "ListeCommande",
     setup() {
@@ -161,15 +69,92 @@ export default {
     },
     data() {
         return {
-            etat1: false,
-            etat2: true,
-            etat3: true,
-            etat4: false
+            commandes: [],
+            detailModal: false,
         }
     },
     methods: {
+        valider(id){
+            Swal.fire({
+                title: 'Êtes vous sûr ?',
+                text: "Cette commande sera valider "+ id,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Oui, valider !',
+                cancelButtonText: 'Annuler'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    commande.validateCommande(id).then((response) => {
+                        if (response.status == 200) {
+                            Swal.fire(
+                                'Valider !',
+                                'La commande a bien été valider',
+                                'success'
+                            ).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.reload()
+                                }
+                            })
+                        }
+                    })
+                }
+            })
+        },
+        details(commande) {
+            this.selectedCommande = commande;
+            this.detailModal = true;
+        },
+        closeModalOutside(event) {
+            if (event.target.classList.contains('modal-custom')) {
+                this.closeModal();
+            }
+        },
+        closeModal() {
+            this.detailModal = false;
+            this.selectedCommande = null;
+        },
     },
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+
+.modal-custom {
+    align-self: center;
+    z-index: 1;
+    display: flex;
+    position: fixed;
+    left: 0;
+    top: -10px;
+    bottom: -110px;
+    width: 100%;
+    height: auto;
+    overflow: scroll;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 40%;
+    height: auto;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+</style>

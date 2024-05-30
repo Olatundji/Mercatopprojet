@@ -125,7 +125,7 @@ import { produit, categorie, marque } from '../../../services';
 export default {
     mounted() {
         produit.allProduit(1, 100).then((response) => {
-            // console.log(response);
+            console.log(response.data);
             this.produits = response.data.produits
         })
 
@@ -238,11 +238,13 @@ export default {
 <style scoped>
 
 .modal-custom {
+    align-self: center;
     z-index: 1;
     display: flex;
     position: fixed;
     left: 0;
-    top: 0;
+    top: -10px;
+    bottom: -110px;
     width: 100%;
     height: auto;
     overflow: scroll;

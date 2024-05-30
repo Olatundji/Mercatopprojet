@@ -21,31 +21,6 @@
     <section class="products section">
         <div class="container">
             <div class="row">
-                <div class="col-md-3">
-                    <div class="widget">
-                        <h4 class="widget-title">Trier par : </h4>
-                        <form action="#">
-                            <p>Catégorie</p>
-                            <select v-model="filtre.categorie_id" class="form-control mb-4">
-                                <option>Man</option>
-                                <option>Women</option>
-                                <option>Accessories</option>
-                                <option>Shoes</option>
-                            </select>
-                            <p>Marque </p>
-                            <select v-model="filtre.marque_id" class="mb-4 form-control">
-                                <option>Autre</option>
-                                <option>Women</option>
-                                <option>Accessories</option>
-                                <option>Shoes</option>
-                            </select>
-                            <p>Prix</p>
-                            <input v-model="filtre.prix" class="form-control mb-3" type="text"
-                                placeholder="Ecrivez un montant ici">
-                            <button type="submit" class="btn btn-lg btn-outline-success">Filtrer</button>
-                        </form>
-                    </div>
-                </div>
                 <div class="col-md-9">
                     <div class="row">
                         <div v-for="(item, index) in produits" :key="index" class="col-md-4">
@@ -79,13 +54,14 @@
                                 </div>
                             </div>
                         </div>
-                        <div ref="sentinel" class="sentinel"></div>
+                        
                     </div>
                 </div>
 
             </div>
         </div>
     </section>
+    <div ref="sentinel" class="sentinel"></div>
 
     <TheFooter></TheFooter>
 </template>
@@ -121,7 +97,7 @@ export default {
     },
 
     mounted() {
-        console.log();
+        console.log(this.produits.length);
         this.page = 1
         this.allProduit()
         this.createObserver();
@@ -148,7 +124,7 @@ export default {
         },
         createObserver() {
             const options = {
-                root: this.$refs.scrollContainer,
+                root: null,
                 rootMargin: '0px',
                 threshold: 1.0
             };
@@ -159,6 +135,7 @@ export default {
         handleIntersect(entries) {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
+                    console.log(this.produits.length);
                     this.onScrollEnd();
                 }
             });

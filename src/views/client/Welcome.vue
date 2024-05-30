@@ -114,6 +114,7 @@ export default {
     },
     mounted() {
         produit.randomProduit(9).then((response) => {
+            console.log(response);
             this.produits = response.data
             console.log(this.produits);
         } )

@@ -10,7 +10,7 @@ const Axios = axios.create({
             Authorization: `Bearer `
         },
     },
-    baseURL: process.env.VUE_APP_API_URL
+    baseURL: 'http://localhost:8080/api'
 })
 
 // Intercepteur de réponse

@@ -56,6 +56,7 @@
 
 <script>
 import Axios from '../../../services/caller';
+import store from '../../../store';
 
 
 export default {
@@ -63,10 +64,10 @@ export default {
     data() {
         return {
             boutique: {
-                nom: "",
-                slogan: "",
-                adresse: "",
-                logo: "",
+                nom: store.getters.getSiteInfos.nom,
+                slogan: store.getters.getSiteInfos.slogan,
+                adresse: store.getters.getSiteInfos.adresse,
+                logo: store.getters.getSiteInfos.logo
             },
             imgSrc: ''
         }
@@ -87,7 +88,7 @@ export default {
             Axios.post('parametres/update/'+1, formData).then((response) => {
                 // console.log(response);
                 if(response.status == 200){
-                    console.log('Infos de la boutique mis a jour avec succes');
+                    location.reload()
                 }
             } )
         }

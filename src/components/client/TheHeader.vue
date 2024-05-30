@@ -20,6 +20,14 @@
                             <router-link to="/user/cart"> <i class="tf-ion-android-cart"></i>Cart<span class="badge">{{ cartNumber }}</span></router-link>
                         </li>
 
+                        <li class="dropdown cart-nav dropdown-slide">
+                            <router-link to="/user/favoris"> <i class="tf-ion-ios-heart"></i>Favoris</router-link>
+                        </li>
+
+                        <li class="dropdown cart-nav dropdown-slide">
+                            <router-link to="/user/search"> <i class="tf-ion-android-search"></i></router-link> 
+                        </li>
+
                     </ul>
                 </div>
             </div>
@@ -52,6 +60,10 @@
                             <router-link to="/produits">Nos produits</router-link>
                         </li>
 
+                        <li class="dropdown">
+                            <router-link to="/blog">Blog</router-link>
+                        </li>
+                        
                         <li v-if="value == 'user' " class="dropdown ">
                             <router-link to="/user/profile">Profile</router-link>
                         </li>
