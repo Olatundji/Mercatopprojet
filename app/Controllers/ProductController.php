@@ -187,7 +187,7 @@ class ProductController extends BaseController
 
         if ($file && $file->isValid() && !$file->hasMoved()) {
             $fileName = $file->getRandomName();
-            $file->move(WRITEPATH . 'uploads', $fileName);
+            $file->move(FCPATH . 'uploads', $fileName);
 
             // Construire le chemin d'accès public à l'image
             $data['image'] = base_url('uploads/' . $fileName);

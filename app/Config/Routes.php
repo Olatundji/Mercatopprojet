@@ -195,6 +195,9 @@ $routes->delete('api/favoris/delete/(:num)', 'FavorisController::delete/$1');
 //commentaire
 $routes->post('api/commentaires/create', 'CommentaireController::create');
 $routes->get('api/commentaires/index', 'CommentaireController::index');
+$routes->get('api/produit/commentaires/(:num)', 'CommentaireController::index/$1');
+$routes->get('api/article/commentaires/(:num)', 'CommentaireController::index/$1');
+
 $routes->delete('api/commentaires/delete/(:num)', 'CommentaireController::delete/$1');
 
 

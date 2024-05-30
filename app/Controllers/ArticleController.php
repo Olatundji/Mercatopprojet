@@ -138,7 +138,7 @@ class ArticleController extends BaseController
             $fileName = $file->getRandomName();
             $filePath = 'uploads/' . $fileName;
 
-            if (!$file->move(WRITEPATH . 'uploads', $fileName)) {
+            if (!$file->move(FCPATH . 'uploads', $fileName)) {
                 log_message('error', 'Failed to move file: ' . $file->getErrorString());
                 return $this->failServerError('Failed to move file');
             }
