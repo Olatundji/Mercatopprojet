@@ -256,14 +256,37 @@ class CommandeController extends BaseController
     }
     public function listeToutesCommandes()
     {
+        // Récupérer toutes les commandes
         $commandes = $this->commandeModel->findAll();
 
         if (empty($commandes)) {
-            return $this->failNotFound('Aucune commande trouvée');
+            return $this->failNotFound('No commandes found');
+        }
+
+        // Inclure les produits de chaque commande et les informations de l'utilisateur
+        foreach ($commandes as &$commande) {
+            // Récupérer les produits de la commande
+            $produitsCommande = $this->commandeProduitModel
+                ->select('produit.nom AS nom_produit, commandeproduit.quantite AS quantite_produit')
+                ->join('produit', 'produit.id = commandeproduit.produit_id')
+                ->where('commandeproduit.commande_id', $commande['id'])
+                ->findAll();
+
+            $commande['produits'] = $produitsCommande;
+
+            $userModel = new \App\Models\UserModel();
+            $user = $userModel->find($commande['idUser']);
+
+            if ($user) {
+                $commande['nom'] = $user['nom'];
+            } else {
+                $commande['nom'] = 'Unknown User';
+            }
         }
 
         return $this->respond($commandes);
     }
+
 
     public function listeCommandesUtilisateur($idUser)
     {
