@@ -16,7 +16,7 @@ class ParametreController extends ResourceController
         $this->parametreModel = new ParametreModel();
         helper(['form', 'url']);
     }
-    public function show($id = null)
+    public function show($id = 1)
     {
         if ($id === null) {
             return $this->fail('ID is required for show operation', ResponseInterface::HTTP_BAD_REQUEST);
