@@ -10,10 +10,10 @@ class ProduitSeeder extends Seeder
     {
         // Liste des URLs des images
         $imageUrls = [
-            '"http://localhost:8080/uploads/1717175680_3ad6fcd90e791bbb2263.jpeg',
-            '"http://localhost:8080/uploads/1717175680_3ad6fcd90e791bbb2263.jpeg',
-            '"http://localhost:8080/uploads/1717175680_3ad6fcd90e791bbb2263.jpeg',
-            '"http://localhost:8080/uploads/1717175680_3ad6fcd90e791bbb2263.jpeg',
+            'http://localhost:8080/uploads/1717175680_3ad6fcd90e791bbb2263.jpeg',
+            'http://localhost:8080/uploads/1717175680_3ad6fcd90e791bbb2263.jpeg',
+            'http://localhost:8080/uploads/1717175680_3ad6fcd90e791bbb2263.jpeg',
+            'http://localhost:8080/uploads/1717175680_3ad6fcd90e791bbb2263.jpeg',
 
 
         ];
