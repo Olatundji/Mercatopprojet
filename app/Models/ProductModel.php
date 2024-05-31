@@ -95,7 +95,7 @@ class ProductModel extends Model
     }
     public function getProductCommentaires($productId)
     {
-        return $this->db->table('commentaires')
+        return $this->db->table('produitcommentaires')
             ->select('produitcommentaires.contenu as commentaire_contenu, users.nom as utilisateur_nom')
             ->join('users', 'users.id = produitcommentaires.idUser')
             ->where('produitcommentaires.idProduit', $productId)

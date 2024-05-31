@@ -8,37 +8,30 @@ class ProduitSeeder extends Seeder
 {
     public function run()
     {
+        // Liste des URLs des images
+        $imageUrls = [
+            '"http://localhost:8080/uploads/1717175680_3ad6fcd90e791bbb2263.jpeg',
+            '"http://localhost:8080/uploads/1717175680_3ad6fcd90e791bbb2263.jpeg',
+            '"http://localhost:8080/uploads/1717175680_3ad6fcd90e791bbb2263.jpeg',
+            '"http://localhost:8080/uploads/1717175680_3ad6fcd90e791bbb2263.jpeg',
 
-        $uploadPath = WRITEPATH . 'uploads/';
-        $images = [
-            'image1.jpeg',
-            'image6.jpeg',
-            'image7.jpeg',
-            'image8.jpeg',
+
         ];
 
-        foreach ($images as $imageName) {
-            $sourceImagePath = FCPATH . 'images/' . $imageName;
+        foreach ($imageUrls as $imageUrl) {
+            $data = [
+                'nom' => 'produit',
+                'prix' => '20',
+                'description' => 'mon produit',
+                'qte' => '10',
+                'image' => $imageUrl, // Utiliser l'URL de l'image
+                'idMarque' => '2',
+                'idCategorie' => '1',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ];
 
-            $destinationImagePath = $uploadPath . $imageName;
-
-            if (copy($sourceImagePath, $destinationImagePath)) {
-                $data = [
-                    'nom' => 'produit',
-                    'prix' => '20',
-                    'description' => 'mon produit',
-                    'qte' => '10',
-                    'image' => $imageName,
-                    'idMarque' => '2',
-                    'idCategorie' => '1',
-                    'created_at' => date('Y-m-d H:i:s'),
-                    'updated_at' => date('Y-m-d H:i:s'),
-                ];
-
-                $this->db->table('produit')->insert($data);
-            } else {
-                echo "Erreur lors du téléchargement de l'image.";
-            }
+            $this->db->table('produit')->insert($data);
         }
     }
 }
