@@ -90,7 +90,8 @@ class ProductController extends BaseController
                 'categorie' => [
                     'id' => $product['idCategorie'],
                     'nom' => $product['categorie_nom']
-                ]
+                ],
+                'image' => $product['image']
             ];
         }
 
