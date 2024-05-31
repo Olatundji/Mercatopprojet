@@ -47,6 +47,6 @@ class CreateProduitCommentaireTable extends Migration
 
     public function down()
     {
-        $this->forge->dropTable('commentaires');
+        $this->forge->dropTable('produitcommentaires');
     }
 }
