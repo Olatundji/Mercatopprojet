@@ -6,7 +6,7 @@ use App\Models\ProduitCommentaireModel;
 use App\Models\ArticleCommentaireModel;
 use CodeIgniter\RESTful\ResourceController;
 
-class Commentaire extends ResourceController
+class CommentaireController extends ResourceController
 {
     public function createProduitCommentaire()
     {
@@ -14,9 +14,9 @@ class Commentaire extends ResourceController
         $model = new ProduitCommentaireModel();
 
         $data = [
-            'contenu' => $this->request->getPost('contenu'),
-            'idUser' => $this->request->getPost('idUser'),
-            'idProduit' => $this->request->getPost('idProduit'),
+            'contenu' => $this->request->getVar('contenu'),
+            'idUser' => $this->request->getVar('idUser'),
+            'idProduit' => $this->request->getVar('idProduit'),
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s'),
         ];
@@ -33,9 +33,9 @@ class Commentaire extends ResourceController
         $model = new ArticleCommentaireModel();
 
         $data = [
-            'contenu' => $this->request->getPost('contenu'),
-            'idUser' => $this->request->getPost('idUser'),
-            'idArticle' => $this->request->getPost('idArticle'),
+            'contenu' => $this->request->getVar('contenu'),
+            'idUser' => $this->request->getVar('idUser'),
+            'idArticle' => $this->request->getVar('idArticle'),
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s'),
         ];
