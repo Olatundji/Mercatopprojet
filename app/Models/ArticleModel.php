@@ -12,7 +12,7 @@ class ArticleModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields = ['contenu', 'titre', 'image','description', 'idCategorie_article'];
+    protected $allowedFields = ['contenu', 'titre', 'image', 'description', 'idCategorie_article'];
 
 
     protected bool $allowEmptyInserts = false;
@@ -52,11 +52,21 @@ class ArticleModel extends Model
     protected $afterDelete    = [];
 
     public function commentaire()
-{
-    return $this->belongsTo(CommentaireModel::class);
-}
-public function categorie_articles()
-{
-    return $this->hasMany(CategorieArticleModel::class, 'idCategorie_article');
-}
+    {
+        return $this->belongsTo(CommentaireModel::class);
+    }
+    public function categorie_articles()
+    {
+        return $this->hasMany(CategorieArticleModel::class, 'idCategorie_article');
+    }
+
+    public function getArticleCommentaires($articleId)
+    {
+        return $this->db->table('articlecommentaires')
+            ->select('articlecommentaires.contenu as commentaire_contenu, users.nom as utilisateur_nom')
+            ->join('users', 'users.id = articlecommentaires.idUser')
+            ->where('articlecommentaires.idArticle', $articleId)
+            ->get()
+            ->getResultArray();
+    }
 }

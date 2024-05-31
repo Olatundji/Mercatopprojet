@@ -19,6 +19,7 @@ class ArticleController extends BaseController
 
     public function show($id)
     {
+        // Récupérer les détails de l'article
         $article = $this->articleModel
             ->select('articles.*, categorie_articles.libelle as categorie_nom')
             ->join('categorie_articles', 'categorie_articles.id = articles.idCategorie_article')
@@ -27,6 +28,7 @@ class ArticleController extends BaseController
         if (!$article) {
             return $this->failNotFound('Article not found');
         }
+        $commentaires = $this->articleModel->getArticleCommentaires($id);
 
         $formattedArticle = [
             'id' => $article['id'],
@@ -37,7 +39,8 @@ class ArticleController extends BaseController
             'categorie' => [
                 'id' => $article['idCategorie_article'],
                 'nom' => $article['categorie_nom']
-            ]
+            ],
+            'commentaires' => $commentaires
         ];
 
         return $this->respond($formattedArticle);
