@@ -16,6 +16,7 @@ class ProductController extends BaseController
         $this->productModel = new ProductModel();
     }
 
+
     public function show($id)
     {
         $product = $this->productModel
@@ -27,6 +28,8 @@ class ProductController extends BaseController
         if (!$product) {
             return $this->failNotFound('Product not found');
         }
+
+        $commentaires = $this->productModel->getProductCommentaires($id);
 
         $formattedProduct = [
             'id' => $product['id'],
@@ -42,11 +45,13 @@ class ProductController extends BaseController
                 'id' => $product['idCategorie'],
                 'nom' => $product['categorie_nom']
             ],
-            'image' => $product['image']
+            'image' => $product['image'],
+            'commentaires' => $commentaires // Ajouter les commentaires comme attribut du produit
         ];
 
         return $this->respond($formattedProduct);
     }
+
 
     public function search()
     {

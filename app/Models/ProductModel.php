@@ -93,4 +93,13 @@ class ProductModel extends Model
             ->orLike('idCategorie', $keyword)
             ->findAll();
     }
+    public function getProductCommentaires($productId)
+    {
+        return $this->db->table('commentaires')
+            ->select('produitcommentaires.contenu as commentaire_contenu, users.nom as utilisateur_nom')
+            ->join('users', 'users.id = produitcommentaires.idUser')
+            ->where('produitcommentaires.idProduit', $productId)
+            ->get()
+            ->getResultArray();
+    }
 }

@@ -193,10 +193,10 @@ $routes->post('api/favoris/create', 'FavorisController::create');
 $routes->get('api/favoris/user/(:num)', 'FavorisController::index/$1');
 $routes->delete('api/favoris/delete/(:num)', 'FavorisController::delete/$1');
 //commentaire
-$routes->post('api/commentaires/create', 'CommentaireController::create');
-$routes->get('api/commentaires/index', 'CommentaireController::index');
-$routes->get('api/produit/commentaires/(:num)', 'CommentaireController::index/$1');
-$routes->get('api/article/commentaires/(:num)', 'CommentaireController::index/$1');
+$routes->post('api/produitcommentaires/create', 'CommentaireController::createProduitCommentaire');
+$routes->post('api/articlecommentaires/create', 'CommentaireController::createArticleCommentaire');
+
+//$routes->get('api/commentaires/index', 'CommentaireController::index');
 
 $routes->delete('api/commentaires/delete/(:num)', 'CommentaireController::delete/$1');
 
