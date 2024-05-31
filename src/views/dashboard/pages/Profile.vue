@@ -106,7 +106,6 @@ export default {
             this.closeModal();
         },
         updateProfile(){
-            console.log(this.user);
             auth.updateProfile(this.user, this.user_id).then((response) => {
                 console.log(response);
                 if(response.status == 200){

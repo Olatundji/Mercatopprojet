@@ -59,7 +59,7 @@
                 <div v-for="(item, index) in randomProduits" :key="index" class="col-md-3">
                     <div class="product-item">
                         <div class="product-thumb">
-                            <img class="img-responsive" src="@/assets/images/shop/products/product-5.jpg"
+                            <img class="img-responsive" :src="item.image"
                                 alt="product-img" />
                             <div class="preview-meta">
                                 <ul>

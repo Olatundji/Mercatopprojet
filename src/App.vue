@@ -5,14 +5,14 @@
 import { onBeforeMount } from 'vue'
 import { useStore } from 'vuex'
 import { useColorModes } from '@coreui/vue'
-// import store from './store';
-// import { boutique } from './services';
+import store from './store';
+import { boutique } from './services';
 
 export default {
   mounted() {
-    // boutique.getBoutiqueInfos().then((response) => {
-    //   store.commit('setSiteInfos', response.data.infos)
-    // } )
+    boutique.getBoutiqueInfos().then((response) => {
+      store.commit('setSiteInfos', response.data)
+    } )
   },
   
   setup() {

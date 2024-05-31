@@ -71,14 +71,14 @@
                                         <tr v-for="(item, index) in cart" :key="index">
                                             <td>
                                                 <div class="product-info">
-                                                    <img width="80" src="@/assets/images/shop/cart/cart-2.jpg" alt="" />
+                                                    <img width="80" :src="item.image" alt="" />
                                                     <a href="#!">{{ item.nom }}</a>
                                                 </div>
                                             </td>
                                             <td>XOF {{ item.prix }}</td>
                                             <td>
                                                 <input type="number" v-model.number="item.quantite" placeholder="1"
-                                                    :min="1" :max="item.qte" @input="updateTotal(item)">
+                                                    :min="1" :max="item.qte" @input="validateQuantity(item)">
                                             </td>
                                             <td>XOF {{ item.total }}</td>
                                             <td> {{ item.marque.nom }} </td>
@@ -190,16 +190,14 @@ export default {
         successHandler(response) {
             console.log(response.transactionId);
             if (response.transactionId) {
-                commande.createCommande(response.transactionId, this.selectedPayment, 
-                this.montant_total, this.cart, store.getters.getUser.id).then((response) => {
-                    if(response.status == 200){
-                        router.push({name:`UserCommandes`})
-                    }
-                } ).catch((error) => {
-                    console.log(error);
-                } )
-
-
+                commande.createCommande(response.transactionId, this.selectedPayment,
+                    this.montant_total, this.cart, store.getters.getUser.id).then((response) => {
+                        if (response.status == 200) {
+                            router.push({ name: `UserCommandes` })
+                        }
+                    }).catch((error) => {
+                        console.log(error);
+                    })
                 this.isModalOpen = false;
             }
         },
@@ -230,14 +228,14 @@ export default {
                                 onApprove: (data, actions) => {
                                     return actions.order.capture().then(details => {
                                         console.log(details);
-                                        this.showPaypalButton = false 
-                                        commande.createCommande(details.id, this.selectedPayment, 
-                                        this.montant_total, this.cart, this.user_id).then((response) => {
-                                            if(response.status == 200 ){
-                                                router.push({name:`UserCommandes`})
-                                            }
-                                        })
-                                        
+                                        this.showPaypalButton = false
+                                        commande.createCommande(details.id, this.selectedPayment,
+                                            this.montant_total, this.cart, this.user_id).then((response) => {
+                                                if (response.status == 200) {
+                                                    router.push({ name: `UserCommandes` })
+                                                }
+                                            })
+
                                     });
                                 },
                                 onError: (err) => {
@@ -286,6 +284,14 @@ export default {
         },
         updateMontantTotal() {
             this.montant_total = this.cart.reduce((total, item) => parseInt(total) + parseInt(item.total), 0);
+        },
+        validateQuantity(item) {
+            if (item.quantite > item.qte) {
+                item.quantite = item.qte;
+            } else if (item.quantite < 1) {
+                item.quantite = 1;
+            }
+            this.updateTotal(item);
         }
     }
 }

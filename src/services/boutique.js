@@ -13,7 +13,7 @@ let updateBoutique = (id, boutique) => {
 }
 
 let getBoutiqueInfos = () => {
-    return Axios.get('/parametres/info')
+    return Axios.get('/parametres/show/1')
 }
 
 export const boutique = { updateBoutique, getBoutiqueInfos };

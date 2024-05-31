@@ -96,6 +96,7 @@
 
 import TheFooter from '@/components/client/TheFooter'
 import TheHeader from '@/components/client/TheHeader'
+import store from '../../store';
 import { categorie, marque, produit } from '../../services';
 
 export default {
@@ -120,6 +121,7 @@ export default {
                 prix_min: '',
                 prix_max: ''
             },
+            isConnected: store.getters.isConnect,
             marques: [],
             categories: [],
             filteredProduits: []
@@ -133,7 +135,13 @@ export default {
                 console.log(response); 
                 this.filteredProduits = response.data
             } )
-        }
+        },
+        addToCart(element) {
+            store.commit('addToCart', element)
+        },
+        goDetails(id) {
+            localStorage.setItem('id_produit', id)
+        },
     },
 
 }

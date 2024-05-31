@@ -26,7 +26,7 @@
                         <div v-for="(item, index) in produits" :key="index" class="col-md-4">
                             <div class="product-item">
                                 <div class="product-thumb">
-                                    <img class="img-responsive" src="@/assets/images/shop/products/product-9.jpg"
+                                    <img class="img-responsive" :src="item.image"
                                         alt="product-img" />
                                     <div class="preview-meta">
                                         <ul>
@@ -80,7 +80,7 @@ export default {
     data() {
         return {
             isConnected: store.getters.isConnect,
-            user_id: store.getters.getUser.id,
+            user_id: null,
             produits: [],
             showedProducts: [],
             productIndex: 0,
@@ -110,12 +110,12 @@ export default {
     },
     methods: {
         userFavaoris(){
-            favoris.userFavoris(this.user_id).then((response) => {
+            favoris.userFavoris(store.getters.getUser.id).then((response) => {
                 console.log(response);
             } )
         },
         addToFavoris(id){
-            favoris.createFavoris(id, this.user_id).then((response) => {
+            favoris.createFavoris(id, store.getters.getUser.id).then((response) => {
                 console.log(response);
             })
         },
@@ -135,7 +135,6 @@ export default {
         handleIntersect(entries) {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    console.log(this.produits.length);
                     this.onScrollEnd();
                 }
             });
@@ -143,6 +142,7 @@ export default {
         onScrollEnd() {
             this.page++
             produit.allProduit(this.page, 10).then((response) => {
+                console.log(response);
                 this.produits.push(...response.data.produits)
             })
 
@@ -159,6 +159,7 @@ export default {
         },
         async allProduit() {
             await produit.allProduit().then((response) => {
+                console.log(response.data);
                 this.produits = response.data.produits
                 // console.log(this.produits.length);
             })

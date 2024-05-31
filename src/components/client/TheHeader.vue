@@ -11,7 +11,7 @@
                 </div>
                 <div class="col-md-4 col-xs-12 col-sm-4">
                     <div class="one">
-                        <h1>MERCATO</h1>
+                        <h1> {{ siteInfos.nom }} </h1>
                     </div>
                 </div>
                 <div class="col-md-4 col-xs-12 col-sm-4">
@@ -113,6 +113,7 @@ export default {
     name: 'TheHeader',
     data() {
         return {
+            siteInfos: store.getters.getSiteInfos,
             visible: false,
             user: store.getters.getUser,
             type: store.getters.getType,

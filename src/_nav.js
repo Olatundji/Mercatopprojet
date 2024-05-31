@@ -64,6 +64,23 @@ export default [
       },
     ],
   },
+  { 
+    component: 'CNavGroup',
+    name: 'Promotion',
+    icon: 'cil-list',
+    items: [
+      {
+        component: 'CNavItem',
+        name: 'Creer un code promo',
+        to: '/admin/promotion-create',
+      },
+      {
+        component: 'CNavItem',
+        name: 'Liste des code promo',
+        to: '/admin/promotion-list',
+      },
+    ],
+  },
   {
     component: 'CNavItem',
     name: 'Profile',

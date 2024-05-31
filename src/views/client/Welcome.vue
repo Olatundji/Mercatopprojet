@@ -58,7 +58,7 @@
                 <div v-for="(item, index) in produits" :key="index" class="col-md-4">
                     <div class="product-item">
                         <div class="product-thumb">
-                            <img class="img-responsive" src="@/assets/images/shop/products/product-9.jpg"
+                            <img class="img-responsive" :src="item.image"
                                 alt="product-img" />
                             <div class="preview-meta">
                                 <ul>
@@ -116,7 +116,6 @@ export default {
         produit.randomProduit(9).then((response) => {
             console.log(response);
             this.produits = response.data
-            console.log(this.produits);
         } )
     },
     data() {

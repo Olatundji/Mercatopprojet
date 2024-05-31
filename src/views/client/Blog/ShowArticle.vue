@@ -24,14 +24,13 @@
                             </ul>
                         </div>
                         <div class="post-content post-excerpt">
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Velit vitae placeat ad architecto nostrum asperiores vel aperiam, veniam eum nulla. Maxime cum magnam, adipisci architecto quibusdam cumque veniam fugiat quae. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Odio vitae ab doloremque accusamus sit, eos dolorum officiis a perspiciatis aliquid. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quod, facere. </p>
+                            <p> {{ article.titre }} </p>
+                            <p> {{ article.description }} </p>
                             <blockquote class="quote-post">
                                 <p>
-                                    Lid est laborum dolo rumes fugats untras. Etharums ser quidem rerum facilis dolores nemis omnis fugats vitaes nemo minima rerums unsers sadips amets.. Sed ut perspiciatis unde omnis iste natus error
+                                    {{ article.contenu }}
                                 </p>
                             </blockquote>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laborum illo deserunt necessitatibus quibusdam sint, eos explicabo tenetur molestiae vero facere, aspernatur sit mollitia perferendis reiciendis. Deleniti magni explicabo sed alias fugit amet animi molestias ipsum maiores. Praesentium sint, id laborum quos. Tempora inventore est, dolor corporis quis doloremque nostrum, eos velit culpa quasi labore. Provident laborum porro nihil iste, magnam officia nemo praesentium autem, libero vel officiis. Omnis pariatur nam voluptatem voluptate at officia repellat ea beatae eligendi? Mollitia error saepe, aperiam facere. Optio maiores deleniti veritatis eaque commodi atque aperiam, debitis iste alias eligendi ut facilis earum! Impedit, tempore.</p>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ex error esse a dolore, architecto sapiente, aliquid commodi, laudantium eius nemo enim. Enim, fugit voluptatem rem molestiae. Sed totam quis accusantium iste nesciunt id exercitationem cumque repudiandae voluptas perspiciatis, consequatur quasi, molestias, culpa odio adipisci. Nesciunt optio fugiat iste quam modi, ex vitae odio pariatur! Corrupti explicabo at harum qui doloribus, sit dicta nemo, dolor, enim eum molestias fugiat obcaecati autem eligendi? Nisi delectus eaque architecto voluptatibus, unde sit minus quae quod eligendi soluta recusandae doloribus, officia, veritatis voluptatum eius aliquam quos. Consectetur, nisi? Veritatis totam, unde nostrum exercitationem tempora suscipit, molestias, deserunt ipsum laborum aut iste eaque? Vitae delectus dicta maxime non mollitia? Sapiente eos a quia eligendi deserunt repudiandae modi molestias tenetur autem pariatur ullam itaque, quas eveniet, illo quam rerum ex obcaecati voluptatum nesciunt incidunt culpa provident illum soluta. Voluptas possimus nesciunt inventore perspiciatis neque fugiat, magnam natus repellendus praesentium eum voluptatum, alias incidunt, tempora reprehenderit recusandae et numquam itaque ratione dolor voluptatibus in commodi ut! Neque deserunt nostrum commodi dolor natus quo, non vitae deleniti, vero voluptatem error aspernatur veniam expedita numquam amet quia in dolores velit esse molestiae! Iusto architecto accusantium quisquam recusandae quod vero quia.</p>
                         </div>
     
                         <div class="post-comments">
@@ -66,22 +65,17 @@
     
                         <div class="post-comments-form">
                             <h3 class="post-sub-heading">Laiser un commentaire </h3>
-                            <form method="post" action="#" id="form" role="form" >
-    
+                            <form @submit.prevent="commenter" >
                                 <div class="row">
                                     <div class="form-group col-md-12">
-                                        <textarea name="text" id="text" class=" form-control" rows="6" placeholder="Comment" maxlength="400"></textarea>
+                                        <textarea v-model="contenu" name="text" id="text" class=" form-control" rows="6" placeholder="Comment" maxlength="400" required></textarea>
                                     </div>
-
                                     <div class="form-group col-md-12">
-                                        <button disabled  type="submit" class="btn btn-small btn-success btn-main ">
+                                        <button v-show="isConnected"  type="submit" class="btn btn-small btn-success btn-main ">
                                             Commenter
                                         </button>
                                     </div>
-    
-    
                                 </div>
-    
                             </form>
                         </div>
     
@@ -101,7 +95,8 @@
 
 import TheHeader from '@/components/client/TheHeader'
 import TheFooter from '@/components/client/TheFooter'
-import { article } from '../../../services';
+import { article, commentaire } from '../../../services';
+import store from '../../../store';
 
     export default {
         components: {
@@ -109,8 +104,25 @@ import { article } from '../../../services';
         },
         mounted() {
             article.showArticle(localStorage.getItem('article_id')).then((response) => {
+                this.article = response.data
                 console.log(response);
             } )
+        },
+        data() {
+            return {
+                article: [],
+                isConnected: store.getters.isConnect,
+                contenu: ''
+            }
+        },
+        methods: {
+            commenter(){
+                let user_id = store.getters.getUser.id
+                let article_id = localStorage.getItem('article_id')
+                commentaire.create(this.contenu, user_id, article_id).then((response) => {
+                    console.log(response);
+                } )
+            }
         },
     }
 </script>

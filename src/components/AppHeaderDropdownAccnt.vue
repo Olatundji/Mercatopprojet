@@ -11,7 +11,7 @@
         <CIcon icon="cil-user" /> Profile
       </CDropdownItem>
       <CDropdownItem @click="logout" >
-        <CIcon icon="cilAccountLogout" /> Logout
+        <CIcon icon="cil-account-logout" /> Logout
       </CDropdownItem>
     </CDropdownMenu>
   </CDropdown>

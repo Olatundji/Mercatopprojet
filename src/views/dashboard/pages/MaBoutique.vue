@@ -45,7 +45,7 @@
                             </CCol>
                         </CRow>
                         <div class="col-auto">
-                            <CButton color="success" type="submit"> Ajouter </CButton>
+                            <CButton color="success" type="submit"> Modifier </CButton>
                         </div>
                     </CForm>
                 </CCardBody>
@@ -55,6 +55,7 @@
 </template>
 
 <script>
+import { boutique } from '../../../services';
 import Axios from '../../../services/caller';
 import store from '../../../store';
 
@@ -72,6 +73,11 @@ export default {
             imgSrc: ''
         }
     },
+    mounted() {
+        boutique.getBoutiqueInfos().then((response) => {
+            console.log(response);
+        } )
+    },
     methods: {
         handleFileChange(event) {
             const file = this.boutique.logo = event.target.files[0]
@@ -86,8 +92,9 @@ export default {
             formData.append("logo", this.boutique.logo)
 
             Axios.post('parametres/update/'+1, formData).then((response) => {
-                // console.log(response);
+                console.log(response);
                 if(response.status == 200){
+                    store.commit('setSiteInfos', response.data)
                     location.reload()
                 }
             } )

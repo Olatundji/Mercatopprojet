@@ -62,6 +62,7 @@
                         <div class="col-auto">
                             <CButton color="success" type="submit"> Ajouter </CButton>
                         </div>
+                        <img :src="imgSrc" alt="En attente de chargement">
                     </CForm>
                 </CCardBody>
             </CCard>
@@ -99,13 +100,15 @@ export default {
             },
             errors: [],
             categories:[],
-            marques: []
+            marques: [],
+            imgSrc: null
         }
     },
     methods: {
         handleFileChange(event){
-            this.produit.image = event.target.files[0]
-            console.log(event.target.files[0]);
+            let file = this.produit.image = event.target.files[0]
+            const link = URL.createObjectURL(file)
+            this.imgSrc = link
         },
         addProduit(){
             console.log(this.produit);
