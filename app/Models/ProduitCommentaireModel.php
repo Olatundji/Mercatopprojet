@@ -45,7 +45,7 @@ class ProduitCommentaireModel extends Model
     public function getCommentairesWithUser($idProduit)
     {
         return $this->select('produitcommentaires.*, users.nom as user_name')
-            ->join('users', 'users.id = produit_commentaires.idUser')
+            ->join('users', 'users.id = produitcommentaires.idUser')
             ->where('idProduit', $idProduit)
             ->findAll();
     }
