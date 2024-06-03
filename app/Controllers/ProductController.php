@@ -32,7 +32,16 @@ class ProductController extends BaseController
         }
 
         $commentaireModel = new ProduitCommentaireModel();
-        $commentaires = $commentaireModel->where('idProduit', $id)->findAll();
+        $commentaires = $commentaireModel->getCommentairesWithUser($id);
+
+        $formattedCommentaires = [];
+        foreach ($commentaires as $commentaire) {
+            $formattedCommentaires[] = [
+                'user_name' => $commentaire['user_name'],
+                'contenu' => $commentaire['contenu'],
+                'created_at' => $commentaire['created_at']
+            ];
+        }
 
         $formattedProduct = [
             'id' => $product['id'],
@@ -49,7 +58,7 @@ class ProductController extends BaseController
                 'nom' => $product['categorie_nom']
             ],
             'image' => $product['image'],
-            'commentaires' => $commentaires
+            'commentaires' => $formattedCommentaires
         ];
 
         return $this->respond($formattedProduct);
