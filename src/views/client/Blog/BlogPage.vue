@@ -8,7 +8,7 @@
                     <div class="content">
                         <h1 class="page-name">Blog</h1>
                         <ol class="breadcrumb">
-                            <li><a href="index.html">Home</a></li>
+                            <li><a href="/">Home</a></li>
                             <li class="active">blog</li>
                         </ol>
                     </div>
@@ -42,7 +42,7 @@
                             <div v-for="(item, index) in articles" :key="index" class="post">
                                 <div class="post-media post-thumb">
                                     <router-link @click="goShowArticle(item.id)"  to="/blog/single">
-                                        <img src="@/assets/images/blog/blog-post-1.jpg" alt="">
+                                        <img :src="item.image" alt="">
                                     </router-link>
                                 </div>
                                 <h2 class="post-title"> <router-link @click="goShowArticle(item.id)" to="/blog/single"> {{ item.titre }} </router-link> </h2>

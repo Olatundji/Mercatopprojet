@@ -1,5 +1,4 @@
 <template>
-
     <div v-if="isModalOpen" class="modal-custom" @click="closeModalOutside">
         <div class="modal-content">
             <span class="close" @click="closeModal">&times;</span>
@@ -47,6 +46,8 @@
         </div>
     </div>
 
+    <div id="render"></div>
+
     <TheHeader></TheHeader>
     <div class="page-wrapper">
         <div class="cart shopping">
@@ -78,11 +79,11 @@
                                             <td>XOF {{ item.prix }}</td>
                                             <td>
                                                 <input type="number" v-model.number="item.quantite" placeholder="1"
-                                                    :min="1" :max="item.qte" @input="validateQuantity(item)">
+                                                    :min="1" :max="item.qte" @input="validateQuantity(item)" />
                                             </td>
                                             <td>XOF {{ item.total }}</td>
-                                            <td> {{ item.marque.nom }} </td>
-                                            <td> {{ item.categorie.nom }} </td>
+                                            <td>{{ item.marque.nom }}</td>
+                                            <td>{{ item.categorie.nom }}</td>
                                             <td>
                                                 <a @click.prevent="removeFromCart(item.id)" class="product-remove"
                                                     href="#">Supprimer</a>
@@ -90,9 +91,12 @@
                                         </tr>
                                     </tbody>
                                 </table>
-                                <h3 class="pull-right espace">Total du panier : XOF {{ montant_total }}</h3>
-                                <button @click="valider" class="btn btn-success pull-right"
-                                    type="submit">Valider</button>
+                                <h3 class="pull-right espace">
+                                    Total du panier : XOF {{ montant_total }}
+                                </h3>
+                                <button @click="valider" class="btn btn-success pull-right" type="submit">
+                                    Valider
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -100,8 +104,7 @@
             </div>
         </div>
     </div>
-    <div>
-    </div>
+    <div></div>
     <TheFooter></TheFooter>
 </template>
 
@@ -113,6 +116,7 @@ import { openKkiapayWidget, addKkiapayListener, removeKkiapayListener, } from "k
 import { loadScript } from '@paypal/paypal-js';
 import { commande } from '../../services';
 import router from '../../router'
+import 'https://api.feexpay.me/feexpay-javascript-sdk/index.js'
 
 export default {
     name: 'CartPage',
@@ -256,7 +260,18 @@ export default {
                     });
                     break;
                 case 'FeexPay':
-                    console.log(`Paiement avec ${this.selectedPayment}`)
+                    console.log(this.selectedPayment);
+                    // await FeexPayButton.init("render", {
+                    //     id: '648d7a2b72ea51df295a06d4',
+                    //     amount: this.montant_total,
+                    //     token: "fp_sZ5RVWy3U0aWhcBh9fteXs3iJUFoERpvXLj8zPcji4jpOcynpNPDvIbqK3hdKRvx",
+                    //     callback: () => { alert('succes') },
+                    //     callback_url: 'http://localhost:3000/user/commandes',
+                    //     mode: 'SANDBOX',
+                    //     custom_button: false,
+                    //     description: "Test",
+                    // })
+
                     break;
                 case 'Stripe':
                     await this.stripePay()

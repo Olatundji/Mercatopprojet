@@ -23,8 +23,5 @@ let allArticle = () => {
     return Axios.get(`/articles/index`)
 }
 
-let randomProduit = (limit = 5) => {
-    return Axios.get(`/limit-products?limit=${limit}`)
-}
 
-export const article = { createArticle, allArticle, showArticle, updateArticle, deleteArticle, randomProduit };
+export const article = { createArticle, allArticle, showArticle, updateArticle, deleteArticle };

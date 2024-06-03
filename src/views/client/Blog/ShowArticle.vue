@@ -7,24 +7,23 @@
                 <div class="col-md-12">
                     <div class="post post-single">
                         <div class="post-thumb">
-                            <img class="img-responsive" src="@/assets/images/blog/blog-post-1.jpg" alt="">
+                            <img class="img-responsive" :src="article.image" alt="">
                         </div>
-                        <h2 class="post-title">How To Wear Bright Shoes</h2>
+                        <h2 class="post-title"> {{ article.titre }} </h2>
                         <div class="post-meta">
                             <ul>
                                 <li>
-                                    <i class="tf-ion-ios-calendar"></i> 20, MAR 2017
+                                    <i class="tf-ion-ios-calendar"></i> {{ article.created_at }}
                                 </li>
                                 <li>
                                     <i class="tf-ion-android-person"></i> POSTED BY ADMIN
                                 </li>
                                 <li>
-                                    <a href="#!"><i class="tf-ion-chatbubbles"></i> 4 COMMENTS</a>
+                                    <a href="#!"><i class="tf-ion-chatbubbles"></i> {{ comment_count }} COMMENTS</a>
                                 </li>
                             </ul>
                         </div>
                         <div class="post-content post-excerpt">
-                            <p> {{ article.titre }} </p>
                             <p> {{ article.description }} </p>
                             <blockquote class="quote-post">
                                 <p>
@@ -34,32 +33,20 @@
                         </div>
     
                         <div class="post-comments">
-                            <h3 class="post-sub-heading">10 Comments</h3>
                             <ul class="media-list comments-list m-bot-50 clearlist">
-                                <li class="media">
-    
-                                    <a class="pull-left" href="#!">
-                                        <img class="media-object comment-avatar" src="@/assets/images/blog/avater-1.jpg" alt="" width="50" height="50">
-                                    </a>
-    
+                                <li v-for="(item, index) in commentaires" :key="index" class="media p-3 ">
                                     <div class="media-body">
     
                                         <div class="comment-info">
                                             <div class="comment-author">
-                                                <a href="#!">Jonathon Andrew</a>
+                                                <a href="#!">{{ item.user_name }}</a>
                                             </div>
-                                            <time>July 02, 2015, at 11:34</time>
-                                            <a class="comment-button" href="#!"><i class="tf-ion-chatbubbles"></i>Reply</a>
+                                            <time>{{ item.created_at }}</time>
                                         </div>
-    
-                                        <p>
-                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque at magna ut ante eleifend eleifend.
-                                        </p>
+                                        <p> {{ item.contenu}} </p>
     
                                     </div>
-    
                                 </li>
-    
                             </ul>
                         </div>
     
@@ -105,14 +92,18 @@ import store from '../../../store';
         mounted() {
             article.showArticle(localStorage.getItem('article_id')).then((response) => {
                 this.article = response.data
-                console.log(response);
+                this.comment_count = this.article.commentaires.length
+                this.commentaires = response.data.commentaires
+                console.log(this.article);
             } )
         },
         data() {
             return {
                 article: [],
                 isConnected: store.getters.isConnect,
-                contenu: ''
+                contenu: '',
+                comment_count: 0,
+                commentaires: []
             }
         },
         methods: {
@@ -120,7 +111,9 @@ import store from '../../../store';
                 let user_id = store.getters.getUser.id
                 let article_id = localStorage.getItem('article_id')
                 commentaire.create(this.contenu, user_id, article_id).then((response) => {
-                    console.log(response);
+                    if(response.status == 201){
+                        location.reload()
+                    }
                 } )
             }
         },
