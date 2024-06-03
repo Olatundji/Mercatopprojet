@@ -4,6 +4,8 @@ namespace App\Controllers;
 
 use CodeIgniter\API\ResponseTrait;
 use App\Models\ProductModel;
+use App\Models\ProduitCommentaireModel;
+
 
 class ProductController extends BaseController
 {
@@ -29,7 +31,8 @@ class ProductController extends BaseController
             return $this->failNotFound('Product not found');
         }
 
-        $commentaires = $this->productModel->getProductCommentaires($id);
+        $commentaireModel = new ProduitCommentaireModel();
+        $commentaires = $commentaireModel->where('idProduit', $id)->findAll();
 
         $formattedProduct = [
             'id' => $product['id'],
@@ -46,7 +49,7 @@ class ProductController extends BaseController
                 'nom' => $product['categorie_nom']
             ],
             'image' => $product['image'],
-            'commentaires' => $commentaires // Ajouter les commentaires comme attribut du produit
+            'commentaires' => $commentaires
         ];
 
         return $this->respond($formattedProduct);
@@ -269,37 +272,47 @@ class ProductController extends BaseController
 
     public function searchFilters()
     {
-        $categorieId = $this->request->getVar('categorie_id');
-        $marqueId = $this->request->getVar('marque_id');
-        $prixMin = $this->request->getVar('prix_min');
-        $prixMax = $this->request->getVar('prix_max');
+        // Récupérer les paramètres de filtre de la requête
+        $categorieId = $this->request->getVar('idCategorie');
+        $marqueId = $this->request->getVar('idMarque');
+        $prix_min = $this->request->getVar('prix_min');
+        $prix_max = $this->request->getVar('prix_max');
+        // $nom = $this->request->getVar('nom');
 
+        // Construire la requête de recherche avec les filtres
         $query = $this->productModel
             ->select('produit.*, marques.nom as marque_nom, categories.libelle as categorie_nom')
             ->join('marques', 'marques.id = produit.idMarque')
             ->join('categories', 'categories.id = produit.idCategorie');
 
+        // Ajouter les conditions de filtre à la requête
         if ($categorieId !== null) {
-            $query->where('produit.idCategorie', $categorieId);
+            $query->where('produit.idCategorie=', $categorieId);
         }
 
         if ($marqueId !== null) {
-            $query->where('produit.idMarque', $marqueId);
+            $query->where('produit.idMarque=', $marqueId);
         }
 
-        if ($prixMin !== null) {
-            $query->where('produit.prix >=', $prixMin);
+        // if ($nom !== null) {
+        //     $query->like('produit.nom=', $nom);
+        // }
+
+        if ($prix_min !== null) {
+            $query->where('produit.prix >=', $prix_min);
         }
 
-        if ($prixMax !== null) {
-            $query->where('produit.prix <=', $prixMax);
+        if ($prix_max !== null) {
+            $query->where('produit.prix <=', $prix_max);
         }
 
-        $produits = $query->findAll();
+        // Exécuter la requête et obtenir les résultats
+        $produit = $query->findAll();
 
-        $formattedProduits = [];
-        foreach ($produits as $produit) {
-            $formattedProduits[] = [
+        // Formater les produits pour la réponse
+        $formattedProduit = [];
+        foreach ($produit as $produit) {
+            $formattedProduit[] = [
                 'id' => $produit['id'],
                 'nom' => $produit['nom'],
                 'prix' => $produit['prix'],
@@ -317,6 +330,7 @@ class ProductController extends BaseController
             ];
         }
 
-        return $this->respond($formattedProduits);
+        // Renvoyer la réponse avec les produits formatés
+        return $this->respond($formattedProduit);
     }
 }
