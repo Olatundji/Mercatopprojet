@@ -57,7 +57,7 @@ class ArticleController extends BaseController
     public function index()
     {
         $page = $this->request->getVar('page') ?? 1;
-        $perPage = 10;
+        $perPage = 500;
         $articles = $this->articleModel
             ->select('articles.*, categorie_articles.libelle as categorie_nom')
             ->join('categorie_articles', 'categorie_articles.id = articles.idCategorie_article')
