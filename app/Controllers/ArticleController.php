@@ -4,6 +4,8 @@ namespace App\Controllers;
 
 use CodeIgniter\API\ResponseTrait;
 use App\Models\ArticleModel;
+use App\Models\ArticleCommentaireModel;
+
 use Config\Services;
 
 class ArticleController extends BaseController
@@ -28,7 +30,9 @@ class ArticleController extends BaseController
         if (!$article) {
             return $this->failNotFound('Article not found');
         }
-        $commentaires = $this->articleModel->getArticleCommentaires($id);
+
+        $commentaireModel = new ArticleCommentaireModel();
+        $commentaires = $commentaireModel->where('idArticle', $id)->findAll();
 
         $formattedArticle = [
             'id' => $article['id'],

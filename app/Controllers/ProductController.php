@@ -4,6 +4,8 @@ namespace App\Controllers;
 
 use CodeIgniter\API\ResponseTrait;
 use App\Models\ProductModel;
+use App\Models\ProduitCommentaireModel;
+
 
 class ProductController extends BaseController
 {
@@ -29,7 +31,8 @@ class ProductController extends BaseController
             return $this->failNotFound('Product not found');
         }
 
-        $commentaires = $this->productModel->getProductCommentaires($id);
+        $commentaireModel = new ProduitCommentaireModel();
+        $commentaires = $commentaireModel->where('idProduit', $id)->findAll();
 
         $formattedProduct = [
             'id' => $product['id'],
@@ -46,7 +49,7 @@ class ProductController extends BaseController
                 'nom' => $product['categorie_nom']
             ],
             'image' => $product['image'],
-            'commentaires' => $commentaires // Ajouter les commentaires comme attribut du produit
+            'commentaires' => $commentaires
         ];
 
         return $this->respond($formattedProduct);
