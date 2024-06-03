@@ -42,4 +42,11 @@ class ProduitCommentaireModel extends Model
     protected $afterFind            = [];
     protected $beforeDelete         = [];
     protected $afterDelete          = [];
+    public function getCommentairesWithUser($idProduit)
+    {
+        return $this->select('produitcommentaires.*, users.nom as user_name')
+            ->join('users', 'users.id = produit_commentaires.idUser')
+            ->where('idProduit', $idProduit)
+            ->findAll();
+    }
 }

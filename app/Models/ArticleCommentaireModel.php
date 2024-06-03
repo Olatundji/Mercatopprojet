@@ -42,4 +42,12 @@ class ArticleCommentaireModel extends Model
     protected $afterFind            = [];
     protected $beforeDelete         = [];
     protected $afterDelete          = [];
+
+    public function getCommentairesWithUser($idArticle)
+    {
+        return $this->select('articlecommentaires.*, users.nom as user_name')
+            ->join('users', 'users.id = articlecommentaires.idUser')
+            ->where('idArticle', $idArticle)
+            ->findAll();
+    }
 }

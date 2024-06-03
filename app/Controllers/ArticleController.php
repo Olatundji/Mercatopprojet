@@ -21,7 +21,6 @@ class ArticleController extends BaseController
 
     public function show($id)
     {
-        // Récupérer les détails de l'article
         $article = $this->articleModel
             ->select('articles.*, categorie_articles.libelle as categorie_nom')
             ->join('categorie_articles', 'categorie_articles.id = articles.idCategorie_article')
@@ -32,7 +31,16 @@ class ArticleController extends BaseController
         }
 
         $commentaireModel = new ArticleCommentaireModel();
-        $commentaires = $commentaireModel->where('idArticle', $id)->findAll();
+        $commentaires = $commentaireModel->getCommentairesWithUser($id);
+
+        $formattedCommentaires = [];
+        foreach ($commentaires as $commentaire) {
+            $formattedCommentaires[] = [
+                'user_name' => $commentaire['user_name'],
+                'contenu' => $commentaire['contenu'],
+                'created_at' => $commentaire['created_at']
+            ];
+        }
 
         $formattedArticle = [
             'id' => $article['id'],
@@ -44,7 +52,7 @@ class ArticleController extends BaseController
                 'id' => $article['idCategorie_article'],
                 'nom' => $article['categorie_nom']
             ],
-            'commentaires' => $commentaires
+            'commentaires' => $formattedCommentaires
         ];
 
         return $this->respond($formattedArticle);
