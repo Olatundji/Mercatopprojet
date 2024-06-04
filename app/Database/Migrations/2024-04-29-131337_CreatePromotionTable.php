@@ -17,34 +17,44 @@ class CreatePromotionTable extends Migration
             ],
             'code' => [
                 'type' => 'VARCHAR',
-                'constraint' => 255, 
-                'null' => true, 
+                'constraint' => 255,
+                'null' => true,
             ],
 
             'reduction' => [
                 'type' => 'VARCHAR',
-                'constraint' => 20, 
-                'null' => false, 
+                'constraint' => 20,
+                'null' => false,
             ],
             'date_debut' => [
                 'type' => 'DATE',
-                'null' => false, 
+                'null' => false,
             ],
             'date_fin' => [
                 'type' => 'DATE',
-                'null' => false, 
+                'null' => false,
             ],
             'idProduit' => [
                 'type' => 'INT',
                 'constraint' => 11,
                 'unsigned' => true,
+                'null' => true,
+
             ],
+            'idCategorie' => [
+                'type' => 'INT',
+                'constraint' => 11,
+                'unsigned' => true,
+                'null' => true,
+
+            ],
+
             // 'idUser' => [
             //     'type' => 'INT',
             //     'constraint' => 11,
             //     'unsigned' => true,
             // ],
-            
+
             'created_at' => [
                 'type' => 'DATETIME',
                 'null' => true,
@@ -56,13 +66,12 @@ class CreatePromotionTable extends Migration
         ]);
         $this->forge->addPrimaryKey('id');
         $this->forge->addForeignKey('idProduit', 'produit', 'id', 'CASCADE', 'CASCADE');
-        //$this->forge->addForeignKey('idUser', 'users', 'id', 'CASCADE', 'CASCADE');
+        $this->forge->addForeignKey('idCategorie', 'categories', 'id', 'CASCADE', 'CASCADE');
         $this->forge->createTable('promotions');
     }
 
     public function down()
     {
         $this->forge->dropTable('promotions');
-    
     }
 }
