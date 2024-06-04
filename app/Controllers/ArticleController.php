@@ -52,6 +52,7 @@ class ArticleController extends BaseController
                 'id' => $article['idCategorie_article'],
                 'nom' => $article['categorie_nom']
             ],
+            'created_at' => $article['created_at'],
             'commentaires' => $formattedCommentaires
         ];
 
