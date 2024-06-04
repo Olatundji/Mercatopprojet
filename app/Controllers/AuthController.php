@@ -184,4 +184,32 @@ class AuthController extends BaseController
             return $this->fail('An error occurred: ' . $e->getMessage(), 500);
         }
     }
+
+    public function changePassword()
+    {
+        try {
+            $userId = $this->request->getVar('user_id');
+            $currentPassword = $this->request->getVar('current_password');
+            $newPassword = $this->request->getVar('new_password');
+
+            $user = $this->userModel->find($userId);
+
+            if (!$user) {
+                return $this->failNotFound('User not found');
+            }
+
+            if (!password_verify($currentPassword, $user['password'])) {
+                return $this->respond(['error' => 'Current password is incorrect'], 400);
+            }
+
+            $hashedNewPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+
+            $this->userModel->update($userId, ['password' => $hashedNewPassword]);
+
+            return $this->respond(['message' => 'Password changed successfully'], 200);
+        } catch (\Exception $e) {
+            log_message('error', $e->getMessage());
+            return $this->fail('An error occurred: ' . $e->getMessage(), 500);
+        }
+    }
 }

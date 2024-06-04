@@ -20,6 +20,8 @@ $routes->get('api/profile/(:num)', 'AuthController::show/$1');
 $routes->put('api/users/update/(:num)', 'AuthController::update/$1');
 $routes->post('api/forgot-password', 'AuthController::forgotPassword');
 $routes->post('api/reset-password', 'AuthController::resetPassword');
+$routes->post('api/change-password', 'AuthController::changePassword');
+
 
 //produit
 // $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection $routes): void {
@@ -66,7 +68,8 @@ $routes->delete('api/marques/delete/(:num)', 'MarqueController::delete/$1');
 $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection $routes): void {
     // $routes->resource('promotions');
 
-    $routes->post('promotions/create', 'PromotionController::create');
+    $routes->post('promotions/produit/create', 'PromotionController::createProductPromotion');
+    $routes->post('promotions/categorie/create', 'PromotionController::createCategoryPromotion');
     $routes->post('promotions/use', 'PromotionController::usePromoCode');
 });
 // $routes->get('promotions/index', 'PromotionController::index');
