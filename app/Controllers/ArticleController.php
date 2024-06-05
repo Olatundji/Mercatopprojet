@@ -52,6 +52,7 @@ class ArticleController extends BaseController
                 'id' => $article['idCategorie_article'],
                 'nom' => $article['categorie_nom']
             ],
+            'created_at' => $article['created_at'],
             'commentaires' => $formattedCommentaires
         ];
 
@@ -69,7 +70,7 @@ class ArticleController extends BaseController
     public function index()
     {
         $page = $this->request->getVar('page') ?? 1;
-        $perPage = 10;
+        $perPage = 500;
         $articles = $this->articleModel
             ->select('articles.*, categorie_articles.libelle as categorie_nom')
             ->join('categorie_articles', 'categorie_articles.id = articles.idCategorie_article')

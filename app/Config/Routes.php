@@ -170,7 +170,7 @@ $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection
     $routes->get('commandes-utilisateur/(:num)', 'CommandeController::commandesUtilisateur/$1');
     $routes->post('admin/valider-commande/(:num)', 'CommandeController::validerCommande/$1');
     $routes->get('commande/index', 'CommandeController::listeToutesCommandes');
-    $routes->get('commande/index-utilisateur/(:num)', 'CommandeController::listeCommandesUtilisateur/$1');
+    $routes->get('commande/user/(:num)', 'CommandeController::listeCommandesUtilisateur/$1');
 });
 // $routes->post('commande/nouvelle', 'CommandeController::nouvelleCommande');
 // $routes->get('commande/details/(:num)', 'CommandeController::detailsCommande/$1');

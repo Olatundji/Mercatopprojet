@@ -26,13 +26,13 @@ class ProduitSeeder extends Seeder
 
         foreach ($imageUrls as $imageUrl) {
             $data = [
-                'nom' => 'produit',
-                'prix' => '20',
+                'nom' => 'produit '. random_int(10, 10000),
+                'prix' => rand(100,1000),
                 'description' => 'mon produit',
-                'qte' => '10',
+                'qte' =>rand(1,99),
                 'image' => $imageUrl, // Utiliser l'URL de l'image
-                'idMarque' => '2',
-                'idCategorie' => '1',
+                'idMarque' => random_int(1,10),
+                'idCategorie' => random_int(1,10),
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ];
