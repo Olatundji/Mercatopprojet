@@ -113,9 +113,9 @@ class PromotionController extends ResourceController
 
         $reduction = floatval($promotion['reduction']);
         $prixOriginal = floatval($produit['prix']);
-        $nouveauPrix = $prixOriginal - ($prixOriginal * ($reduction / 100));
+        $nouveauPrix = $prixOriginal - ($prixOriginal * ($reduction / 100)) * $item['quantity']; 
         $item['prix'] = $nouveauPrix;
-        $item['reduction'] = $prixOriginal - $nouveauPrix;
+        $item['reduction'] = ($prixOriginal - $nouveauPrix) * $item['quantity']; 
         $item['prixOriginal'] = $prixOriginal;
 
         return $item;
@@ -130,9 +130,9 @@ class PromotionController extends ResourceController
 
         $reduction = floatval($promotion['reduction']);
         $prixOriginal = floatval($produit['prix']);
-        $nouveauPrix = $prixOriginal - ($prixOriginal * ($reduction / 100));
+        $nouveauPrix = $prixOriginal - ($prixOriginal * ($reduction / 100)) * $item['quantity']; 
         $item['prix'] = $nouveauPrix;
-        $item['reduction'] = $prixOriginal - $nouveauPrix;
+        $item['reduction'] = ($prixOriginal - $nouveauPrix) * $item['quantity']; 
         $item['prixOriginal'] = $prixOriginal;
 
         return $item;
