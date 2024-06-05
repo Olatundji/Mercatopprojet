@@ -9,3 +9,4 @@ export * from './boutique.js';
 export * from './article.js'
 export * from './categorie_article.js'
 export * from './commentaire.js'
+export * from './promotion.js'

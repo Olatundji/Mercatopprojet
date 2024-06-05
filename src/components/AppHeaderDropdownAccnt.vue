@@ -5,10 +5,10 @@
     </CDropdownToggle>
     <CDropdownMenu class="pt-0">
       <CDropdownItem>
-        <CIcon icon="cil-user" /> Parametre du site
+        <CIcon icon="cil-user" /> <router-link to="/admin/boutique"> Parametre du site </router-link>
       </CDropdownItem>
       <CDropdownItem>
-        <CIcon icon="cil-user" /> Profile
+        <CIcon icon="cil-user" /> <router-link to="/admin/profile"> Profile </router-link>
       </CDropdownItem>
       <CDropdownItem @click="logout" >
         <CIcon icon="cil-account-logout" /> Logout

@@ -1,19 +1,11 @@
-/* eslint-disable no-unused-vars */
+
 
 import Axios from './caller';
 
 
 
 let createProduit = (produit) =>{
-    return Axios.post('/product/create', {
-        nom: produit.nom,
-        prix: produit.prix,
-        description: produit.description,
-        image: produit.image,
-        qte: produit.qte,
-        idMarque: produit.idMarque,
-        idCategorie: produit.idCategorie
-    })
+    return Axios.post('/product/create', produit)
 }
 
 let updateProduit = (id, produit) => {

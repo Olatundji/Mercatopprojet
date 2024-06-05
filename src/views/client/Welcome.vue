@@ -15,19 +15,19 @@
                 <div class="col-md-6">
                     <div class="category-box">
                         <a href="#!">
-                            <img src="@/assets/images/shop/category/category-1.jpg" alt="" />
+                            <img src="@/assets/images/shop/category/nike-logo.png" alt="" />
                             <div class="content">
                                 <h3>Nike</h3>
-                                <p>Shop New Season Clothing</p>
+                                <p>Just Do It</p>
                             </div>
                         </a>
                     </div>
                     <div class="category-box">
                         <a href="#!">
-                            <img src="@/assets/images/shop/category/category-2.jpg" alt="" />
+                            <img src="@/assets/images/shop/category/adidas-logo.jpg" alt="" />
                             <div class="content">
                                 <h3>Adidas</h3>
-                                <p>Get Wide Range Selection</p>
+                                <p>Impossible is nothing</p>
                             </div>
                         </a>
                     </div>
@@ -35,10 +35,10 @@
                 <div class="col-md-6">
                     <div class="category-box category-box-2">
                         <a href="#!">
-                            <img src="@/assets/images/shop/category/category-3.jpg" alt="" />
+                            <img src="@/assets/images/shop/category/jordan-logo.jpg" alt="" />
                             <div class="content">
                                 <h3>Jordan</h3>
-                                <p>Special Design Comes First</p>
+                                <p>Be Like Mike</p>
                             </div>
                         </a>
                     </div>
@@ -51,7 +51,7 @@
         <div class="container">
             <div class="row">
                 <div class="title text-center">
-                    <h2>Trendy Products</h2>
+                    <h2>Quelques produits</h2>
                 </div>
             </div>
             <div class="row">
@@ -102,8 +102,8 @@ import "@/assets/plugins/slick/slick.min.js"
 import "@/assets/plugins/slick/slick-animation.min.js"
 import "@/assets/plugins/google-map/gmap.js"
 import "@/assets/js/script.js"
-import TheFooter from '@/components/client/TheFooter.vue'
-import TheHeader from '@/components/client/TheHeader.vue'
+import TheFooter from '../../components/client/TheFooter.vue'
+import TheHeader from '../../components/client/TheHeader.vue'
 import { produit } from '../../services'
 import store from '../../store'
 

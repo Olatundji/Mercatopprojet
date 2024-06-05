@@ -58,7 +58,10 @@
                                         <td>{{ item.produits.length }}</td>
                                         <td>{{ item.montant }}</td>
                                         <td>{{ item.method_pay }}</td>
-                                        <td><span class="label label-primary"> {{ item.etat }} </span></td>
+                                        <td>
+                                            <span v-if="item.etat == 'pending' " class="label label-primary"> {{ item.etat }} </span>
+                                            <span v-if="item.etat == 'validated' " class="label label-success"> {{ item.etat }} </span>
+                                        </td>
                                         <td><a @click.prevent="details(item)" href="#" class="btn btn-default">Voir plus</a></td>
                                     </tr>
                                 </tbody>

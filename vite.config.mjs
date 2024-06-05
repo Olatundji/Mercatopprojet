@@ -36,6 +36,10 @@ export default defineConfig(({ mode }) => {
           find: '@',
           replacement: path.resolve(__dirname, '/src'),
         },
+        {
+          find: 'vue',
+          replacement: 'vue/dist/vue.esm-bundler.js'  // Ajout de cet alias
+        }
       ],
       extensions: [
         '.mjs',

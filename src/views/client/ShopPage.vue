@@ -26,8 +26,7 @@
                         <div v-for="(item, index) in produits" :key="index" class="col-md-4">
                             <div class="product-item">
                                 <div class="product-thumb">
-                                    <img class="img-responsive" :src="item.image"
-                                        alt="product-img" />
+                                    <img class="img-responsive" :src="item.image" alt="product-img" />
                                     <div class="preview-meta">
                                         <ul>
                                             <li @click="addToCart(item)">
@@ -35,10 +34,10 @@
                                                     <i class="tf-ion-android-add"></i>
                                                 </span>
                                             </li>
-                                            <li @click="addToFavoris(item.id)" v-if="isConnected" >
+                                            <li @click="addToFavoris(item.id)" v-if="isConnected">
                                                 <a href="#!"><i class="tf-ion-ios-heart"></i></a>
                                             </li>
-                                            <li @click="deleteFromFavoris(item.id)" v-if="isConnected" >
+                                            <li @click="deleteFromFavoris(item.id)" v-if="isConnected">
                                                 <a href="#!"><i class="tf-ion-ios-heart-outline"></i></a>
                                             </li>
                                         </ul>
@@ -54,7 +53,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                     </div>
                 </div>
 
@@ -92,7 +91,9 @@ export default {
             },
             actionCart: true,
             page: 1,
-            isLoading: false
+            isLoading: false,
+            isInitialLoad: true,
+            hasMore: true
         }
     },
 
@@ -109,17 +110,17 @@ export default {
         }
     },
     methods: {
-        userFavaoris(){
+        userFavaoris() {
             favoris.userFavoris(store.getters.getUser.id).then((response) => {
                 console.log(response);
-            } )
+            })
         },
-        addToFavoris(id){
+        addToFavoris(id) {
             favoris.createFavoris(id, store.getters.getUser.id).then((response) => {
                 console.log(response);
             })
         },
-        deleteToFavoris(id){
+        deleteToFavoris(id) {
             console.log(id);
         },
         createObserver() {
@@ -143,25 +144,20 @@ export default {
             this.page++
             produit.allProduit(this.page, 10).then((response) => {
                 console.log(response);
-                this.produits.push(...response.data.produits)
-            })
-
-            this.produits = this.produits.reduce((acc, current) => {
-                    const x = acc.find(item => item.id === current.id);
-                    if (!x) {
-                        return acc.concat([current]);
-                    }
-                    return acc;
-                }, []);
+                const newProducts = response.data.produits.filter(newProduct =>
+                    !this.produits.some(existingProduct => existingProduct.id === newProduct.id)
+                );
+                this.produits.push(...newProducts);
+            });
         },
         goDetails(id) {
             localStorage.setItem('id_produit', id)
         },
         async allProduit() {
-            await produit.allProduit().then((response) => {
+            await produit.allProduit(1, 10).then((response) => {
                 console.log(response.data);
                 this.produits = response.data.produits
-                // console.log(this.produits.length);
+                console.log(this.produits.length);
             })
         },
         addToCart(element) {
@@ -173,6 +169,7 @@ export default {
 
 <style scoped>
 .sentinel {
-    height: 1px;
+    height: 200px;
+    position: absolute;
 }
 </style>

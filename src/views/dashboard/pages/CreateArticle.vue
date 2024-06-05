@@ -105,9 +105,11 @@ export default {
             article.createArticle(formData).then((response) => {
                 console.log(response);
                 if(response.status == 200 || response.status == 201 ){
-                    router.push({name: `Liste des catégorie d'article`})
+                    router.push({name: `Liste des articles`})
                 }
-            })
+            }).catch((error) => {
+                console.log(error);
+            } )
 
         }
     },
