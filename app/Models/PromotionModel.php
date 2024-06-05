@@ -12,7 +12,7 @@ class PromotionModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields = ['code', 'reduction', 'date_debut', 'date_fin', 'idProduit', 'idCategorie', 'created_at', 'updated_at'];
+    protected $allowedFields = ['code', 'reduction', 'date_debut', 'date_fin', 'idProduit', 'idCategorie', 'montant',  'created_at', 'updated_at'];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
@@ -34,7 +34,9 @@ class PromotionModel extends Model
         'date_debut' => 'required|valid_date',
         'date_fin' => 'required|valid_date',
         'idProduit' => 'permit_empty|is_natural_no_zero',
-        'idCategorie' => 'permit_empty|is_natural_no_zero'
+        'idCategorie' => 'permit_empty|is_natural_no_zero',
+        'montant' => 'permit_empty|is_natural_no_zero'
+
     ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
@@ -50,17 +52,28 @@ class PromotionModel extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
-
-    public function isValidPromotion($code)
-    {
-        return $this->where('code', $code)
-            ->where('date_debut <=', date('Y-m-d'))
-            ->where('date_fin >=', date('Y-m-d'))
-            ->first();
-    }
-
     public function produit()
     {
         return $this->hasMany(ProductModel::class, 'idProduit');
+    }
+
+    public function isValidPromotion($code)
+    {
+        // Obtient la date et l'heure actuelles
+        $now = date('Y-m-d H:i:s');
+
+        // Débogage : affiche la date actuelle et le code de promotion
+        log_message('debug', 'isValidPromotion: Code - ' . $code . ', Now - ' . $now);
+
+        // Rechercher la promotion correspondant au code fourni et qui est actuellement valide
+        $promotion = $this->where('code', $code)
+            ->where('date_debut <=', $now)
+            ->where('date_fin >=', $now)
+            ->first();
+
+        // Débogage : affiche la promotion trouvée ou non
+        log_message('debug', 'isValidPromotion: Promotion - ' . print_r($promotion, true));
+
+        return $promotion;
     }
 }

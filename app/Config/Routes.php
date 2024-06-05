@@ -70,6 +70,7 @@ $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection
 
     $routes->post('promotions/produit/create', 'PromotionController::createProductPromotion');
     $routes->post('promotions/categorie/create', 'PromotionController::createCategoryPromotion');
+    $routes->post('promotions/montant/create', 'PromotionController::createMontantPromotion');
     $routes->post('promotions/use', 'PromotionController::usePromoCode');
 });
 // $routes->get('promotions/index', 'PromotionController::index');

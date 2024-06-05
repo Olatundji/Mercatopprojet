@@ -48,6 +48,11 @@ class CreatePromotionTable extends Migration
                 'null' => true,
 
             ],
+            'montant' => [
+                'type' => 'VARCHAR',
+                'constraint' => 20,
+                'null' => true,
+            ],
 
             // 'idUser' => [
             //     'type' => 'INT',
