@@ -10,29 +10,29 @@ class ProduitSeeder extends Seeder
     {
         // Liste des URLs des images
         $imageUrls = [
-            'http://localhost:8080/uploads/1717493740_b46a81f61b120bc2791f.jpeg',
-            'http://localhost:8080/uploads/1717493787_e981216bad044a83153b.jpeg',
-            'http://localhost:8080/uploads/1717493823_f73ea1fe8a49269a00a4.jpeg',
-            'http://localhost:8080/uploads/1717493874_0e5e890c2407b198a341.jpeg',
-            'http://localhost:8080/uploads/1717493912_a89124a87952ebfb12b9.jpeg',
-            'http://localhost:8080/uploads/1717493959_c2d246b745f4dee24347.jpeg',
-            'http://localhost:8080/uploads/1717494003_109b99da0e0f643b291c.jpeg',
-            'http://localhost:8080/uploads/1717494046_60f59cf7778ed19a28a6.jpeg',
-            'http://localhost:8080/uploads/1717494098_3436123bc8905ea0a540.jpeg',
-            'http://localhost:8080/uploads/1717494160_448be7972affdc88dc28.jpeg'
+            'http://localhost:8080/uploads/1717666800_2800af235121cf6ec6d9.jpeg',
+            'http://localhost:8080/uploads/1717666895_aaab6f443996a81d5bab.jpeg',
+            'http://localhost:8080/uploads/1717666936_1916a400a41b9d38269c.jpeg',
+            'http://localhost:8080/uploads/1717666975_0745af23f76fd232101d.jpeg',
+            'http://localhost:8080/uploads/1717667024_72bbb2740c2a52855f5e.jpeg',
+            'http://localhost:8080/uploads/1717667063_280d62f4af2d261982cd.jpeg',
+            'http://localhost:8080/uploads/1717667117_3b33d5136e51d2caf4ce.jpeg',
+            'http://localhost:8080/uploads/1717667152_82550e61eb698f310f9d.jpeg',
+            'http://localhost:8080/uploads/1717667196_4d64c8298ebf5aa11b25.jpeg',
+            'http://localhost:8080/uploads/1717667233_c91397e1b373ed44bf1a.jpeg'
 
 
         ];
 
         foreach ($imageUrls as $imageUrl) {
             $data = [
-                'nom' => 'produit '. random_int(10, 10000),
-                'prix' => rand(100,1000),
+                'nom' => 'produit ' . random_int(10, 10000),
+                'prix' => rand(100, 1000),
                 'description' => 'mon produit',
-                'qte' =>rand(1,99),
+                'qte' => rand(1, 99),
                 'image' => $imageUrl, // Utiliser l'URL de l'image
-                'idMarque' => random_int(1,10),
-                'idCategorie' => random_int(1,10),
+                'idMarque' => random_int(1, 10),
+                'idCategorie' => random_int(1, 10),
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ];

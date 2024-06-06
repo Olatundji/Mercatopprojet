@@ -206,7 +206,19 @@ class AuthController extends BaseController
 
             $this->userModel->update($userId, ['password' => $hashedNewPassword]);
 
-            return $this->respond(['message' => 'Password changed successfully'], 200);
+            // Configuration de l'email
+            $email = \Config\Services::email();
+
+            $email->setFrom('vewedje@gmail.com', 'Viviane');
+            $email->setTo($user['email']);
+            $email->setSubject('Changement de mot de passe');
+            $email->setMessage('Bonjour ' . $user['nom'] . ',<br><br>Votre mot de passe a été changé avec succès.<br><br>Si vous n\'êtes pas à l\'origine de cette modification, veuillez contacter notre support immédiatement.');
+
+            if ($email->send()) {
+                return $this->respond(['message' => 'Password changed successfully and email sent'], 200);
+            } else {
+                return $this->respond(['message' => 'Password changed successfully, but email could not be sent'], 200);
+            }
         } catch (\Exception $e) {
             log_message('error', $e->getMessage());
             return $this->fail('An error occurred: ' . $e->getMessage(), 500);

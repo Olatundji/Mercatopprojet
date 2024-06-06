@@ -60,7 +60,7 @@ class PromotionModel extends Model
     public function isValidPromotion($code)
     {
         // Obtient la date et l'heure actuelles
-        $now = date('Y-m-d H:i:s');
+        $now = date('d-m-Y H:i:s');
 
         // Débogage : affiche la date actuelle et le code de promotion
         log_message('debug', 'isValidPromotion: Code - ' . $code . ', Now - ' . $now);
