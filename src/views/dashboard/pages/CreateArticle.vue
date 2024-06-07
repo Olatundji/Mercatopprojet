@@ -85,7 +85,8 @@ export default {
                 categorieArticle_id: ''
             },
             imgSrc: '',
-            categorie_article: []
+            categorie_article: [],
+            errors: []
         }
     },
     methods: {
@@ -101,7 +102,6 @@ export default {
             formData.append("titre", this.article.titre)
             formData.append("idCategorie_article", this.article.categorieArticle_id)
             formData.append("image", this.article.image)
-            console.log(this.article)
             article.createArticle(formData).then((response) => {
                 console.log(response);
                 if(response.status == 200 || response.status == 201 ){

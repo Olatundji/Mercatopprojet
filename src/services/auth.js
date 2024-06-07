@@ -33,12 +33,14 @@ let updateProfile = (user, id) =>{
     })
 };
 
-let resetPassword = (password) =>{
-    return Axios.patch('/forgot-password', {
-        password: password
+let changePassword = (password, current_password, user_id) =>{
+    return Axios.post('/change-password', {
+        new_password: password,
+        current_password: current_password,
+        user_id: user_id
     })
 }
 
 
 
-export const auth = {  register, login, updateProfile, resetPassword };
+export const auth = {  register, login, updateProfile, changePassword };

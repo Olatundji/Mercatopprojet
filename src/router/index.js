@@ -27,6 +27,7 @@ import FavorisPage from '../views/client/FavorisPage.vue'
 import BlogPage from '../views/client/Blog/BlogPage.vue'
 import ShowArticle from '../views/client/Blog/ShowArticle.vue'
 import SearchPage from '../views/client/SearchPage.vue'
+import CreatePromotion from '../views/dashboard/pages/CreatePromotion.vue'
 
 const routes = [
   {
@@ -101,6 +102,12 @@ const routes = [
         meta: {requireAuth: true, type:'admin'},
         component: CategorieArticle
       },
+      {
+        path: "/admin/create-promotion",
+        name: "Create Promotion",
+        meta: {requireAuth: true, type:'admin'},
+        component: CreatePromotion,
+      }
     ]
   },
   {

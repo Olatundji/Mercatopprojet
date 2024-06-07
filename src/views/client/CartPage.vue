@@ -261,16 +261,29 @@ export default {
                     break;
                 case 'FeexPay':
                     console.log(this.selectedPayment);
-                    // await FeexPayButton.init("render", {
-                    //     id: '648d7a2b72ea51df295a06d4',
-                    //     amount: this.montant_total,
-                    //     token: "fp_sZ5RVWy3U0aWhcBh9fteXs3iJUFoERpvXLj8zPcji4jpOcynpNPDvIbqK3hdKRvx",
-                    //     callback: () => { alert('succes') },
-                    //     callback_url: 'http://localhost:3000/user/commandes',
-                    //     mode: 'SANDBOX',
-                    //     custom_button: false,
-                    //     description: "Test",
-                    // })
+                    await FeexPayButton.init("render", {
+                        id: '648d7a2b72ea51df295a06d4',
+                        amount: this.montant_total,
+                        token: "fp_sZ5RVWy3U0aWhcBh9fteXs3iJUFoERpvXLj8zPcji4jpOcynpNPDvIbqK3hdKRvx",
+                        // callback_url: 'http://localhost:3000/user/commandes',
+                        callback: (response) => {
+                            if (response.status == 'SUCCESSFUL') {
+                                commande.createCommande(response.transaction_id, this.selectedPayment,
+                                    this.montant_total, this.cart, store.getters.getUser.id).then((response) => {
+                                        if (response.status == 200) {
+                                            router.push({ name: `UserCommandes` })
+                                        }
+                                    }).catch((error) => {
+                                        console.log(error);
+                                    })
+                            }else{
+                                console.log(response);
+                            }
+                        },
+                        mode: 'LIVE',
+                        custom_button: false,
+                        description: "Test",
+                    })
 
                     break;
                 case 'Stripe':
@@ -288,6 +301,9 @@ export default {
             if (event.target.classList.contains('modal-custom')) {
                 this.closeModal();
             }
+        },
+        onchange(response) {
+            console.log(response);
         },
         removeFromCart(id) {
             store.commit('deleteToCart', id);
@@ -363,6 +379,6 @@ export default {
 }
 
 .espace {
-    margin-left: 7px;
+    margin-left:7px;
 }
 </style>

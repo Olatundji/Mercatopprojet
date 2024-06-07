@@ -98,7 +98,6 @@
 <script>
 
 import store from '../../store';
-import router from '../../router'
 
 
 export default {
@@ -139,7 +138,7 @@ export default {
         },
         logout(){
             store.commit('logout')
-            router.push('/')
+            location.reload()
         }
     },
 }

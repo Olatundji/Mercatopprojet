@@ -25,13 +25,15 @@
             <h2>Changer le mot de passe</h2>
             <form @submit.prevent="changePassword">
                 <div class="form-group">
-                    <input v-model="password.newPassword" type="password" class="form-control" placeholder="Nouveau mot de passe">
+                    <input v-model="password.passwordOld" type="password" class="form-control"
+                        placeholder="Mot de passe actuelle">
                 </div>
                 <div class="form-group">
-                    <input v-model="password.passwordConfirm" type="password" class="form-control" placeholder="Confirmer le mot de passe">
+                    <input v-model="password.newPassword" type="password" class="form-control"
+                        placeholder="Nouveau mot de passe">
                 </div>
                 <div class="text-center">
-                    <button type="submit" class="btn btn-success">Se connecter</button>
+                    <button type="submit" class="btn btn-success">Modifier</button>
                 </div>
             </form>
         </div>
@@ -42,24 +44,23 @@
             <div class="row">
                 <div class="police dashboard-wrapper dashboard-user-profile">
                     <div class="media">
-                        <div class="pull-left text-center" href="#!">
+                        <div class="pull-left text-center" href="#">
                             <img class="media-object user-img" src="@/assets/images/avatar.png" alt="Image">
-                            <button class="btn btn-success mt-20">Modifier informations</button>
                         </div>
                         <div class="media-body ">
                             <div class="media-body">
-                                <form @submit.prevent="updateProfile" >
+                                <form @submit.prevent="updateProfile">
                                     <ul>
                                         <li>
                                             <div class="form-group">
                                                 <label for="nom">Nom:</label>
-                                                <input class="form-control" type="text" v-model="user.nom" >
+                                                <input class="form-control" type="text" v-model="user.nom">
                                             </div>
                                         </li>
                                         <li>
                                             <div class="form-group">
                                                 <label for="email">Email:</label>
-                                                <input class="form-control" type="text" v-model="user.email" >
+                                                <input class="form-control" type="text" v-model="user.email">
                                             </div>
                                         </li>
                                         <li>
@@ -71,12 +72,12 @@
                                         <li>
                                             <div class="form-group">
                                                 <label for="email">Adresse :</label>
-                                                <input class="form-control" type="text" v-model="user.adresse" >
+                                                <input class="form-control" type="text" v-model="user.adresse">
                                             </div>
                                         </li>
                                     </ul>
 
-                                    <button type="submit" class="btn btn-block btn-success" >Modifier</button>
+                                    <button type="submit" class="btn btn-block btn-success">Modifier</button>
                                 </form>
                             </div>
                         </div>
@@ -97,6 +98,7 @@ import TheHeader from '@/components/client/TheHeader'
 import TheFooter from '@/components/client/TheFooter'
 import store from '../../store'
 import { auth } from '../../services';
+import Swal from 'sweetalert2';
 
 export default {
     name: 'UserProfile',
@@ -115,22 +117,29 @@ export default {
             user_id: store.getters.getUser.id,
             password: {
                 newPassword: '',
-                passwordConfirm: ''
+                passwordOld: ''
             }
         }
     },
     methods: {
-        updateProfile(){
+        updateProfile() {
             auth.updateProfile(this.user, this.user_id).then((response) => {
                 store.commit('setUser', response.data.user)
-            } )
+                if (response.status == 200) {
+                    Swal.fire(
+                        'Modifier!',
+                        'Vos informations ont bien été modifier',
+                        'success'
+                    )
+                }
+            })
         },
         closeModalOutside(event) {
             if (event.target.classList.contains('modal-custom')) {
                 this.closeModal();
             }
         },
-        
+
         openModal() {
             this.isModalOpen = true;
         },
@@ -140,7 +149,16 @@ export default {
         },
 
         changePassword() {
-            console.log(this.password);
+            auth.changePassword(this.password.newPassword, this.password.passwordOld, store.getters.getUser.id).then((response) => {
+                console.log(response);
+                if (response.status == 200) {
+                    Swal.fire(
+                        'Modifier!',
+                        'Votre mot de passe à bien été modifier',
+                        'success'
+                    )
+                }
+            })
             this.closeModal();
         }
     },
@@ -148,9 +166,7 @@ export default {
 </script>
 
 <style scoped>
-
-
-.custom-button{
+.custom-button {
     background-color: #f1e253;
     border: none;
     margin: 10px;
@@ -167,8 +183,8 @@ export default {
     width: 100%;
     height: auto;
     overflow: hidden;
-    background-color: rgb(0,0,0);
-    background-color: rgba(0,0,0,0.4);
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.4);
 }
 
 .modal-content {
@@ -194,8 +210,7 @@ export default {
     cursor: pointer;
 }
 
-.police{
+.police {
     font-size: 14px;
 }
-
 </style>

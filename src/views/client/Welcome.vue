@@ -87,6 +87,52 @@
         </div>
     </section>
 
+    <div class="title text-center">
+        <h2>Quelques avis de nos clients</h2>
+    </div>
+    <div class="comments" >
+
+        <div class="card">
+            <div class="profile">
+                <img src="@/assets/images/shop/category/nike-logo.png" alt="Profile Image" class="profile-image">
+                <div class="profile-info">
+                    <h2>Utilisateur 1050</h2>
+                </div>
+            </div>
+            <p class="description">
+                It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using...
+            </p>
+            <p class="date">14 Juin 2024</p>
+        </div>
+
+        <div class="card">
+            <div class="profile">
+                <img src="@/assets/images/shop/category/nike-logo.png" alt="Profile Image" class="profile-image">
+                <div class="profile-info">
+                    <h2>Utilisateur 5050</h2>
+                </div>
+            </div>
+            <p class="description">
+                It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using...
+            </p>
+            <p class="date">14 Juin 2024</p>
+        </div>
+
+        <div class="card">
+            <div class="profile">
+                <img src="@/assets/images/shop/category/nike-logo.png" alt="Profile Image" class="profile-image">
+                <div class="profile-info">
+                    <h2>Utilisateur 007</h2>
+                </div>
+            </div>
+            <p class="description">
+                It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using...
+            </p>
+            <p class="date">12 Juin 2024</p>
+        </div>
+    </div>
+
+
     <TheFooter/>
 
 </template>
@@ -114,7 +160,6 @@ export default {
     },
     mounted() {
         produit.randomProduit(9).then((response) => {
-            console.log(response);
             this.produits = response.data
         } )
     },
@@ -137,8 +182,68 @@ export default {
 
 <style scoped>
 
+.comment_track{
+    display: flex;
+    width: calc(100% * 10);
+    animation: scroll 30s infinite;
+}
+
+.card {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin: 3px;
+    max-width: 350px;
+    width: 100%;
+    font-family: Arial, sans-serif;
+}
+
+.profile {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.profile-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.profile-info h2 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.description {
+    font-size: 14px;
+    color: #333;
+    margin: 15px 0;
+}
+
+.date {
+    font-size: 12px;
+    color: #888;
+    text-align: right;
+    margin: 0;
+}
 
 
+.comments{
+    margin: 10px;
+    padding: 15px;
+    display: flex;
+    flex-direction: row;
+}
+
+.comment_item{
+    background-color: #fff;
+    width: 300px;
+    height: 150px;
+    border-radius: 15px;
+}
 
 a {
     text-decoration: none;

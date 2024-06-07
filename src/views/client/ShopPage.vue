@@ -59,10 +59,11 @@
 
             </div>
         </div>
+        
     </section>
-    <div ref="sentinel" class="sentinel"></div>
-
+    
     <TheFooter></TheFooter>
+    <div ref="sentinel"></div>
 </template>
 
 <script>
@@ -91,17 +92,13 @@ export default {
             },
             actionCart: true,
             page: 1,
-            isLoading: false,
-            isInitialLoad: true,
-            hasMore: true
         }
     },
 
     mounted() {
-        console.log(this.produits.length);
+        this.createObserver();
         this.page = 1
         this.allProduit()
-        this.createObserver();
 
     },
     beforeUnmount() {
@@ -123,7 +120,7 @@ export default {
         deleteToFavoris(id) {
             console.log(id);
         },
-        createObserver() {
+        async createObserver() {
             const options = {
                 root: null,
                 rootMargin: '0px',
@@ -154,10 +151,8 @@ export default {
             localStorage.setItem('id_produit', id)
         },
         async allProduit() {
-            await produit.allProduit(1, 10).then((response) => {
-                console.log(response.data);
+            await produit.allProduit(1, 5).then((response) => {
                 this.produits = response.data.produits
-                console.log(this.produits.length);
             })
         },
         addToCart(element) {
@@ -168,8 +163,4 @@ export default {
 </script>
 
 <style scoped>
-.sentinel {
-    height: 200px;
-    position: absolute;
-}
 </style>
