@@ -1,0 +1,52 @@
+Pas de problème, vous pouvez afficher les produits filtrés au même endroit que la liste complète des produits. Voici comment procéder :
+
+Supprimez la propriété produitsFiltres de votre objet de données.
+
+data() {
+    return {
+        produits: [], // Votre liste de produits initiale
+        filtre: {
+            categorie_id: '',
+            marque_id: '',
+            prix: ''
+        }
+    }
+}
+
+Dans votre méthode filtrerProduits, filtrez directement la liste produits au lieu de créer un nouveau tableau.
+
+methods: {
+    filtrerProduits() {
+        // Récupérer les valeurs du formulaire
+        this.filtre.categorie_id = // Valeur du champ catégorie
+        this.filtre.marque_id = // Valeur du champ marque
+        this.filtre.prix = // Valeur du champ prix
+    }
+}
+
+Dans votre template, utilisez une seule boucle v-for sur produits, mais filtrez les produits à l'intérieur de cette boucle en utilisant une méthode de filtre calculée.
+
+<div v-for="produit in produits" :key="produit.id">
+    <div v-if="produitEstFiltre(produit)">
+        <!-- Code pour afficher chaque produit -->
+    </div>
+</div>
+
+Ajoutez la méthode produitEstFiltre à votre instance Vue pour filtrer les produits en fonction des critères du formulaire.
+
+methods: {
+    filtrerProduits() {
+        // Récupérer les valeurs du formulaire
+    },
+    produitEstFiltre(produit) {
+        return (
+            (!this.filtre.categorie_id || produit.categorie_id === this.filtre.categorie_id) &&
+            (!this.filtre.marque_id || produit.marque_id === this.filtre.marque_id) &&
+            (!this.filtre.prix || produit.prix <= this.filtre.prix)
+        )
+    }
+}
+Avec cette approche, vous affichez toujours la liste complète des produits, mais vous filtrez les produits à afficher en utilisant la méthode produitEstFiltre. Lorsque le formulaire est soumis, les critères de filtrage sont mis à jour dans l'objet filtre, et la méthode produitEstFiltre détermine quels produits doivent être affichés en fonction de ces critères.
+Cette approche peut être plus performante que de créer un nouveau tableau filtré, car elle évite de recréer un nouveau tableau à chaque fois que le filtre change.
+
+
