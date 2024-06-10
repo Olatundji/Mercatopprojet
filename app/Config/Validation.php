@@ -38,6 +38,7 @@ class Validation extends BaseConfig
         'single' => 'CodeIgniter\Validation\Views\single',
     ];
 
+    public $valid_dmy_date = 'App\Controllers\PromotionController::valid_dmy_date';
     // --------------------------------------------------------------------
     // Rules
     // --------------------------------------------------------------------
