@@ -86,12 +86,16 @@ class PromotionController extends ResourceController
             return $this->failServerError('Échec de la création de la promotion');
         }
     }
-
     public function usePromoCode()
     {
         $code = $this->request->getVar('code');
         $panier = $this->request->getVar('panier');
         $idUser = $this->request->getVar('idUser');
+
+        if (!is_array($panier)) {
+            return $this->failValidationError('Le panier doit être un tableau');
+        }
+
         if (empty($code)) {
             return $this->failValidationErrors(['code' => 'Un code promotionnel est requis']);
         }
