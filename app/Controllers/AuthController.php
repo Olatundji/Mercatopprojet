@@ -74,8 +74,8 @@ class AuthController extends BaseController
                 'numero' => $this->request->getVar('numero'),
                 'adresse' => $this->request->getVar('adresse'),
                 'email' => $this->request->getVar('email'),
-                'password' => $this->request->getVar('password'),
-                //'password' => password_hash($this->request->getVar('password'), PASSWORD_DEFAULT),
+                //'password' => $this->request->getVar('password'),
+                'password' => password_hash($this->request->getVar('password'), PASSWORD_DEFAULT),
             ];
 
             $this->userModel->insert($data);
@@ -219,7 +219,7 @@ class AuthController extends BaseController
                 return $this->respond(['message' => 'Password changed successfully and email sent'], 200);
             } else {
                 $data = $email->printDebugger(['headers']);
-                return $this->respond(['message' => 'Password changed successfully, but email could not be sent', 'error' => $data ], 200);
+                return $this->respond(['message' => 'Password changed successfully, but email could not be sent', 'error' => $data], 200);
             }
         } catch (\Exception $e) {
             log_message('error', $e->getMessage());

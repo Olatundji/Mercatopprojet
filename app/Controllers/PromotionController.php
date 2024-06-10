@@ -10,15 +10,13 @@ use App\Models\ProductModel;
 class PromotionController extends ResourceController
 {
     protected $modelName = 'App\Models\PromotionModel';
-    //protected $format    = 'json';
     protected $produitModel;
-
     private $categoriePromotionModel;
 
     public function __construct()
     {
         $this->produitModel = new ProductModel();
-        $this->categoriePromotionModel = new CategoriePromotionModel;
+        $this->categoriePromotionModel = new CategoriePromotionModel();
     }
 
     public function createProductPromotion()
@@ -42,27 +40,6 @@ class PromotionController extends ResourceController
         }
     }
 
-    public function createCategoryPromotion()
-    { {
-            if (!$this->validate($this->categoriePromotionModel->validationRules)) {
-                return $this->failValidationErrors($this->validator->getErrors());
-            }
-            $data = [
-                'code' => $this->request->getVar('code'),
-                'reduction' => $this->request->getVar('reduction'),
-                'date_debut' => $this->request->getVar('date_debut'),
-                'date_fin' => $this->request->getVar('date_fin'),
-                'idCategorie' => $this->request->getVar('idCategorie'),
-
-
-            ];
-
-            $this->categoriePromotionModel->insert($data);
-
-            return $this->respond(['message' => 'Marque created successfully']);
-        }
-    }
-
     public function createMontantPromotion()
     {
         $data = $this->request->getVar();
@@ -83,6 +60,84 @@ class PromotionController extends ResourceController
             return $this->failServerError('Échec de la création de la promotion');
         }
     }
+    public function createCategoryPromotion()
+    {
+        $data = $this->request->getVar();
+
+        if (!$this->validate([
+            'code'       => 'required',
+            'reduction'  => 'required',
+            'date_debut' => 'required|valid_date',
+            'date_fin'   => 'required|valid_date',
+            'idCategorie'  => 'required|is_natural_no_zero',
+        ])) {
+            return $this->failValidationErrors($this->validator->getErrors());
+        }
+
+        if ($this->model->save($data)) {
+            return $this->respondCreated(['message' => 'Promotion créée avec succès']);
+        } else {
+            return $this->failServerError('Échec de la création de la promotion');
+        }
+    }
+    private function applyPromotionToProduct($promotion, $item)
+    {
+        if ($promotion['idProduit'] != $item['id']) {
+            return $item;
+        }
+
+        $reduction = floatval($promotion['reduction']);
+        $prixOriginal = floatval($item['prix']);
+        $nouveauPrix = $prixOriginal - ($prixOriginal * ($reduction / 100));
+        $item['prix'] = $nouveauPrix;
+
+        if (isset($item['quatite'])) {
+            $item['total'] = $nouveauPrix * $item['quatite'];
+            $item['reduction'] = ($prixOriginal - $nouveauPrix) * $item['quatite'];
+        } else {
+            $item['total'] = $nouveauPrix;
+            $item['reduction'] = $prixOriginal - $nouveauPrix;
+        }
+
+        $item['prixOriginal'] = $prixOriginal;
+
+        return $item;
+    }
+
+    private function applyPromotionToCategory($promotion, $item)
+    {
+        $categorieId = $item['categorie']['id'];
+
+        if ($promotion['idCategorie'] != $categorieId) {
+            return $item;
+        }
+
+        $reduction = floatval($promotion['reduction']);
+        $prixOriginal = floatval($item['prix']);
+        $nouveauPrix = $prixOriginal - ($prixOriginal * ($reduction / 100));
+        $item['prix'] = $nouveauPrix;
+
+        if (isset($item['quatite'])) {
+            $item['total'] = $nouveauPrix * $item['quatite'];
+            $item['reduction'] = ($prixOriginal - $nouveauPrix) * $item['quatite'];
+        } else {
+            $item['total'] = $nouveauPrix;
+            $item['reduction'] = $prixOriginal - $nouveauPrix;
+        }
+
+        $item['prixOriginal'] = $prixOriginal;
+
+        return $item;
+    }
+
+    private function applyPromotionToMontant($promotion, $totalPanier)
+    {
+        if ($totalPanier >= floatval($promotion['montant'])) {
+            $totalPanier -= $totalPanier * (floatval($promotion['reduction']) / 100);
+        }
+        return $totalPanier;
+    }
+
     public function usePromoCode()
     {
         $code = $this->request->getVar('code');
@@ -92,8 +147,6 @@ class PromotionController extends ResourceController
         if (!is_array($panier)) {
             return $this->failValidationError('Le panier doit être un tableau');
         }
-
-        $panier = json_decode(json_encode($panier), true);
 
         if (empty($code)) {
             return $this->failValidationErrors(['code' => 'Un code promotionnel est requis']);
@@ -107,6 +160,8 @@ class PromotionController extends ResourceController
             return $this->failValidationErrors(['panier' => 'Panier est obligatoire']);
         }
 
+        $panier = json_decode(json_encode($panier), true);
+
         log_message('debug', 'usePromoCode: Checking code - ' . $code);
         $promotion = $this->model->isValidPromotion($code);
 
@@ -116,71 +171,30 @@ class PromotionController extends ResourceController
             $updatedPanier = [];
 
             foreach ($panier as $item) {
-                if (isset($item['idProduit']) && !empty($promotion['idProduit']) && $promotion['idProduit'] == $item['idProduit']) {
+                if (isset($item['id']) && !empty($promotion['idProduit']) && $promotion['idProduit'] == $item['id']) {
                     $item = $this->applyPromotionToProduct($promotion, $item);
-                } elseif (isset($item['idCategorie']) && !empty($promotion['idCategorie']) && $promotion['idCategorie'] == $item['idCategorie']) {
+                } elseif (isset($item['categorie']['id']) && !empty($promotion['idCategorie']) && $promotion['idCategorie'] == $item['categorie']['id']) {
                     $item = $this->applyPromotionToCategory($promotion, $item);
-                } elseif (!empty($promotion['montant'])) {
-                    $item = $this->applyPromotionToMontant($promotion, $item);
                 }
                 $updatedPanier[] = $item;
                 $totalReduction += $item['reduction'] ?? 0;
             }
 
+            $totalPanier = array_reduce($updatedPanier, function ($carry, $item) {
+                return $carry + $item['total'];
+            }, 0);
+            if (!empty($promotion['montant'])) {
+                $totalPanier = $this->applyPromotionToMontant($promotion, $totalPanier);
+            }
             return $this->respond([
                 'message' => 'Code promotionnel appliqué avec succès',
                 'promotion' => $promotion,
-                'totalReduction' => $totalReduction,
-                'updatedPanier' => $updatedPanier
+                'updatedPanier' => $updatedPanier,
+                'totalPanier' => $totalPanier
             ]);
         } else {
             log_message('debug', 'usePromoCode: No valid promotion found');
             return $this->failNotFound('Le code promotionnel n’est pas valide ou a expiré');
         }
-    }
-
-
-    private function applyPromotionToProduct($promotion, $item)
-    {
-        $produit = $this->produitModel->find($item['idProduit']);
-        if (!$produit) {
-            return $item;
-        }
-
-        $reduction = floatval($promotion['reduction']);
-        $prixOriginal = floatval($produit['prix']);
-        $nouveauPrix = $prixOriginal - ($prixOriginal * ($reduction / 100));
-        $item['prix'] = $nouveauPrix;
-        $item['reduction'] = ($prixOriginal - $nouveauPrix) * $item['quantite'];
-        $item['prixOriginal'] = $prixOriginal;
-
-        return $item;
-    }
-
-    private function applyPromotionToCategory($promotion, $item)
-    {
-        $produit = $this->produitModel->find($item['idProduit']);
-        if (!$produit) {
-            return $item;
-        }
-
-        $reduction = floatval($promotion['reduction']);
-        $prixOriginal = floatval($produit['prix']);
-        $nouveauPrix = $prixOriginal - ($prixOriginal * ($reduction / 100));
-        $item['prix'] = $nouveauPrix;
-        $item['reduction'] = ($prixOriginal - $nouveauPrix) * $item['quantite'];
-        $item['prixOriginal'] = $prixOriginal;
-
-        return $item;
-    }
-
-    private function applyPromotionToMontant($promotion, $totalPanier)
-    {
-        $montantReduction = 0;
-        if ($totalPanier >= $promotion['montant']) {
-            $montantReduction = $totalPanier * ($promotion['reduction'] / 100);
-            $totalPanier -= $montantReduction;
-        }
-        return [$totalPanier, $montantReduction];
     }
 }

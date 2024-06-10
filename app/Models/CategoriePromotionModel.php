@@ -29,11 +29,11 @@ class CategoriePromotionModel extends Model
 
     // Validation
     protected $validationRules      = [
-        //'code' => 'required',
-        // 'reduction' => 'required|numeric|greater_than_equal_to[0]|less_than_equal_to[100]',
-        // 'date_debut' => 'required|valid_date',
-        // 'date_fin' => 'required|valid_date',
-        // 'idCategorie' => 'permit_empty|is_natural_no_zero',
+        'code'       => 'required',
+        'reduction'  => 'required|numeric',
+        'date_debut' => 'required|valid_date',
+        'date_fin'   => 'required|valid_date',
+        'idCategorie' => 'required|is_natural_no_zero',
 
     ];
     protected $validationMessages   = [];
@@ -54,19 +54,15 @@ class CategoriePromotionModel extends Model
 
     public function isValidPromotion($code)
     {
-        // Obtient la date et l'heure actuelles
         $now = date('d-m-Y H:i:s');
 
-        // Débogage : affiche la date actuelle et le code de promotion
         log_message('debug', 'isValidPromotion: Code - ' . $code . ', Now - ' . $now);
 
-        // Rechercher la promotion correspondant au code fourni et qui est actuellement valide
         $promotion = $this->where('code', $code)
             ->where('date_debut <=', $now)
             ->where('date_fin >=', $now)
             ->first();
 
-        // Débogage : affiche la promotion trouvée ou non
         log_message('debug', 'isValidPromotion: Promotion - ' . print_r($promotion, true));
 
         return $promotion;
