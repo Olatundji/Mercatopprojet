@@ -14,29 +14,15 @@ vérification d'une transaction en back
 FeexPay docs (explixite)
 
 TODO : {
-    - favoris --
-    - boutique ---
-    - processus de paiement avec Paypal et Kkyapay
-    - rechercher un produit par nom, categorie et marque
-    - blog
+    - creer trois composant de formulaire pour la création des différentes promotion + affichage dynamique à partir d'un select
+    - deployer le back sur un hebergeur gratuit si possible
+    - utilisation de la promotion par le client
+    - les statistiques (front-back)
 }
 
-
-        $public_key = "8276f590733111eea6c35d3a0ec50887";
-        $private_key = "tpk_8276f592733111eea6c35d3a0ec50887";
-        $secret = "tsk_82771ca0733111eea6c35d3a0ec50887";
-
-        try {
-            $kkiapay = new \Kkiapay\Kkiapay($public_key, $private_key, $secret, $sandbox = true);
-            $kkiapay->verifyTransaction($transactionId);
-        } catch (Exceptio $e) {
-            return false; 
-            log_message('error', 'Erreur de validation de transaction kiapay: ' . $e->getMessage());
-        }
-
-        return true;
-
-
-$2y$10$z2tNeBrJh33u1cJ0oxCn0uVQQel9A4frqUwsvSrewSHXYUaFE9AHG
-
-$2y$10$z2tNeBrJh33u1cJ0oxCn0uVQQel9A4frqUwsvSrewSHXYUaFE9AHG
+Weekly Program {
+    - Préparer le programme de remise à niveau en css (tailwind css)
+    - programme de discipline pour une meilleur productivité
+    - Liste des projets possible de réaliser avec tailwind css
+    - Duolingo
+}

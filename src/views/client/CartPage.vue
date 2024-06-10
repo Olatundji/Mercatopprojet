@@ -49,6 +49,12 @@
     <div id="render"></div>
 
     <TheHeader></TheHeader>
+    <CRow>
+        <CCol class="mx-3" :md="6" >
+            <h3>Ajouter un code promo</h3>
+            <input class="form-control" v-model="promo" @blur="handlePromo" type="text">
+        </CCol>
+    </CRow>
     <div class="page-wrapper">
         <div class="cart shopping">
             <div class="container">
@@ -94,6 +100,9 @@
                                 <h3 class="pull-right espace">
                                     Total du panier : XOF {{ montant_total }}
                                 </h3>
+                                <h5 class="pull-right">
+                                    Montant après la réduction : XOF {{ nouveau_total }}
+                                </h5>
                                 <button @click="valider" class="btn btn-success pull-right" type="submit">
                                     Valider
                                 </button>
@@ -104,7 +113,6 @@
             </div>
         </div>
     </div>
-    <div></div>
     <TheFooter></TheFooter>
 </template>
 
@@ -114,8 +122,9 @@ import TheFooter from '@/components/client/TheFooter.vue'
 import store from '@/store'
 import { openKkiapayWidget, addKkiapayListener, removeKkiapayListener, } from "kkiapay";
 import { loadScript } from '@paypal/paypal-js';
-import { commande } from '../../services';
+import { commande, promotion } from '../../services';
 import router from '../../router'
+import Swal from 'sweetalert2';
 import 'https://api.feexpay.me/feexpay-javascript-sdk/index.js'
 
 export default {
@@ -170,8 +179,10 @@ export default {
                 }
             ],
             montant_total: 0,
+            nouveau_total: 0,
             isModalOpen: false,
-            dollard_prix: 604.65
+            dollard_prix: 604.65,
+            promo: ''
         }
     },
     mounted() {
@@ -180,6 +191,20 @@ export default {
     },
 
     methods: {
+        handlePromo(){
+            console.log(this.promo);
+            console.log(this.cart);
+            promotion.usePromotion(this.promo, this.cart, store.getters.getUser.id ?? null ).then((response) => {
+                console.log(response);
+            }).catch((error) => {
+                console.log(error);
+                Swal.fire(
+                        'Error',
+                        'Une erreur est subvenu ',
+                        'danger'
+                    )
+            } )
+        },
         async stripePay() {
             const { error } = await this.stripe.redirectToCheckout({
                 mode: 'payment',
@@ -265,7 +290,6 @@ export default {
                         id: '648d7a2b72ea51df295a06d4',
                         amount: this.montant_total,
                         token: "fp_sZ5RVWy3U0aWhcBh9fteXs3iJUFoERpvXLj8zPcji4jpOcynpNPDvIbqK3hdKRvx",
-                        // callback_url: 'http://localhost:3000/user/commandes',
                         callback: (response) => {
                             if (response.status == 'SUCCESSFUL') {
                                 commande.createCommande(response.transaction_id, this.selectedPayment,
