@@ -2,10 +2,10 @@
 
 namespace App\Controllers;
 
-use App\Controllers\BaseController;
+use \Firebase\JWT\JWT;
 use App\Models\UserModel;
 use CodeIgniter\API\ResponseTrait;
-use \Firebase\JWT\JWT;
+use App\Controllers\BaseController;
 
 class AuthController extends BaseController
 {
@@ -210,7 +210,7 @@ class AuthController extends BaseController
             // Configuration de l'email
             $email = \Config\Services::email();
 
-            $email->setFrom('vewedje@gmail.com', 'Viviane');
+            // $email->setFrom('lawsonlatevi005@gmail.com', 'Mercato');
             $email->setTo($user['email']);
             $email->setSubject('Changement de mot de passe');
             $email->setMessage('Bonjour ' . $user['nom'] . ',<br><br>Votre mot de passe a été changé avec succès.<br><br>Si vous n\'êtes pas à l\'origine de cette modification, veuillez contacter notre support immédiatement.');
@@ -218,7 +218,8 @@ class AuthController extends BaseController
             if ($email->send()) {
                 return $this->respond(['message' => 'Password changed successfully and email sent'], 200);
             } else {
-                return $this->respond(['message' => 'Password changed successfully, but email could not be sent'], 200);
+                $data = $email->printDebugger(['headers']);
+                return $this->respond(['message' => 'Password changed successfully, but email could not be sent', 'error' => $data ], 200);
             }
         } catch (\Exception $e) {
             log_message('error', $e->getMessage());
