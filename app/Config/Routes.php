@@ -65,14 +65,19 @@ $routes->put('api/marques/update/(:num)', 'MarqueController::update/$1');
 $routes->delete('api/marques/delete/(:num)', 'MarqueController::delete/$1');
 //promotion
 
-$routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection $routes): void {
-    // $routes->resource('promotions');
+// $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection $routes): void {
+//     // $routes->resource('promotions');
 
-    $routes->post('promotions/produit/create', 'PromotionController::createProductPromotion');
-    $routes->post('promotions/categorie/create', 'PromotionController::createCategoryPromotion');
-    $routes->post('promotions/montant/create', 'PromotionController::createMontantPromotion');
-    $routes->post('promotions/use', 'PromotionController::usePromoCode');
-});
+//     $routes->post('promotions/produit/create', 'PromotionController::createProductPromotion');
+//     $routes->post('promotions/categorie/create', 'PromotionController::createCategoryPromotion');
+//     $routes->post('promotions/montant/create', 'PromotionController::createMontantPromotion');
+//     $routes->post('promotions/use', 'PromotionController::usePromoCode');
+// });
+
+$routes->post('api/promotions/produit/create', 'PromotionController::createProductPromotion');
+$routes->post('api/promotions/categorie/create', 'PromotionController::createCategoryPromotion');
+$routes->post('api/promotions/montant/create', 'PromotionController::createMontantPromotion');
+$routes->post('api/promotions/use', 'PromotionController::usePromoCode');
 // $routes->get('promotions/index', 'PromotionController::index');
 // $routes->get('promotions/show/(:num)', 'PromotionController::show/$1');
 // $routes->post('promotions/create', 'PromotionController::create');

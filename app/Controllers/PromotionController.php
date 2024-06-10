@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use CodeIgniter\RESTful\ResourceController;
 use App\Models\PromotionModel;
+use App\Models\CategoriePromotionModel;
 use App\Models\ProductModel;
 
 class PromotionController extends ResourceController
@@ -12,9 +13,12 @@ class PromotionController extends ResourceController
     protected $format    = 'json';
     protected $produitModel;
 
+    private $categoriePromotionModel;
+
     public function __construct()
     {
         $this->produitModel = new ProductModel();
+        $this->categoriePromotionModel = new CategoriePromotionModel;
     }
 
     public function createProductPromotion()
@@ -39,23 +43,26 @@ class PromotionController extends ResourceController
     }
 
     public function createCategoryPromotion()
-    {
-        $data = $this->request->getVar();
+    { {
+            if (!$this->validate($this->categoriePromotionModel->validationRules)) {
+                // Si la validation échoue, renvoyer les erreurs de validation
+                return $this->failValidationErrors($this->validator->getErrors());
+            }
+            // Récupérer les données envoyées dans la requête
+            $data = [
+                'code' => $this->request->getVar('code'),
+                'reduction' => $this->request->getVar('reduction'),
+                'date_debut' => $this->request->getVar('date_debut'),
+                'date_fin' => $this->request->getVar('date_fin'),
+                'idCategorie' => $this->request->getVar('idCategorie'),
 
-        if (!$this->validate([
-            'code'       => 'required',
-            'reduction'  => 'required|decimal',
-            'date_debut' => 'required|valid_date',
-            'date_fin'   => 'required|valid_date',
-            'idCategorie' => 'required|is_natural_no_zero',
-        ])) {
-            return $this->failValidationErrors($this->validator->getErrors());
-        }
 
-        if ($this->model->save($data)) {
-            return $this->respondCreated(['message' => 'Promotion créée avec succès']);
-        } else {
-            return $this->failServerError('Échec de la création de la promotion');
+            ];
+
+            // Insérer le nouveau produit dans la base de données
+            $this->categoriePromotionModel->insert($data);
+
+            return $this->respond(['message' => 'Marque created successfully']);
         }
     }
 
@@ -85,7 +92,6 @@ class PromotionController extends ResourceController
         $code = $this->request->getVar('code');
         $panier = $this->request->getVar('panier');
         $idUser = $this->request->getVar('idUser');
-        $panier = json_decode($panier, true);
         if (empty($code)) {
             return $this->failValidationErrors(['code' => 'Un code promotionnel est requis']);
         }
@@ -98,14 +104,11 @@ class PromotionController extends ResourceController
             return $this->failValidationErrors(['panier' => 'Panier est obligatoire']);
         }
 
-        // Vérifie si le code promotionnel est valide
         log_message('debug', 'usePromoCode: Checking code - ' . $code);
         $promotion = $this->model->isValidPromotion($code);
 
         if ($promotion) {
-            // Log the promotion details
             log_message('debug', 'usePromoCode: Valid promotion found - ' . print_r($promotion, true));
-            // Appliquer la promotion
             $totalReduction = 0;
             $updatedPanier = [];
 
