@@ -10,7 +10,7 @@ use App\Models\ProductModel;
 class PromotionController extends ResourceController
 {
     protected $modelName = 'App\Models\PromotionModel';
-    protected $format    = 'json';
+    //protected $format    = 'json';
     protected $produitModel;
 
     private $categoriePromotionModel;
@@ -45,10 +45,8 @@ class PromotionController extends ResourceController
     public function createCategoryPromotion()
     { {
             if (!$this->validate($this->categoriePromotionModel->validationRules)) {
-                // Si la validation échoue, renvoyer les erreurs de validation
                 return $this->failValidationErrors($this->validator->getErrors());
             }
-            // Récupérer les données envoyées dans la requête
             $data = [
                 'code' => $this->request->getVar('code'),
                 'reduction' => $this->request->getVar('reduction'),
@@ -59,7 +57,6 @@ class PromotionController extends ResourceController
 
             ];
 
-            // Insérer le nouveau produit dans la base de données
             $this->categoriePromotionModel->insert($data);
 
             return $this->respond(['message' => 'Marque created successfully']);
@@ -95,6 +92,8 @@ class PromotionController extends ResourceController
         if (!is_array($panier)) {
             return $this->failValidationError('Le panier doit être un tableau');
         }
+
+        $panier = json_decode(json_encode($panier), true);
 
         if (empty($code)) {
             return $this->failValidationErrors(['code' => 'Un code promotionnel est requis']);
