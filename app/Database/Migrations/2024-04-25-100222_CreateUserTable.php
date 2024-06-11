@@ -51,6 +51,15 @@ class User extends Migration
                 'type' => 'VARCHAR',
                 'constraint' => 100,
             ],
+            'activation_token' => [
+                'type' => 'VARCHAR',
+                'constraint' => 255,
+                'null' => true,
+            ],
+            'is_active' => [
+                'type' => 'BOOLEAN',
+                'default' => false,
+            ],
             'created_at' => [
                 'type' => 'DATETIME',
                 'null' => true,

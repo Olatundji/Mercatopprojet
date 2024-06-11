@@ -32,6 +32,10 @@ class AuthController extends BaseController
                 return $this->respond(['error' => 'Invalid username or password.'], 401);
             }
 
+            if (!$user['is_active']) {
+                return $this->respond(['error' => 'Account is not activated. Please check your email.'], 401);
+            }
+
             $pwd_verify = password_verify($password, $user['password']);
 
             if (!$pwd_verify) {
@@ -56,7 +60,7 @@ class AuthController extends BaseController
             $response = [
                 'message' => 'Login Succesful',
                 'token' => $token,
-                'user' => $user // Ajouter les détails de l'utilisateur ici
+                'user' => $user
             ];
 
             return $this->respond($response, 200);
@@ -65,6 +69,7 @@ class AuthController extends BaseController
             return $this->fail('An error occurred: ' . $e->getMessage(), 500);
         }
     }
+
 
     public function register()
     {
@@ -76,16 +81,44 @@ class AuthController extends BaseController
                 'email' => $this->request->getVar('email'),
                 //'password' => $this->request->getVar('password'),
                 'password' => password_hash($this->request->getVar('password'), PASSWORD_DEFAULT),
+                'activation_token' => bin2hex(random_bytes(16)), // Générer un jeton d'activation
+                'is_active' => false
             ];
 
             $this->userModel->insert($data);
 
-            return $this->respond(['message' => 'User registered successfully']);
+            $user = $this->userModel->where('email', $data['email'])->first();
+
+            $emailService = \Config\Services::email();
+            $emailService->setTo($data['email']);
+            $emailService->setSubject('Activation de votre compte');
+            $emailService->setMessage("Bonjour, veuillez cliquer sur ce lien pour activer votre compte : " . base_url("auth/activate/" . $user['activation_token']));
+            $emailService->send();
+
+            return $this->respond(['message' => 'Inscription avec succès. Veuillez vérifier votre e-mail pour activer votre compte.']);
         } catch (\Exception $e) {
             log_message('error', $e->getMessage());
             return $this->fail('An error occurred: ' . $e->getMessage(), 500);
         }
     }
+    public function activate($token)
+    {
+        try {
+            $user = $this->userModel->where('activation_token', $token)->first();
+
+            if (!$user) {
+                return $this->failNotFound('Invalid activation token.');
+            }
+
+            $this->userModel->update($user['id'], ['is_active' => true, 'activation_token' => null]);
+
+            return $this->respond(['message' => 'Compte activé avec succès.']);
+        } catch (\Exception $e) {
+            log_message('error', $e->getMessage());
+            return $this->fail('An error occurred: ' . $e->getMessage(), 500);
+        }
+    }
+
 
 
     public function show($id)
