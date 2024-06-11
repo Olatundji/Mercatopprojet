@@ -197,4 +197,23 @@ class PromotionController extends ResourceController
             return $this->failNotFound('Le code promotionnel n’est pas valide ou a expiré');
         }
     }
+
+    public function deletePromotion($id = null)
+    {
+        if ($id === null) {
+            return $this->failValidationError('L\'ID de la promotion est requis');
+        }
+
+        $promotion = $this->model->find($id);
+
+        if (!$promotion) {
+            return $this->failNotFound('Promotion non trouvée');
+        }
+
+        if ($this->model->delete($id)) {
+            return $this->respondDeleted(['message' => 'Promotion supprimée avec succès']);
+        } else {
+            return $this->failServerError('Échec de la suppression de la promotion');
+        }
+    }
 }
