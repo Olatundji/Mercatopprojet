@@ -74,50 +74,77 @@ class AuthController extends BaseController
     public function register()
     {
         try {
+            // Génération du jeton d'activation
+            $activationToken = bin2hex(random_bytes(16));
+
             $data = [
                 'nom' => $this->request->getVar('nom'),
                 'numero' => $this->request->getVar('numero'),
                 'adresse' => $this->request->getVar('adresse'),
                 'email' => $this->request->getVar('email'),
-                //'password' => $this->request->getVar('password'),
                 'password' => password_hash($this->request->getVar('password'), PASSWORD_DEFAULT),
-                'activation_token' => bin2hex(random_bytes(16)), // Générer un jeton d'activation
-                'is_active' => false
+                'activation_token' => $activationToken,  // Stocker le jeton d'activation
+                'is_active' => 0 // Compte non activé par défaut
             ];
 
-            $this->userModel->insert($data);
+            if (!$this->userModel->insert($data)) {
+                log_message('error', 'User registration failed');
+                return $this->fail('User registration failed', 500);
+            }
 
-            $user = $this->userModel->where('email', $data['email'])->first();
+            // Récupérer l'ID de l'utilisateur nouvellement créé
+            $userId = $this->userModel->getInsertID();
+            $user = $this->userModel->find($userId);
 
+            log_message('debug', 'User registered successfully with ID: ' . $userId . ' and token: ' . $activationToken);
+
+            // URL d'activation
+            $activationUrl = base_url("api/auth/activate/" . $activationToken);
+            log_message('debug', 'Activation URL: ' . $activationUrl);
+
+            // Envoyer l'email d'activation
             $emailService = \Config\Services::email();
-            $emailService->setTo($data['email']);
-            $emailService->setSubject('Activation de votre compte');
-            $emailService->setMessage("Bonjour, veuillez cliquer sur ce lien pour activer votre compte : " . base_url("auth/activate/" . $user['activation_token']));
-            $emailService->send();
+            $emailService->setTo($user['email']);
+            $emailService->setSubject('Account Activation');
+            $emailService->setMessage("Veuillez cliquer sur le lien suivant pour activer votre compte: $activationUrl");
 
-            return $this->respond(['message' => 'Inscription avec succès. Veuillez vérifier votre e-mail pour activer votre compte.']);
+            if (!$emailService->send()) {
+                log_message('error', 'Failed to send activation email to: ' . $user['email']);
+                return $this->fail('Failed to send activation email', 500);
+            }
+
+            return $this->respond(['message' => 'Inscription avec succès. Veuillez vérifier votre e-mail pour activer votre compte. ']);
         } catch (\Exception $e) {
             log_message('error', $e->getMessage());
             return $this->fail('An error occurred: ' . $e->getMessage(), 500);
         }
     }
+
+
+
     public function activate($token)
     {
         try {
             $user = $this->userModel->where('activation_token', $token)->first();
 
             if (!$user) {
-                return $this->failNotFound('Invalid activation token.');
+                return $this->failNotFound(' activation token invalide');
             }
 
-            $this->userModel->update($user['id'], ['is_active' => true, 'activation_token' => null]);
+            $this->userModel->update($user['id'], [
+                'is_active' => 1,
+                'activation_token' => null  // Supprimer le token d'activation
+            ]);
 
-            return $this->respond(['message' => 'Compte activé avec succès.']);
+            return $this->respond(['message' => 'Compte activé avec succès']);
         } catch (\Exception $e) {
             log_message('error', $e->getMessage());
             return $this->fail('An error occurred: ' . $e->getMessage(), 500);
         }
     }
+
+
+
 
 
 

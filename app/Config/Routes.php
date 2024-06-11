@@ -21,6 +21,7 @@ $routes->put('api/users/update/(:num)', 'AuthController::update/$1');
 $routes->post('api/forgot-password', 'AuthController::forgotPassword');
 $routes->post('api/reset-password', 'AuthController::resetPassword');
 $routes->post('api/change-password', 'AuthController::changePassword');
+$routes->get('api/auth/activate/(:segment)', 'AuthController::activate/$1');
 
 
 //produit
