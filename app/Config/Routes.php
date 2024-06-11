@@ -79,6 +79,7 @@ $routes->post('api/promotions/categorie/create', 'PromotionController::createCat
 $routes->post('api/promotions/montant/create', 'PromotionController::createMontantPromotion');
 $routes->post('api/promotions/use', 'PromotionController::usePromoCode');
 $routes->delete('api/promotions/delete/(:num)', 'PromotionController::deletePromotion/$1');
+$routes->get('api/promotions', 'PromotionController::getAllPromotions');
 
 // $routes->get('promotions/index', 'PromotionController::index');
 // $routes->get('promotions/show/(:num)', 'PromotionController::show/$1');

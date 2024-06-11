@@ -6,17 +6,22 @@ use CodeIgniter\RESTful\ResourceController;
 use App\Models\PromotionModel;
 use App\Models\CategoriePromotionModel;
 use App\Models\ProductModel;
+use App\Models\CategorieModel;
+
 
 class PromotionController extends ResourceController
 {
     protected $modelName = 'App\Models\PromotionModel';
     protected $produitModel;
     private $categoriePromotionModel;
+    private $categorieModel;
+
 
     public function __construct()
     {
         $this->produitModel = new ProductModel();
         $this->categoriePromotionModel = new CategoriePromotionModel();
+        $this->categorieModel = new CategorieModel();
     }
 
     public function createProductPromotion()
@@ -215,5 +220,42 @@ class PromotionController extends ResourceController
         } else {
             return $this->failServerError('Échec de la suppression de la promotion');
         }
+    }
+
+    public function getAllPromotions()
+    {
+        $promotions = $this->model->findAll();
+
+        if (!$promotions) {
+            return $this->failNotFound('Aucun code promotionnel trouvé');
+        }
+
+        $result = [];
+
+        foreach ($promotions as $promotion) {
+            $promoDetails = [
+                'code' => $promotion['code'],
+                'date_debut' => $promotion['date_debut'],
+                'date_fin' => $promotion['date_fin'],
+                'reduction' => $promotion['reduction'],
+            ];
+
+            if (!empty($promotion['idProduit'])) {
+                $product = $this->produitModel->find($promotion['idProduit']);
+                $promoDetails['type'] = 'Produit';
+                $promoDetails['nom'] = $product['nom'] ?? 'Produit inconnu';
+            } elseif (!empty($promotion['idCategorie'])) {
+                $category = $this->categorieModel->find($promotion['idCategorie']);
+                $promoDetails['type'] = 'Categorie';
+                $promoDetails['libelle'] = $category['libelle'] ?? 'Catégorie inconnue';
+            } elseif (!empty($promotion['montant'])) {
+                $promoDetails['type'] = 'Montant';
+                $promoDetails['montant'] = $promotion['montant'];
+            }
+
+            $result[] = $promoDetails;
+        }
+
+        return $this->respond($result);
     }
 }
