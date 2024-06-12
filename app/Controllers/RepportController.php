@@ -6,66 +6,84 @@ use CodeIgniter\API\ResponseTrait;
 use App\Models\CommandeModel;
 use App\Models\ProductModel;
 use App\Models\UserModel;
-
 use CodeIgniter\Controller;
 
 class RepportController extends Controller
 {
     use ResponseTrait;
 
+    private $moisFrancais = [
+        'January' => 'Janvier',
+        'February' => 'Février',
+        'March' => 'Mars',
+        'April' => 'Avril',
+        'May' => 'Mai',
+        'June' => 'Juin',
+        'July' => 'Juillet',
+        'August' => 'Août',
+        'September' => 'Septembre',
+        'October' => 'Octobre',
+        'November' => 'Novembre',
+        'December' => 'Décembre',
+    ];
+
     public function salesReport()
     {
-        $dateDebut = $this->request->getGet('date_debut');
-        $dateFin = $this->request->getGet('date_fin');
-
-        if (is_null($dateDebut) || is_null($dateFin)) {
-            return $this->fail('Start date and end date are required', 400);
-        }
+        $dateDebut = '2024-01-01';
+        $dateFin = '2024-12-31';
 
         $commandeModel = new CommandeModel();
-        $report = $commandeModel->getSalesReport($dateDebut, $dateFin);
 
-        return $this->respond($report);
-    }
+        $query = $commandeModel->select("DATE_FORMAT(date, '%M %Y') as mois, SUM(montant) as total_vente")
+            ->where('date >=', $dateDebut)
+            ->where('date <=', $dateFin)
+            ->groupBy("DATE_FORMAT(date, '%M %Y')")
+            ->orderBy("YEAR(date)", 'ASC')
+            ->orderBy("MONTH(date)", 'ASC')
+            ->get();
 
-    public function getBestSellingProducts($startDate, $endDate)
-    {
-        $commandeModel = new CommandeModel();
-        $productModel = new ProductModel();
+        $report = $query->getResultArray();
 
-        $bestSellingProducts = $commandeModel
-            ->select('idProduit, SUM(qte) as total_quantity_sold')
-            ->where('date >=', $startDate)
-            ->where('date <=', $endDate)
-            ->groupBy('idProduit')
-            ->orderBy('total_quantity_sold', 'DESC')
-            ->findAll();
+        $moisFr = [
+            'January' => 'Janvier',
+            'February' => 'Février',
+            'March' => 'Mars',
+            'April' => 'Avril',
+            'May' => 'Mai',
+            'June' => 'Juin',
+            'July' => 'Juillet',
+            'August' => 'Août',
+            'September' => 'Septembre',
+            'October' => 'Octobre',
+            'November' => 'Novembre',
+            'December' => 'Décembre'
+        ];
 
-        $produit = [];
-        foreach ($bestSellingProducts as $product) {
-            $productDetails = $productModel->find($product['idProduit']);
-            if ($productDetails) {
-                $products[] = [
-                    'idProduit' => $productDetails['idProduit'],
-                    'nom' => $productDetails['nom'],
-                    'total_quantity_sold' => $product['total_quantity_sold']
-                ];
-            }
+        $moisAnnee = [];
+        for ($i = 1; $i <= 12; $i++) {
+            $date = \DateTime::createFromFormat('!m', $i);
+            $moisAnnee[$date->format('F Y')] = [
+                'mois' => $moisFr[$date->format('F')] . ' 2024',
+                'total_vente' => 0
+            ];
         }
 
-        return $this->respond($produit);
+        foreach ($report as $item) {
+            $moisAnnee[$item['mois']]['total_vente'] = $item['total_vente'];
+        }
+
+        return $this->respond(array_values($moisAnnee));
     }
     public function getUserReport()
     {
         $userModel = new UserModel();
 
         $totalUsers = $userModel->countAll();
-
-        $nom = $userModel->select('nom')->findAll();
+        $noms = $userModel->select('nom')->findAll();
 
         return json_encode([
-            'total_users' => $totalUsers,
-            'user_names' => $nom
+            'total_utilisateurs' => $totalUsers,
+            'noms_utilisateurs' => $noms
         ]);
     }
 }

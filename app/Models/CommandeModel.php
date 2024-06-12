@@ -60,6 +60,16 @@ class CommandeModel extends Model
             // ->groupBy('produit')
             ->findAll();
     }
+    public function getSalesReportFrom2024()
+    {
+        return $this->select("DATE_FORMAT(date, '%Y-%m') as month, 
+                              DATE_FORMAT(date, '%M %Y') as month_name, 
+                              SUM(montant) as total_quantity_sold")
+            ->where('date >=', '2024-01-01')
+            ->groupBy('month')
+            ->orderBy('month', 'ASC')
+            ->findAll();
+    }
 
     public function produit()
     {
