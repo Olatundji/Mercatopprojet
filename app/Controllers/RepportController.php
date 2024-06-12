@@ -86,4 +86,31 @@ class RepportController extends Controller
             'noms_utilisateurs' => $noms
         ]);
     }
+
+
+    public function salesReporte()
+    {
+        $monthlySales = [];
+
+        $monthsFr = [
+            'January' => 'Janvier',
+            'February' => 'Février',
+            'March' => 'Mars',
+            'April' => 'Avril',
+            'May' => 'Mai',
+            'June' => 'Juin',
+            'July' => 'Juillet',
+            'August' => 'Août',
+            'September' => 'Septembre',
+            'October' => 'Octobre',
+            'November' => 'Novembre',
+            'December' => 'Décembre'
+        ];
+
+        foreach ($monthsFr as $en => $fr) {
+            $monthlySales[$fr] = rand(1000, 5000);
+        }
+
+        return $this->respond($monthlySales);
+    }
 }

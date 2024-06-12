@@ -217,5 +217,7 @@ $routes->delete('api/commentaires/delete/(:num)', 'CommentaireController::delete
 $routes->post('api/upload', 'FileController::uploadFile');
 
 $routes->get('api/reports/sales', 'RepportController::salesReport');
+$routes->get('api/reportes/sales', 'RepportController::salesReporte');
+
 $routes->get('api/report/best-selling-products/(:any)/(:any)', 'RepportController::getBestSellingProducts/$1/$2');
 $routes->get('api/report/user-report', 'RepportController::getUserReport');
