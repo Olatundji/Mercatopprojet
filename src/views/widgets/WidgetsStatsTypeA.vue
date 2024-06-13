@@ -33,8 +33,9 @@
             ref="widgetChartRef1"
             :data="{
               labels: [
+                // ensemble de donneé en absice
                 'January',
-                'February',
+                'February', 
                 'March',
                 'April',
                 'May',
@@ -47,7 +48,7 @@
                   backgroundColor: 'transparent',
                   borderColor: 'rgba(255,255,255,.55)',
                   pointBackgroundColor: getStyle('--cui-primary'),
-                  data: [68, 59, 84, 84, 51, 55, 40],
+                  data: [68, 59, 84, 84, 51, 55, 40], // les différents points attein pour chaque moi
                 },
               ],
             }"
@@ -383,6 +384,7 @@
 import { onMounted, ref } from 'vue'
 import { CChart } from '@coreui/vue-chartjs'
 import { getStyle } from '@coreui/utils'
+import { statistique } from '../../services';
 
 export default {
   name: 'WidgetsStatsA',
@@ -410,6 +412,12 @@ export default {
     })
 
     return { getStyle, widgetChartRef1, widgetChartRef2 }
+  },
+    
+  mounted() {
+    statistique.rapportVente().then((response) => {
+      console.log(response);
+    } )
   },
 }
 </script>

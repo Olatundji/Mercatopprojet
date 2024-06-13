@@ -52,7 +52,9 @@
     <CRow>
         <CCol class="mx-3" :md="6" >
             <h3>Ajouter un code promo</h3>
-            <input class="form-control" v-model="promo" @blur="handlePromo" type="text">
+            <input class="form-control mb-3 " v-model="promo" type="text">
+            <span class="erreur" v-if="error != null " > {{ error  }} </span><br>
+            <button @click="applyCode" class="btn btn-success text-white " >Appliquer</button>
         </CCol>
     </CRow>
     <div class="page-wrapper">
@@ -100,9 +102,11 @@
                                 <h3 class="pull-right espace">
                                     Total du panier : XOF {{ montant_total }}
                                 </h3>
-                                <h5 class="pull-right">
-                                    Montant après la réduction : XOF {{ nouveau_total }}
-                                </h5>
+                                <div class="go-right">
+                                    <h6>
+                                        Montant après la réduction : XOF {{ nouveau_total }}
+                                    </h6>
+                                </div>
                                 <button @click="valider" class="btn btn-success pull-right" type="submit">
                                     Valider
                                 </button>
@@ -124,8 +128,7 @@ import { openKkiapayWidget, addKkiapayListener, removeKkiapayListener, } from "k
 import { loadScript } from '@paypal/paypal-js';
 import { commande, promotion } from '../../services';
 import router from '../../router'
-import Swal from 'sweetalert2';
-import 'https://api.feexpay.me/feexpay-javascript-sdk/index.js'
+// import 'https://api.feexpay.me/feexpay-javascript-sdk/index.js'
 
 export default {
     name: 'CartPage',
@@ -182,27 +185,27 @@ export default {
             nouveau_total: 0,
             isModalOpen: false,
             dollard_prix: 604.65,
-            promo: ''
+            promo: '',
+            error: null,
         }
     },
     mounted() {
         addKkiapayListener('success', this.successHandler)
         this.updateMontantTotal();
+        this.nouveau_total = this.montant_total
     },
 
     methods: {
-        handlePromo(){
+        applyCode(){
+            this.error = null
             console.log(this.promo);
             console.log(this.cart);
             promotion.usePromotion(this.promo, this.cart, store.getters.getUser.id ?? null ).then((response) => {
                 console.log(response);
+                this.nouveau_total = response.data.totalPanier
             }).catch((error) => {
-                console.log(error);
-                Swal.fire(
-                        'Error',
-                        'Une erreur est subvenu ',
-                        'danger'
-                    )
+                this.nouveau_total = this.montant_total
+                this.error = error.response.data.messages.error
             } )
         },
         async stripePay() {
@@ -249,7 +252,7 @@ export default {
                                     return actions.order.create({
                                         purchase_units: [{
                                             amount: {
-                                                value: (this.montant_total / this.dollard_prix).toFixed(2)
+                                                value: (this.this.nouveau_total / this.dollard_prix).toFixed(2)
                                             }
                                         }]
                                     })
@@ -278,7 +281,7 @@ export default {
                     break;
                 case 'Kkiapay':
                     openKkiapayWidget({
-                        amount: this.montant_total,
+                        amount: this.nouveau_total,
                         api_key: this.kkiaypay_pk,
                         sandbox: true,
                         phone: "97000000",
@@ -288,7 +291,7 @@ export default {
                     console.log(this.selectedPayment);
                     await FeexPayButton.init("render", {
                         id: '648d7a2b72ea51df295a06d4',
-                        amount: this.montant_total,
+                        amount: this.nouveau_total,
                         token: "fp_sZ5RVWy3U0aWhcBh9fteXs3iJUFoERpvXLj8zPcji4jpOcynpNPDvIbqK3hdKRvx",
                         callback: (response) => {
                             if (response.status == 'SUCCESSFUL') {
@@ -311,7 +314,7 @@ export default {
 
                     break;
                 case 'Stripe':
-                    await this.stripePay()
+                    console.log(this.selectedPayment);
             }
         },
         closeModal() {
@@ -353,6 +356,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.erreur{
+    color: red;
+}
+
 .payment-category {
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -400,6 +408,11 @@ export default {
     color: black;
     text-decoration: none;
     cursor: pointer;
+}
+
+.go-right{
+    color: green;
+
 }
 
 .espace {

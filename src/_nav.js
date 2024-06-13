@@ -74,6 +74,11 @@ export default [
         name: 'Promotion par produit',
         to: '/admin/create-promotion',
       },
+      {
+        component: 'CNavItem',
+        name: 'Liste des promotions',
+        to: '/admin/list-promotion',
+      },
     ],
   },
   {
@@ -87,5 +92,11 @@ export default [
     name: 'Accueil',
     to: '/',
     icon: 'cil-cursor',
+  },
+  {
+    component: 'CNavItem',
+    name: 'Liste des utilisateurs',
+    to: '/admin/user-list',
+    icon: 'cil-user',
   },
 ]

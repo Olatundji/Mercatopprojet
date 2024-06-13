@@ -51,11 +51,11 @@ let usePromotion = (code, panier, idUser) =>{
 
 
 let deletePromotion = (id) => {
-    return Axios.delete('/product/delete/'+ id,)
+    return Axios.delete('/promotions/delete/'+ id,)
 }
 
 let allPromotion = () => {
-    return Axios.get('')
+    return Axios.get('/promotions')
 }
 
 

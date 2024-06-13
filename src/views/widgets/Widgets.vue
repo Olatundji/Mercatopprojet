@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <CCard class="mb-4">
     <CCardHeader>
@@ -521,6 +522,7 @@ import { CChart } from '@coreui/vue-chartjs'
 import WidgetsStatsA from './WidgetsStatsTypeA.vue'
 import WidgetsStatsD from './WidgetsStatsTypeD.vue'
 export default {
+  // eslint-disable-next-line vue/multi-word-component-names
   name: 'Widgets',
   components: {
     CChart,
@@ -584,5 +586,6 @@ export default {
       ],
     }
   },
+
 }
 </script>

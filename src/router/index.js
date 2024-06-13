@@ -28,6 +28,8 @@ import BlogPage from '../views/client/Blog/BlogPage.vue'
 import ShowArticle from '../views/client/Blog/ShowArticle.vue'
 import SearchPage from '../views/client/SearchPage.vue'
 import CreatePromotion from '../views/dashboard/pages/CreatePromotion.vue'
+import ListePromotion from '../views/dashboard/pages/ListePromotion.vue'
+import ListeUtilisateur from '../views/dashboard/pages/ListeUtilisateur.vue'
 
 const routes = [
   {
@@ -107,6 +109,18 @@ const routes = [
         name: "Create Promotion",
         meta: {requireAuth: true, type:'admin'},
         component: CreatePromotion,
+      },
+      {
+        path: "/admin/list-promotion",
+        name: "Liste Promotion",
+        meta: {requireAuth: true, type:'admin'},
+        component: ListePromotion,
+      },
+      {
+        path: "/admin/user-list",
+        name: "Liste des utilisateurs",
+        meta: {requireAuth: true, type:'admin'},
+        component: ListeUtilisateur,
       }
     ]
   },

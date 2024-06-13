@@ -6,8 +6,9 @@
 import { onMounted, ref } from 'vue'
 import { CChart } from '@coreui/vue-chartjs'
 import { getStyle } from '@coreui/utils'
+import { statistique } from '../../services';
 
-const random = (min, max) => Math.floor(Math.random() * (max - min + 1) + min)
+const random = (min, max) => Math.floor(Math.random() * (max - min + 5) + min)
 
 export default {
   name: 'MainChartExample',
@@ -17,7 +18,7 @@ export default {
   setup() {
     const mainChartRef = ref()
     const data = {
-      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+      labels: ['Janvier', 'Fevrier', 'Mars', 'Avril', 'Mai', 'Juin', 'Juiellet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Decembre' ],
       datasets: [
         {
           label: 'My First dataset',
@@ -33,33 +34,13 @@ export default {
             random(50, 200),
             random(50, 200),
             random(50, 200),
+            random(50, 200),
+            random(50, 200),
+            random(50, 200),
+            random(50, 200),
+            random(50, 200),
           ],
           fill: true,
-        },
-        {
-          label: 'My Second dataset',
-          backgroundColor: 'transparent',
-          borderColor: getStyle('--cui-success'),
-          pointHoverBackgroundColor: getStyle('--cui-success'),
-          borderWidth: 2,
-          data: [
-            random(50, 200),
-            random(50, 200),
-            random(50, 200),
-            random(50, 200),
-            random(50, 200),
-            random(50, 200),
-            random(50, 200),
-          ],
-        },
-        {
-          label: 'My Third dataset',
-          backgroundColor: 'transparent',
-          borderColor: getStyle('--cui-danger'),
-          pointHoverBackgroundColor: getStyle('--cui-danger'),
-          borderWidth: 1,
-          borderDash: [8, 5],
-          data: [65, 65, 65, 65, 65, 65, 65],
         },
       ],
     }
@@ -89,7 +70,7 @@ export default {
           grid: {
             color: getStyle('--cui-border-color-translucent'),
           },
-          max: 250,
+          max: 1000,
           ticks: {
             color: getStyle('--cui-body-color'),
             maxTicksLimit: 5,
@@ -143,6 +124,16 @@ export default {
       mainChartRef,
       options,
     }
+  },
+  data() {
+    return {
+      donnees: []
+    }
+  },
+  mounted() {
+    statistique.rapportVente().then((response) => {
+      console.log(response);
+    } )
   },
 }
 </script>
