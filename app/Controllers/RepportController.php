@@ -81,7 +81,7 @@ class RepportController extends Controller
         $totalUsers = $userModel->countAll();
         $noms = $userModel->select('nom')->findAll();
 
-        return json_encode([
+        return $this->respond([
             'total_utilisateurs' => $totalUsers,
             'noms_utilisateurs' => $noms
         ]);
