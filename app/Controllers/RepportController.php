@@ -78,8 +78,8 @@ class RepportController extends Controller
     {
         $userModel = new UserModel();
 
-        $totalUsers = $userModel->countAll();
-        $noms = $userModel->select('nom')->findAll();
+        $totalUsers = $userModel->where('id !=', 1)->countAllResults();
+        $noms = $userModel->select('nom')->where('id !=', 1)->findAll();
 
         return $this->respond([
             'total_utilisateurs' => $totalUsers,
