@@ -23,7 +23,7 @@ class FavorisController extends BaseController
         $perPage = 10;
 
         $favoris = $this->favorisModel
-            ->select('favoris.*, produit.*, categories.libelle as categorie_nom, marques.nom as marque_nom')
+            ->select('favoris.id as favori_id, produit.*, categories.libelle as categorie_nom, marques.nom as marque_nom')
             ->join('produit', 'produit.id = favoris.idProduit')
             ->join('categories', 'categories.id = produit.idCategorie')
             ->join('marques', 'marques.id = produit.idMarque')
@@ -37,9 +37,9 @@ class FavorisController extends BaseController
         $formattedFavoris = [];
         foreach ($favoris as $favori) {
             $formattedFavoris[] = [
-                'id' => $favori['id'],
+                'favori_id' => $favori['favori_id'],
                 'produit' => [
-                    'id' => $favori['idProduit'],
+                    'id' => $favori['id'],
                     'nom' => $favori['nom'],
                     'description' => $favori['description'],
                     'image' => $favori['image'],

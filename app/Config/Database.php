@@ -24,31 +24,26 @@ class Database extends Config
      *
      * @var array<string, mixed>
      */
-    public array $default = [
+    public $default = [
         'DSN'          => '',
         'hostname'     => 'localhost',
-        'username'     => 'root',
-        'password'     => '',
-        'database'     => 'projet',
-        'DBDriver'     => 'MySQLi',
+        'username'     => 'root',       // Nom d'utilisateur de votre base de données
+        'password'     => '',       // Mot de passe de votre base de données
+        'database'     => 'projet',     // Nom de votre base de données
+        'DBDriver'     => 'MySQLi',     // Driver de base de données (MySQLi pour MySQL)
         'DBPrefix'     => '',
         'pConnect'     => false,
-        'DBDebug'      => true,
-        'charset'      => 'utf8mb4',
-        'DBCollat'     => 'utf8mb4_general_ci',
+        'DBDebug'      => (ENVIRONMENT !== 'development'),
+        'charset'      => 'utf8',
+        'DBCollat'     => 'utf8_general_ci',
         'swapPre'      => '',
         'encrypt'      => false,
         'compress'     => false,
-        'strictOn'     => false,
+        'stricton'     => false,
         'failover'     => [],
-        'port'         => 3306,
-        'numberNative' => false,
-        'dateFormat'   => [
-            'date'     => 'Y-m-d',
-            'datetime' => 'Y-m-d H:i:s',
-            'time'     => 'H:i:s',
-        ],
+        'save_queries' => true
     ];
+
 
     // public array $default = [
     //     'DSN'          => '',
