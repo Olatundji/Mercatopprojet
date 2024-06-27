@@ -203,19 +203,47 @@ class AuthController extends BaseController
             $user = $this->userModel->where('email', $email)->first();
 
             if (!$user) {
-                return $this->respond(['error' => 'Email not found'], 404);
+                return $this->respond(['error' => 'E-mail introuvable'], 404);
             }
 
+            // Générer un jeton de réinitialisation unique
             $resetToken = bin2hex(random_bytes(16));
-            $this->userModel->update($user['id'], ['reset_token' => $resetToken]);
+            $resetTokenExpiry = date('Y-m-d H:i:s', strtotime('+1 hour')); // Le jeton expire dans 1 heure
 
+            $updateData = [
+                'reset_token' => $resetToken,
+                'reset_token_expiry' => $resetTokenExpiry
+            ];
+
+            $affectedRows = $this->userModel->update($user['id'], $updateData);
+
+            if ($affectedRows === 0) {
+                log_message('error', 'Échec de la mise à jour du token de réinitialisation de l’ID utilisateur: ' . $user['id']);
+                return $this->fail('Échec de la mise à jour du token de réinitialisation.', 500);
+            }
+
+            if (empty($updateData)) {
+                return $this->fail('Une erreur s’est produite : Aucune donnée à mettre à jour.', 500);
+            }
+
+            // Mettre à jour l'utilisateur avec le jeton et l'heure d'expiration
+            $this->userModel->update($user['id'], $updateData);
+
+            // Créer le lien de réinitialisation de mot de passe
+            $resetLink = base_url('api/reset-password') . '?token=' . $resetToken;
+
+            // Envoyer l'e-mail de réinitialisation de mot de passe
             $emailService = \Config\Services::email();
             $emailService->setTo($email);
             $emailService->setSubject('Password Reset');
-            $emailService->setMessage("Please use the following token to reset your password: $resetToken");
-            $emailService->send();
+            $emailService->setMessage("Veuillez cliquer sur le lien suivant pour réinitialiser votre mot de passe: $resetLink");
 
-            return $this->respond(['message' => 'Password reset token sent']);
+            if ($emailService->send()) {
+                return $this->respond(['message' => 'Lien de réinitialisation du mot de passe envoyé']);
+            } else {
+                $data = $emailService->printDebugger(['headers']);
+                return $this->respond(['message' => 'Échec de l’envoi du lien de réinitialisation du mot de passe', 'error' => $data], 500);
+            }
         } catch (\Exception $e) {
             log_message('error', $e->getMessage());
             return $this->fail('An error occurred: ' . $e->getMessage(), 500);
@@ -225,26 +253,36 @@ class AuthController extends BaseController
     public function resetPassword()
     {
         try {
-            $resetToken = $this->request->getVar('reset_token');
-            $newPassword = $this->request->getVar('password');
+            $resetToken = $this->request->getVar('token');
+            $newPassword = $this->request->getVar('new_password');
 
-            $user = $this->userModel->where('reset_token', $resetToken)->first();
+            $user = $this->userModel->where('reset_token', $resetToken)
+                ->where('reset_token_expiry >=', date('Y-m-d H:i:s'))
+                ->first();
 
             if (!$user) {
-                return $this->respond(['error' => 'Invalid token'], 400);
+                return $this->failNotFound('Token invalide ou expiré');
             }
 
+            if (empty($newPassword)) {
+                return $this->fail('nouveau mot de passe est requis', 400);
+            }
+
+            // Mettre à jour le mot de passe de l'utilisateur
+            $hashedNewPassword = password_hash($newPassword, PASSWORD_DEFAULT);
             $this->userModel->update($user['id'], [
-                'password' => password_hash($newPassword, PASSWORD_DEFAULT),
-                'reset_token' => null
+                'password' => $hashedNewPassword,
+                'reset_token' => null,
+                'reset_token_expiry' => null
             ]);
 
-            return $this->respond(['message' => 'Password reset successfully']);
+            return $this->respond(['message' => 'Le mot de passe a été réinitialisé avec succès'], 200);
         } catch (\Exception $e) {
             log_message('error', $e->getMessage());
             return $this->fail('An error occurred: ' . $e->getMessage(), 500);
         }
     }
+
 
     public function changePassword()
     {

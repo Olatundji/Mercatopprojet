@@ -99,6 +99,9 @@ $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection
     $routes->delete('articles/delete/(:num)', 'ArticleController::delete/$1');
     $routes->get('articles/show/(:num)', 'ArticleController::show/$1');
 });
+
+$routes->get('api/articles/detail/(:num)', 'ArticleController::detail/$1');
+
 // $routes->get('articles/index', 'ArticleController::index');
 // $routes->get('articles/show/(:num)', 'ArticleController::show/$1');
 // $routes->post('articles/create', 'ArticleController::create');

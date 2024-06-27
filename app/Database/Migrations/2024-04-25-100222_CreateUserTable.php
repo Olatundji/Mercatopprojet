@@ -56,6 +56,11 @@ class User extends Migration
                 'constraint' => 255,
                 'null' => true,
             ],
+            'reset_token_expiry' => [
+                'type' => 'VARCHAR',
+                'constraint' => 100,
+                'null' => true,
+            ],
             'is_active' => [
                 'type' => 'BOOLEAN',
                 'default' => false,

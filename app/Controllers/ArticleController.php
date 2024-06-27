@@ -198,4 +198,36 @@ class ArticleController extends BaseController
         }
         return $this->respond($articles);
     }
+
+
+    public function detail($id)
+    {
+        try {
+            $article = $this->articleModel
+                ->select('articles.*, categorie_articles.libelle as categorie_nom, categorie_articles.id as idCategorie_article')
+                ->join('categorie_articles', 'categorie_articles.id = articles.idCategorie_article')
+                ->find($id);
+
+            if (!$article) {
+                return $this->failNotFound('Article not found');
+            }
+
+            $formattedArticle = [
+                'id' => $article['id'],
+                'contenu' => $article['contenu'],
+                'description' => $article['description'],
+                'titre' => $article['titre'],
+                'categorie' => [
+                    'id' => $article['idCategorie_article'],
+                    'libelle' => $article['categorie_nom']
+                ],
+                'image' => $article['image']
+            ];
+
+            return $this->respond($formattedArticle);
+        } catch (\Exception $e) {
+            log_message('error', $e->getMessage());
+            return $this->fail('An error occurred: ' . $e->getMessage(), 500);
+        }
+    }
 }
