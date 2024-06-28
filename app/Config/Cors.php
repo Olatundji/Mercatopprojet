@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Config;
 
 use CodeIgniter\Filters\FilterInterface;
@@ -9,14 +8,21 @@ use CodeIgniter\HTTP\ResponseInterface;
 
 class Cors implements FilterInterface
 {
+    private $allowedOrigins = [
+        'https://mercatop.lemeilleurcointech.com',
+        'http://mercatop.lemeilleurcointech.com', 
+    ];
+
     public function before(RequestInterface $request, $arguments = null)
     {
         $origin = $request->getHeaderLine('Origin');
 
-        header('Access-Control-Allow-Origin: http://localhost:3000');
-        header('Access-Control-Allow-Credentials: true');
-        header('Access-Control-Allow-Headers: X-API-KEY, Origin, Authorization, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method');
-        header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
+        if (in_array($origin, $this->allowedOrigins)) {
+            header('Access-Control-Allow-Origin: ' . $origin);
+            header('Access-Control-Allow-Credentials: true');
+            header('Access-Control-Allow-Headers: X-API-KEY, Origin, Authorization, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method');
+            header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+        }
 
         if ($request->getMethod() === 'OPTIONS') {
             exit();
@@ -25,10 +31,17 @@ class Cors implements FilterInterface
 
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
     {
-        $response = $response->setHeader('X-Content-Type-Options', 'nosniff');
-        // $response = $response->setHeader('Access-Control-Allow-Origin', '*');
+        $origin = $request->getHeaderLine('Origin');
 
-        // Retourner la réponse mise à jour
+        if (in_array($origin, $this->allowedOrigins)) {
+            $response = $response->setHeader('Access-Control-Allow-Origin', $origin)
+                                 ->setHeader('Access-Control-Allow-Credentials', 'true')
+                                 ->setHeader('Access-Control-Allow-Headers', 'X-API-KEY, Origin, Authorization, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method')
+                                 ->setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        }
+
+        $response = $response->setHeader('X-Content-Type-Options', 'nosniff');
+
         return $response;
     }
 }

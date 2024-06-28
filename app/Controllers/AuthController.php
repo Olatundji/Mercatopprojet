@@ -230,7 +230,7 @@ class AuthController extends BaseController
             $this->userModel->update($user['id'], $updateData);
 
             // Créer le lien de réinitialisation de mot de passe
-            $resetLink = base_url('api/reset-password') . '?token=' . $resetToken;
+            $resetLink = base_url('auth/reset-password') . '?token=' . $resetToken;
 
             // Envoyer l'e-mail de réinitialisation de mot de passe
             $emailService = \Config\Services::email();
@@ -250,37 +250,44 @@ class AuthController extends BaseController
         }
     }
 
+    public function resetPasswordForm()
+    {
+        // Récupère le token de la requête GET
+        $token = $this->request->getGet('token');
+        return view('auth/reset_password', ['token' => $token]);
+    }
+
+    // Gère la soumission du formulaire de réinitialisation de mot de passe
     public function resetPassword()
     {
-        try {
-            $resetToken = $this->request->getVar('token');
-            $newPassword = $this->request->getVar('new_password');
+        // Récupère les variables de la requête POST
+        $token = $this->request->getVar('token');
+        $newPassword = $this->request->getVar('new_password');
+        $confirmPassword = $this->request->getVar('confirm_password');
 
-            $user = $this->userModel->where('reset_token', $resetToken)
-                ->where('reset_token_expiry >=', date('Y-m-d H:i:s'))
-                ->first();
-
-            if (!$user) {
-                return $this->failNotFound('Token invalide ou expiré');
-            }
-
-            if (empty($newPassword)) {
-                return $this->fail('nouveau mot de passe est requis', 400);
-            }
-
-            // Mettre à jour le mot de passe de l'utilisateur
-            $hashedNewPassword = password_hash($newPassword, PASSWORD_DEFAULT);
-            $this->userModel->update($user['id'], [
-                'password' => $hashedNewPassword,
-                'reset_token' => null,
-                'reset_token_expiry' => null
-            ]);
-
-            return $this->respond(['message' => 'Le mot de passe a été réinitialisé avec succès'], 200);
-        } catch (\Exception $e) {
-            log_message('error', $e->getMessage());
-            return $this->fail('An error occurred: ' . $e->getMessage(), 500);
+        // Vérifie si les mots de passe ne correspondent pas
+        if ($newPassword !== $confirmPassword) {
+            return redirect()->back()->with('error', 'Passwords do not match');
         }
+
+        // Cherche l'utilisateur par token et vérifie si le token n'a pas expiré
+        $user = $this->userModel->where('reset_token', $token)->where('reset_token_expiry >=', date('Y-m-d H:i:s'))->first();
+
+        if (!$user) {
+            return redirect()->back()->with('error', 'Invalid or expired token');
+        }
+
+        // Hash le nouveau mot de passe
+        $hashedNewPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+
+        // Met à jour l'utilisateur avec le nouveau mot de passe, et remet à zéro le token et l'expiration
+        $this->userModel->update($user['id'], [
+            'password' => $hashedNewPassword,
+            'reset_token' => null,
+            'reset_token_expiry' => null
+        ]);
+
+        return redirect()->to('/login')->with('message', 'Password has been reset successfully');
     }
 
 
