@@ -208,6 +208,7 @@ $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection
 $routes->post('api/favoris/create', 'FavorisController::create');
 $routes->get('api/favoris/user/(:num)', 'FavorisController::index/$1');
 $routes->delete('api/favoris/delete/(:num)', 'FavorisController::delete/$1');
+$routes->get('api/verify-token', 'AuthController::verifyToken');
 //commentaire
 $routes->post('api/produitcommentaires/create', 'CommentaireController::createProduitCommentaire');
 $routes->post('api/articlecommentaires/create', 'CommentaireController::createArticleCommentaire');

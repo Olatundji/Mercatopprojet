@@ -230,7 +230,7 @@ class AuthController extends BaseController
             $this->userModel->update($user['id'], $updateData);
 
             // Créer le lien de réinitialisation de mot de passe
-            $resetLink = base_url('api/reset-password') . '?token=' . $resetToken;
+            $resetLink = getenv('FRONT_URL').'?token='.$resetToken;
 
             // Envoyer l'e-mail de réinitialisation de mot de passe
             $emailService = \Config\Services::email();
@@ -256,13 +256,13 @@ class AuthController extends BaseController
             $resetToken = $this->request->getVar('token');
             $newPassword = $this->request->getVar('new_password');
 
-            $user = $this->userModel->where('reset_token', $resetToken)
-                ->where('reset_token_expiry >=', date('Y-m-d H:i:s'))
-                ->first();
+            // $user = $this->userModel->where('reset_token', $resetToken)
+            //     ->where('reset_token_expiry >=', date('Y-m-d H:i:s'))
+            //     ->first();
 
-            if (!$user) {
-                return $this->failNotFound('Token invalide ou expiré');
-            }
+            // if (!$user) {
+            //     return $this->failNotFound('Token invalide ou expiré');
+            // }
 
             if (empty($newPassword)) {
                 return $this->fail('nouveau mot de passe est requis', 400);
@@ -323,5 +323,16 @@ class AuthController extends BaseController
             log_message('error', $e->getMessage());
             return $this->fail('An error occurred: ' . $e->getMessage(), 500);
         }
+    }
+
+    public function verifyToken(){
+        $resetToken = $this->request->getVar('token');
+        $user = $this->userModel->where('reset_token', $resetToken)
+                ->where('reset_token_expiry >=', date('Y-m-d H:i:s'))
+                ->first();
+            if (!$user) {
+                return $this->failNotFound('Token invalide ou expiré');
+            }
+        return $this->respond(['isTokenValid' => true]);
     }
 }
