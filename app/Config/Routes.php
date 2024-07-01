@@ -19,10 +19,11 @@ $routes->post('api/register', 'AuthController::register');
 $routes->get('api/profile/(:num)', 'AuthController::show/$1');
 $routes->put('api/users/update/(:num)', 'AuthController::update/$1');
 $routes->post('api/forgot-password', 'AuthController::forgotPassword');
-$routes->post('api/reset-password', 'AuthController::resetPassword');
+//$routes->post('api/reset-password', 'AuthController::resetPassword');
 $routes->post('api/change-password', 'AuthController::changePassword');
 $routes->get('api/auth/activate/(:segment)', 'AuthController::activate/$1');
-
+$routes->get('reset-password', 'AuthController::resetPasswordForm');
+$routes->post('reset-password', 'AuthController::resetPassword');
 
 //produit
 // $routes->group('api', ['filter' => 'cors:api'], static function (RouteCollection $routes): void {
