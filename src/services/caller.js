@@ -10,7 +10,8 @@ const Axios = axios.create({
             Authorization: `Bearer `
         },
     },
-    baseURL: process.env.VUE_APP_API_URL
+    // baseURL: process.env.VUE_APP_API_URL
+    baseURL: 'https://lemeilleurcointech.com/mercatop/api'
 })
 
 // Intercepteur de réponse

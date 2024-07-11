@@ -5,7 +5,8 @@
                 <div class="col-md-6 col-md-offset-3">
                     <div class="block text-center">
                         <a class="logo" href="index.html">
-                            <img src="@/assets/images/logo.png" alt="">
+                            <!-- <img src="@/assets/images/logo.png" alt=""> -->
+                            <h2>MERCATO</h2>
                         </a>
                         <h2 class="text-center">Welcome Back</h2>
                         <p v-if="errors != null" > {{ errors }} </p>
@@ -13,14 +14,20 @@
                             <div class="form-group">
                                 <input v-model="user.email" type="email" class="form-control" placeholder="Email">
                             </div>
-                            <div class="form-group">
-                                <input v-model="user.password" type="password" class="form-control" placeholder="Password">
+                            <div class="form-group password-container">
+                                <input v-model="user.password" :type="isPasswordVisible ? 'text' : 'password'" class="form-control"
+                                    placeholder="Password Confirm">
+                                <font-awesome-icon @click="togglePasswordVisibility"
+                                    :icon="isPasswordVisible ? 'eye-slash' : 'eye'" class="password-toggle" />
+                                
                             </div>
                             <div class="text-center">
-                                <button type="submit" class="btn btn-main text-center">Se connecter</button>
+                                <button type="submit" class="btn btn-login text-center">Se connecter</button>
                             </div>
                         </form>
                         <p class="mt-20">Nouveau sur notre site ? <router-link to="/register"> S'inscrire </router-link> </p>
+                        <p> <router-link to="/forget-password"> Mot de passe oublié ? </router-link> </p>
+
                     </div>
                 </div>
             </div>
@@ -41,6 +48,7 @@ export default {
                 password: ''
             },
             errors: null,
+            isPasswordVisible: false
         }
     },
 
@@ -65,15 +73,37 @@ export default {
                 }
             })
         },
-        logout(){
-            
-        }
+        togglePasswordVisibility() {
+            this.isPasswordVisible = !this.isPasswordVisible;
+        },
     },
 }
 </script>
 
 <style scoped>
-.error {
-    background-color: red;
+
+.btn-login{
+    background-color: greenyellow;
+    width: 40%;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.password-container {
+    position: relative;
+    width: 100%;
+}
+
+.password-container input {
+    width: 100%;
+    padding-right: 40px;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
 }
 </style>

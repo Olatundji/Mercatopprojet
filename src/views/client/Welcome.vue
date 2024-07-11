@@ -67,7 +67,7 @@
                                             <i @click="addToCart(item)" class="tf-ion-android-add"></i>
                                         </span>
                                     </li>
-                                    <li>
+                                    <li v-if="isConnected">
                                         <a href="#!"><i class="tf-ion-ios-heart"></i></a>
                                     </li>
                                 </ul>
@@ -165,7 +165,8 @@ export default {
     },
     data() {
         return {
-            produits: []
+            produits: [],
+            isConnected: store.getters.isConnect,
         }
     },
     methods: {

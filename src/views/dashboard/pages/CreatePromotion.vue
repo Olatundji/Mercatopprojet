@@ -13,9 +13,8 @@
         <CCol :md="6">
             <CFormSelect v-model="type_promo" class="form-control" id="type_promo" >
                 <option value="1">Catégorie</option>
-                <option value="2">Marque</option>
-                <option value="3">Montant</option>
-                <option value="4">Produit</option>
+                <option value="2">Montant</option>
+                <option value="3">Produit</option>
             </CFormSelect>
         </CCol>
     </CRow>
@@ -25,14 +24,10 @@
     </CRow>
 
     <CRow class="mt-3" v-if="type_promo == 2" >
-        <MarquePromotion></MarquePromotion>
-    </CRow>
-
-    <CRow class="mt-3" v-if="type_promo == 3" >
         <MontantPromotion></MontantPromotion>
     </CRow>
 
-    <CRow class="mt-3" v-if="type_promo == 4">
+    <CRow class="mt-3" v-if="type_promo == 3">
         <ProduitPromotion></ProduitPromotion>
     </CRow>
 </template>
@@ -41,13 +36,12 @@
 
 import MontantPromotion from '@/components/dashboard/MontantPromotion.vue';
 import CategoriePromotion from '@/components/dashboard/CategoriePromotion.vue';
-import MarquePromotion from '@/components/dashboard/MarquePromotion.vue';
 import ProduitPromotion from '@/components/dashboard/ProduitPromotion.vue';
 
 export default {
     name: "CreatePromotion",
     components: {
-        MontantPromotion, CategoriePromotion, MarquePromotion, ProduitPromotion 
+        MontantPromotion, CategoriePromotion, ProduitPromotion 
     },
     data() {
         return {

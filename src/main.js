@@ -14,14 +14,23 @@ import CoreuiVue from '@coreui/vue'
 import CIcon from '@coreui/icons-vue'
 import { iconsSet as icons } from '@/assets/icons'
 import DocsExample from '@/components/DocsExample'
+import Toast from "vue-toastification";
+
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { fas } from '@fortawesome/free-solid-svg-icons';
+
+library.add(fas);
 
 const app = createApp(App)
 
 app.use(store)
 app.use(router)
 app.use(CoreuiVue)
+app.use(Toast)
 app.provide('icons', icons)
 app.component('CIcon', CIcon)
 app.component('DocsExample', DocsExample)
+app.component('font-awesome-icon', FontAwesomeIcon);
 
 app.mount('#app')

@@ -1,6 +1,8 @@
 import { createStore } from 'vuex'
 import createPersistedState from "vuex-persistedstate";
 import SecureLS from "secure-ls";
+import "vue-toastification/dist/index.css";
+import { useToast } from "vue-toastification";
 var ls = new SecureLS({ isCompression: false });
 
 export default createStore({
@@ -37,7 +39,14 @@ export default createStore({
         element.quatite = 1
         element.total = parseInt(element.prix)
         state.cart.push(element)
+
+        const toast = useToast();
+        toast.success("Vous venez d'ajoute un produit au panier", {
+            timeout: 2000
+        });
+
       }
+      
     },
     deleteToCart(state, id){
       const index = state.cart.findIndex(produit => produit.id === id);

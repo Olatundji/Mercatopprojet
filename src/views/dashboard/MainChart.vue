@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { onMounted, ref } from 'vue'
+import { ref } from 'vue'
 import { CChart } from '@coreui/vue-chartjs'
 import { getStyle } from '@coreui/utils'
 import { statistique } from '../../services';
@@ -15,36 +15,39 @@ export default {
   components: {
     CChart,
   },
-  setup() {
-    const mainChartRef = ref()
-    const data = {
-      labels: ['Janvier', 'Fevrier', 'Mars', 'Avril', 'Mai', 'Juin', 'Juiellet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Decembre' ],
-      datasets: [
-        {
-          label: 'My First dataset',
-          backgroundColor: `rgba(${getStyle('--cui-info-rgb')}, .1)`,
-          borderColor: getStyle('--cui-info'),
-          pointHoverBackgroundColor: getStyle('--cui-info'),
-          borderWidth: 2,
-          data: [
-            random(50, 200),
-            random(50, 200),
-            random(50, 200),
-            random(50, 200),
-            random(50, 200),
-            random(50, 200),
-            random(50, 200),
-            random(50, 200),
-            random(50, 200),
-            random(50, 200),
-            random(50, 200),
-            random(50, 200),
-          ],
-          fill: true,
-        },
-      ],
+  data() {
+    return {
+      data: {
+        labels: ['Janvier', 'Fevrier', 'Mars', 'Avril', 'Mai', 'Juin', 'Juiellet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Decembre'],
+        datasets: [
+          {
+            label: 'My First dataset',
+            backgroundColor: `rgba(${getStyle('--cui-info-rgb')}, .1)`,
+            borderColor: getStyle('--cui-info'),
+            pointHoverBackgroundColor: getStyle('--cui-info'),
+            borderWidth: 2,
+            data: [
+              random(50, 500),
+              random(50, 500),
+              random(50, 500),
+              random(50, 500),
+              random(50, 500),
+              random(50, 500),
+              random(50, 500),
+              random(50, 500),
+              random(50, 500),
+              random(50, 500),
+              random(50, 500),
+              random(50, 500),
+            ],
+            fill: true,
+          },
+        ],
+      }
     }
-
+  },
+  setup() {
+    const mainChartRef = ref();
     const options = {
       maintainAspectRatio: false,
       plugins: {
@@ -91,49 +94,44 @@ export default {
       },
     }
 
-    onMounted(() => {
-      document.documentElement.addEventListener('ColorSchemeChange', () => {
-        if (mainChartRef.value) {
-          mainChartRef.value.chart,
-            (options.scales.x.grid.borderColor = getStyle(
-              '--cui-border-color-translucent',
-            ))
-          mainChartRef.value.chart,
-            (options.scales.x.grid.color = getStyle(
-              '--cui-border-color-translucent',
-            ))
-          mainChartRef.value.chart,
-            (options.scales.x.ticks.color = getStyle('--cui-body-color'))
-          mainChartRef.value.chart,
-            (options.scales.y.grid.borderColor = getStyle(
-              '--cui-border-color-translucent',
-            ))
-          mainChartRef.value.chart,
-            (options.scales.y.grid.color = getStyle(
-              '--cui-border-color-translucent',
-            ))
-          mainChartRef.value.chart,
-            (options.scales.y.ticks.color = getStyle('--cui-body-color'))
-          mainChartRef.value.chart.update()
-        }
-      })
-    })
-
-    return {
-      data,
-      mainChartRef,
-      options,
-    }
-  },
-  data() {
-    return {
-      donnees: []
-    }
+    return { mainChartRef, options }
   },
   mounted() {
     statistique.rapportVente().then((response) => {
-      console.log(response);
-    } )
+      const apiData = response.data
+      let donnees = apiData.map(item => item.total_vente + 200)
+      let formatedData = Object.fromEntries(donnees.map((valeur, index) => [index, valeur]));
+      // this.data.datasets[0].data = formatedData
+
+      console.log(formatedData);
+      console.log(this.data.datasets[0].data);
+    })
+
+    document.documentElement.addEventListener('ColorSchemeChange', () => {
+      if (this.mainChartRef.value) {
+        this.mainChartRef.value.chart,
+          (this.options.scales.x.grid.borderColor = getStyle(
+            '--cui-border-color-translucent',
+          ))
+        this.mainChartRef.value.chart,
+          (this.options.scales.x.grid.color = getStyle(
+            '--cui-border-color-translucent',
+          ))
+        this.mainChartRef.value.chart,
+          (this.options.scales.x.ticks.color = getStyle('--cui-body-color'))
+        this.mainChartRef.value.chart,
+          (this.options.scales.y.grid.borderColor = getStyle(
+            '--cui-border-color-translucent',
+          ))
+        this.mainChartRef.value.chart,
+          (this.options.scales.y.grid.color = getStyle(
+            '--cui-border-color-translucent',
+          ))
+        this.mainChartRef.value.chart,
+          (this.options.scales.y.ticks.color = getStyle('--cui-body-color'))
+        this.mainChartRef.value.chart.update()
+      }
+    })
   },
 }
 </script>

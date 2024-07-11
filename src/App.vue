@@ -14,7 +14,7 @@ export default {
       store.commit('setSiteInfos', response.data)
     } )
   },
-  
+
   setup() {
     const { isColorModeSet, setColorMode } = useColorModes(
       'coreui-free-vue-admin-template-theme',

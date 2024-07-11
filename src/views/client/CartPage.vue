@@ -50,11 +50,11 @@
 
     <TheHeader></TheHeader>
     <CRow>
-        <CCol class="mx-3" :md="6" >
+        <CCol class="mx-3" :md="6">
             <h3>Ajouter un code promo</h3>
             <input class="form-control mb-3 " v-model="promo" type="text">
-            <span class="erreur" v-if="error != null " > {{ error  }} </span><br>
-            <button @click="applyCode" class="btn btn-success text-white " >Appliquer</button>
+            <span class="erreur" v-if="error != null"> {{ error }} </span><br>
+            <button @click="applyCode" class="btn btn-success text-white ">Appliquer</button>
         </CCol>
     </CRow>
     <div class="page-wrapper">
@@ -128,7 +128,7 @@ import { openKkiapayWidget, addKkiapayListener, removeKkiapayListener, } from "k
 import { loadScript } from '@paypal/paypal-js';
 import { commande, promotion } from '../../services';
 import router from '../../router'
-// import 'https://api.feexpay.me/feexpay-javascript-sdk/index.js'
+import 'https://api.feexpay.me/feexpay-javascript-sdk/index.js'
 
 export default {
     name: 'CartPage',
@@ -152,12 +152,12 @@ export default {
             kkiaypay_pk: '8276f590733111eea6c35d3a0ec50887',
             paypal_client_id: 'AeFGhGeO4unjO0Zgk4YfWVc_Q43kIgRmgYoI2UHLbd1C7FOzbhlcGe08nswsHcvrsFgEhzIAJuu_cu3L',
             feexpay: '',
-            successUrl: 'http://localhost:3000/user/commandes',
-            cancelUrl: 'http://localhost:3000/user/cart',
+            successUrl: 'https://mercatop.lemeilleurcointech.com/user/commandes',
+            cancelUrl: 'https://mercatop.lemeilleurcointech.com/user/cart',
             loading: false,
             stripe: null,
             showPaypalButton: false,
-            user_id: store.getters.getUser.id,
+            user_id: store.getters.getUser?.id ?? 0,
             selectedPayment: null,
             paymentCategories: [
                 {
@@ -196,17 +196,17 @@ export default {
     },
 
     methods: {
-        applyCode(){
+        applyCode() {
             this.error = null
             console.log(this.promo);
             console.log(this.cart);
-            promotion.usePromotion(this.promo, this.cart, store.getters.getUser.id ?? null ).then((response) => {
+            promotion.usePromotion(this.promo, this.cart, store.getters.getUser?.id ?? 0).then((response) => {
                 console.log(response);
                 this.nouveau_total = response.data.totalPanier
             }).catch((error) => {
                 this.nouveau_total = this.montant_total
                 this.error = error.response.data.messages.error
-            } )
+            })
         },
         async stripePay() {
             const { error } = await this.stripe.redirectToCheckout({
@@ -252,7 +252,7 @@ export default {
                                     return actions.order.create({
                                         purchase_units: [{
                                             amount: {
-                                                value: (this.this.nouveau_total / this.dollard_prix).toFixed(2)
+                                                value: (this.nouveau_total / this.dollard_prix).toFixed(2)
                                             }
                                         }]
                                     })
@@ -303,7 +303,7 @@ export default {
                                     }).catch((error) => {
                                         console.log(error);
                                     })
-                            }else{
+                            } else {
                                 console.log(response);
                             }
                         },
@@ -322,7 +322,11 @@ export default {
             this.showPaypalButton = false
         },
         valider() {
-            this.isModalOpen = true
+            if (store.getters.isConnect !== null) {
+                this.isModalOpen = true
+            } else {
+                router.push({ name: `Login` })
+            }
         },
         closeModalOutside(event) {
             if (event.target.classList.contains('modal-custom')) {
@@ -341,7 +345,12 @@ export default {
             this.updateMontantTotal();
         },
         updateMontantTotal() {
-            this.montant_total = this.cart.reduce((total, item) => parseInt(total) + parseInt(item.total), 0);
+            if (Array.isArray(this.cart) && this.cart.length > 0) {
+                this.montant_total = this.cart.reduce((total, item) => parseInt(total) + parseInt(item.total), 0);
+            } else {
+                this.montant_total = 0;
+            }
+            this.nouveau_total = this.montant_total;
         },
         validateQuantity(item) {
             if (item.quantite > item.qte) {
@@ -356,8 +365,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
-.erreur{
+.erreur {
     color: red;
 }
 
@@ -410,12 +418,12 @@ export default {
     cursor: pointer;
 }
 
-.go-right{
+.go-right {
     color: green;
 
 }
 
 .espace {
-    margin-left:7px;
+    margin-left: 7px;
 }
 </style>

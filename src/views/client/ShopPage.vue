@@ -1,6 +1,5 @@
 <template>
     <TheHeader></TheHeader>
-
     <section class="page-header">
         <div class="container">
             <div class="row">
@@ -37,33 +36,35 @@
                                             <li @click="addToFavoris(item.id)" v-if="isConnected">
                                                 <a href="#!"><i class="tf-ion-ios-heart"></i></a>
                                             </li>
-                                            <li @click="deleteFromFavoris(item.id)" v-if="isConnected">
+                                            <li v-if="isConnected">
                                                 <a href="#!"><i class="tf-ion-ios-heart-outline"></i></a>
                                             </li>
                                         </ul>
                                     </div>
                                 </div>
                                 <div class="product-content">
-                                    <h4>
-                                        <router-link @click="goDetails(item.id)" to='/produit/single'>
-                                            {{ item.nom }}
-                                        </router-link>
-                                    </h4>
-                                    <p class="price">XOF {{ item.prix }}</p>
+                                    <router-link class="product-name" :to="{ name: `DetailsProduit` }"
+                                        @click="goDetails(item.id)">
+                                        {{ item.nom }}
+                                    </router-link>
+                                    <p class="price"> {{ item.prix }} </p>
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
-
             </div>
         </div>
-        
+
+        <div class="row arround">
+            <div class="col-md-11">
+                <button @click="onScrollEnd" class="btn btn-block btn-dark">Voir plus</button>
+            </div>
+        </div>
     </section>
-    
-    <TheFooter></TheFooter>
-    <div ref="sentinel"></div>
+
+    <TheFooter />
+    <!-- <div ref="sentinel" class="sentinel"></div> -->
 </template>
 
 <script>
@@ -96,7 +97,7 @@ export default {
     },
 
     mounted() {
-        this.createObserver();
+        // this.createObserver();
         this.page = 1
         this.allProduit()
 
@@ -115,32 +116,35 @@ export default {
         addToFavoris(id) {
             favoris.createFavoris(id, store.getters.getUser.id).then((response) => {
                 console.log(response);
+            }).catch((error) => {
+                console.log(error);
             })
+
         },
         deleteToFavoris(id) {
             console.log(id);
         },
-        async createObserver() {
-            const options = {
-                root: null,
-                rootMargin: '0px',
-                threshold: 1.0
-            };
+        // async createObserver() {
+        //     const options = {
+        //         root: null,
+        //         rootMargin: '0px',
+        //         threshold: 1.0
+        //     };
 
-            this.observer = new IntersectionObserver(this.handleIntersect, options);
-            this.observer.observe(this.$refs.sentinel);
-        },
-        handleIntersect(entries) {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    this.onScrollEnd();
-                }
-            });
-        },
-        onScrollEnd() {
+        //     this.observer = new IntersectionObserver(this.handleIntersect, options);
+        //     this.observer.observe(this.$refs.sentinel);
+        // },
+        // handleIntersect(entries) {
+        //     entries.forEach(entry => {
+        //         if (entry.isIntersecting) {
+        //             console.log(entry);
+        //             this.onScrollEnd();
+        //         }
+        //     });
+        // },
+        async onScrollEnd() {
             this.page++
-            produit.allProduit(this.page, 10).then((response) => {
-                console.log(response);
+            await produit.allProduit(this.page, 10).then((response) => {
                 const newProducts = response.data.produits.filter(newProduct =>
                     !this.produits.some(existingProduct => existingProduct.id === newProduct.id)
                 );
@@ -151,7 +155,7 @@ export default {
             localStorage.setItem('id_produit', id)
         },
         async allProduit() {
-            await produit.allProduit(1, 5).then((response) => {
+            await produit.allProduit(1, 10).then((response) => {
                 this.produits = response.data.produits
             })
         },
@@ -163,4 +167,53 @@ export default {
 </script>
 
 <style scoped>
+.arround {
+    margin: 20px;
+}
+
+.btn-dark {
+    background-color: #333;
+    padding: 5px;
+    margin: 15px;
+    border-radius: 10px;
+}
+
+.btn-dark:hover {
+    background-color: rgb(170, 166, 166);
+    border: 1px solid #333;
+    color: black;
+}
+
+
+.sentinel {
+    height: 1px;
+}
+
+.espace {
+    height: 900px;
+}
+
+.product-name {
+    font-family: 'Arial, sans-serif';
+    /* Utilisation d'une police sans-serif */
+    font-size: 1.5em;
+    /* Taille de la police */
+    font-weight: bold;
+    /* Gras pour mettre en valeur le nom */
+    color: #333;
+    /* Couleur du texte */
+    text-transform: capitalize;
+    /* Capitalise chaque mot */
+    text-align: center;
+    /* Centrer le texte */
+    margin: 20px 0;
+    /* Marge pour espacer les éléments */
+    transition: color 0.3s ease;
+    /* Transition pour l'effet au survol */
+}
+
+.product-name:hover {
+    color: #ff6347;
+    /* Couleur du texte au survol */
+}
 </style>

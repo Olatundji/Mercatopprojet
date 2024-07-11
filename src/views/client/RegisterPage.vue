@@ -5,7 +5,8 @@
                 <div class="col-md-6 col-md-offset-3">
                     <div class="block text-center">
                         <a class="logo" href="index.html">
-                            <img src="@/assets/images/logo.png" alt="">
+                            <!-- <img src="@/assets/images/logo.png" alt=""> -->
+                            <h2>MERCATO</h2>
                         </a>
                         <h2 class="text-center">Créer un compte</h2>
                         <div class="error">
@@ -24,16 +25,22 @@
                             <div class="form-group">
                                 <input v-model="user.adresse" type="text" class="form-control" placeholder="Adresse">
                             </div>
-                            <div class="form-group">
-                                <input v-model="user.password" type="password" class="form-control"
+                            <div class="form-group password-container">
+                                <input v-model="user.password" :type="isPasswordVisible ? 'text' : 'password'" class="form-control"
                                     placeholder="Password">
+                                    <font-awesome-icon @click="togglePasswordVisibility"
+                                    :icon="isPasswordVisible ? 'eye-slash' : 'eye'" class="password-toggle" />
                             </div>
-                            <div class="form-group">
-                                <input v-model="passwordConfirm" type="password" class="form-control"
+                            <div class="form-group password-container">
+                                <small v-if="haveError" class="erreur" > {{ message }} </small>
+                                <input v-model="passwordConfirm" :type="isPasswordVisible ? 'text' : 'password'" class="form-control"
                                     placeholder="Password Confirm">
+                                <font-awesome-icon @click="togglePasswordVisibility"
+                                    :icon="isPasswordVisible ? 'eye-slash' : 'eye'" class="password-toggle" />
+                                
                             </div>
                             <div class="text-center">
-                                <button type="submit" class="btn btn-main text-center">S'inscrire</button>
+                                <button type="submit" class="btn btn-register text-center">S'inscrire</button>
                             </div>
                         </form>
                         <p class="mt-20">Vous avez déjà un compte ? <router-link to="/login"> Connecter-vous
@@ -65,31 +72,44 @@ export default {
             },
             passwordConfirm: '',
             errors: [],
-            haveError: true
+            haveError: false,
+            message: '',
+            isPasswordVisible: false,
         }
     },
 
     methods: {
+        togglePasswordVisibility() {
+            this.isPasswordVisible = !this.isPasswordVisible;
+        },
         register() {
-
             if (this.user.password == this.passwordConfirm) {
                 auth.register(this.user).then((response) => {
                     console.log(response);
                     if (response.status == 200) {
                         Swal.fire(
-                                'Envoyer ',
-                                'Email envoyer avec success',
-                                'success'
-                            ).then((result) => {
-                                if (result.isConfirmed) {
-                                    router.push({ name: `Login` })
-                                }
-                            })
+                            'Envoyer ',
+                            'Email envoyer avec success',
+                            'success'
+                        ).then((result) => {
+                            if (result.isConfirmed) {
+                                router.push({ name: `Login` })
+                            }
+                        })
+                    }
+                }).catch((error) => {
+                    console.log(error);
+                    if (error.response.status == 500) {
+                        Swal.fire(
+                            'Erreur ',
+                            "Une erreur s'est produite lors de l'inscription",
+                            'error'
+                        )
                     }
                 })
             } else {
-                const error = { message: "Les mots de passes ne sont pas identique" }
-                this.errors.push(error)
+                this.haveError = true
+                this.message = "Les mots de passe ne sont pas identiques"
             }
 
         }
@@ -98,7 +118,32 @@ export default {
 </script>
 
 <style scoped>
-.error {
-    background-color: red;
+
+.btn-register{
+    background-color: greenyellow;
+    width: 30%;
+    padding: 10px;
+    border-radius: 10px;
+}
+.erreur {
+    color: red;
+}
+
+.password-container {
+    position: relative;
+    width: 100%;
+}
+
+.password-container input {
+    width: 100%;
+    padding-right: 40px;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
 }
 </style>

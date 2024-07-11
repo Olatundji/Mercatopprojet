@@ -1,21 +1,17 @@
 # Mercatopprojet
 e-commerce
 
-paiement avec stripe
-npm install @vue-stripe/vue-stripe
-
-Paypal
-https://developer.paypal.com/api/rest/
-
-KkiaPay using docs (explixite)
-
-vérification d'une transaction en back
-
-FeexPay docs (explixite)
 
 TODO : {
-    - creer trois composant de formulaire pour la création des différentes promotion + affichage dynamique à partir d'un select ---
-    - deployer le back sur un hebergeur gratuit si possible
-    - utilisation de la promotion par le client ----
-    - les statistiques (front-back)
+    - Intégrer une option pour voir le mot de passe qu'on tape à l'inscription comme à la connexion
+
+- Mettre un fond derrière le bouton s'inscrire et l'agrandir 
+
+- Intégrer la fonctionnalité de mot de passe oublier 
+
+- Intégrer une page de détails sur les articles 
+
+- Option recherche : l'utilisateurs doit avoir la possibilité de taper directement ce l'article qu'il recherche. 
+
+- L'ajout des article au panier l'utilisateur doit pouvoir définir l quantité qu'il veut avant l'ajour au panier.
 }

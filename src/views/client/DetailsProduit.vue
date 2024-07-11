@@ -19,8 +19,7 @@
                             <div class='carousel-outer'>
                                 <div class='carousel-inner '>
                                     <div class='item active'>
-                                        <img src='@/assets/images/shop/single-products/product-1.jpg' alt=''
-                                            data-zoom-image="@/assets/images/shop/single-products/product-1.jpg" />
+                                        <img :src="produit_image" alt=''/>
                                     </div>
                                 </div>
                             </div>

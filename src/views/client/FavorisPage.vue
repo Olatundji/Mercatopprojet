@@ -26,7 +26,7 @@
                                             <td> {{ item.produit.nom  }} </td>
                                             <td> {{ item.produit.marque_nom  }} </td>
                                             <td>
-                                                <a @click.prevent="deleteFromFavoris(item.id)" class="product-remove"
+                                                <a @click.prevent="deleteFromFavoris(item.favori_id)" class="product-remove"
                                                     href="#">Supprimer</a>
                                             </td>
                                         </tr>
@@ -54,9 +54,7 @@ import store from '../../store';
     export default {
         mounted() {
             favoris.userFavoris(store.getters.getUser.id).then((response) => {
-                console.log(response);
                 this.favoris = response.data
-                console.log(this.favoris);
             }).catch((error) => {
                 console.log(error);
             } )
@@ -69,10 +67,15 @@ import store from '../../store';
         methods: {
             deleteFromFavoris(id){
                 favoris.deleteFavoris(id).then((response) => {
-                    console.log(response);
+                    // console.log(response)
+                    if(response.status == 200){
+                        location.reload()
+                    }
+                } ).catch((error) => {
+                    console.log(error);
                 } )
 
-                location.reload()
+                
             },
         },
         components: {

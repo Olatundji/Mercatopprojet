@@ -30,6 +30,8 @@ import SearchPage from '../views/client/SearchPage.vue'
 import CreatePromotion from '../views/dashboard/pages/CreatePromotion.vue'
 import ListePromotion from '../views/dashboard/pages/ListePromotion.vue'
 import ListeUtilisateur from '../views/dashboard/pages/ListeUtilisateur.vue'
+import ForgotPassword from '../views/client/ForgotPassword.vue'
+import ResetPassword from '../views/client/ResetPassword.vue'
 
 const routes = [
   {
@@ -180,7 +182,7 @@ const routes = [
     path: '/user/cart',
     name: 'CartList',
     component: CartPage,
-    meta: {requireAuth: true, type:'user'}
+    // meta: {requireAuth: true, type:'user'}
   },
   {
     path: '/user/search',
@@ -197,6 +199,26 @@ const routes = [
     path: '/user/checkout', 
     name: "CheckoutPage",
     component: CheckoutPage,
+  },
+  {
+    path: '/reset-password',
+    name: 'ResetPassword',
+    component: ResetPassword,
+    // beforeEnter: (to, from, next) => {
+    //   const { token, id } = to.query
+    //   if (!token || !id) {
+    //     next({ name: 'Accueil' }) // Redirigez vers une page d'erreur si les paramètres sont manquants
+    //   } else {
+    //     next(() => {
+    //       console.log("Information invalid");
+    //     })
+    //   }
+    // }
+  },
+  {
+    path: '/forget-password', 
+    name: "ForgotPassword",
+    component: ForgotPassword,
   },
   {
     path: '/:pathMatch(.*)*',redirect: '/'
@@ -218,6 +240,7 @@ router.beforeEach((to,from,next)=>{
   }
   if(to.meta.requireAuth && to.meta.type == 'user')
   {
+    
       authGuard('user')
   }
   next()

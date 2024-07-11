@@ -41,6 +41,21 @@ let changePassword = (password, current_password, user_id) =>{
     })
 }
 
+let forgotPassword = (email) =>{
+    return Axios.post('/forgot-password', {
+        email: email
+    })
+}
 
+let resetPassword = (new_password,token) =>{
+    return Axios.post('/reset-password', {
+        new_password: new_password,
+        token: token
+    })
+}
 
-export const auth = {  register, login, updateProfile, changePassword };
+let verifyToken = (token) => {
+    return Axios.get('/verify-token/'+token)
+}
+
+export const auth = {  register, resetPassword, login, updateProfile, changePassword, forgotPassword, verifyToken };

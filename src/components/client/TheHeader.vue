@@ -38,7 +38,7 @@
         <nav class="navbar navigation">
             <div class="container-navbar">
                 <div class="navbar-header">
-                    <h2 class="menu-title">Main Menu</h2>
+                    <h2 class="menu-title">Menu</h2>
                     <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
                         aria-expanded="false" aria-controls="navbar">
                         <span class="sr-only">Toggle navigation</span>
@@ -49,30 +49,30 @@
                 </div>
 
                 <!-- Navbar Links -->
-                <div id="navbar" class="navbar-collapse collapse container-nav ">
+                <div id="navbar" class="navbar-collapse collapse container-nav">
                     <ul class="nav navbar-nav">
 
                         <li class="dropdown ">
                             <router-link to="/">Accueil</router-link>
                         </li>
 
-                        <li class="dropdown ">
+                        <li class="dropdown full-width dropdown-slide ">
                             <router-link to="/produits">Nos produits</router-link>
                         </li>
 
-                        <li class="dropdown">
+                        <li class="dropdown full-width dropdown-slide">
                             <router-link to="/blog">Blog</router-link>
                         </li>
                         
-                        <li v-if="value == 'user' " class="dropdown ">
+                        <li v-if="value == 'user' " class="dropdown full-width dropdown-slide">
                             <router-link to="/user/profile">Profile</router-link>
                         </li>
 
-                        <li @click="logout" v-if="value == 'user' " class="dropdown ">
+                        <li @click="logout" v-if="value == 'user' " class="dropdown full-width dropdown-slide ">
                             <a href="#"  >Deconnexion</a>
                         </li>
 
-                        <li v-if="value == 'faux'" @mouseenter="visible = true" @mouseleave="visible = false" class="dropdown hover-effet">
+                        <li v-if="value == 'faux'" @mouseenter="visible = true" @mouseleave="visible = false" class="dropdown dropdown-slide full-width hover-effet">
                             <a class="dropdown-toggle" href="#">S'authentifier</a>
                             <div v-show="visible" class="auth">
                                 <router-link class="btn-item" to="/login">Se connecter</router-link>
@@ -81,11 +81,11 @@
                             </div>
                         </li>
 
-                        <li v-if="value == 'user'" class="dropdown ">
+                        <li v-if="value == 'user'" class="dropdown full-width  dropdown-slide">
                             <router-link to="/user/commandes">Dashboard</router-link>
                         </li>
                         
-                        <li v-if="value == 'admin'" class="dropdown ">
+                        <li v-if="value == 'admin'" class="dropdown full-width dropdown-slide ">
                             <router-link to="/admin/dashboard">Dashboard</router-link>
                         </li>
                     </ul>
@@ -144,7 +144,9 @@ export default {
 }
 </script>
 
-<style >
+<style scoped>
+
+
 a {
     text-decoration: none;
 }
